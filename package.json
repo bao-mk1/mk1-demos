@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build:shinonome": "next build shinonome-body-peeling-src && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-shinonome-export.ps1"
+  },
+  "dependencies": {
+    "lucide-react": "^1.18.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}
