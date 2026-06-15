@@ -1,0 +1,5 @@
+:HL["/mk1-demos/shinonome-impact/_next/static/chunks/41sidtw744rq-.css","style"]
+:HL["/mk1-demos/shinonome-impact/_next/static/media/03bda585a99c6450-s.p.32sris142tqlb.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/mk1-demos/shinonome-impact/_next/static/media/75affa71d1e2f6a7-s.p.17-aodiw50953.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/mk1-demos/shinonome-impact/_next/static/chunks/19m329dr2v28e.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}},"staleTime":300,"buildId":"FUy5-lkvoFeLxqRa-JkOB"}

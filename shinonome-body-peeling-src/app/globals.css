@@ -1237,3 +1237,158 @@ blockquote cite {
     min-height: 54px;
   }
 }
+
+/* ============================================================
+   SHINONOME — premium brand-true overrides (appended; cascade wins)
+   ============================================================ */
+:root {
+  --ink: #2b2620;
+  --muted: #6f675e;
+  --line: #e8e1d6;
+  --paper: #faf6f0;
+  --white: #ffffff;
+  --sage: #8a7a64;   /* taupe — primary accent */
+  --rose: #b98a83;
+  --plum: #322b25;   /* espresso (dark sections) */
+  --gold: #a98a54;
+  --charcoal: #1c1813;
+}
+
+/* warm up legacy green-tinted surfaces */
+.topbar { background: rgba(250, 246, 240, 0.86); }
+.hero-trust {
+  background: linear-gradient(90deg, #faf6f0 0%, #faf6f0 56%, #efe7da 56%, #efe7da 100%);
+}
+.method-card article { background: #f4efe7; border-color: #e7ded1; }
+.flow-grid span { background: #efe7d8; color: var(--sage); font-weight: 800; }
+.event-timeline span { background: #efe1da; color: var(--rose); font-weight: 800; }
+.split-section { background: #fffdfa; }
+.cert-section { background: #f3ede3; }
+.emotion-reserve { background: #e7ddcf; }
+.trust-list span { background: rgba(255, 255, 255, 0.6); border-color: rgba(138, 122, 100, 0.22); }
+.method-card article { border-radius: 8px; }
+@media (min-width: 981px) { .problem-band .pain-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* editorial serif for display headings (Playfair latin + Mincho JP) */
+.brandmark,
+.selector-hero h1,
+.hero h1,
+.brand-gallery-copy h2,
+.brand-gallery-card span,
+.section-head h2,
+.split-section h2,
+.proof-copy h2,
+.story-section h2,
+.feature-list h2,
+.testimonial-band h2,
+.cert-section h2,
+.reserve h2,
+.offer-card .price {
+  font-family: var(--font-display), "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+}
+.section-head h2,
+.split-section h2,
+.proof-copy h2,
+.story-section h2,
+.feature-list h2,
+.testimonial-band h2,
+.cert-section h2,
+.reserve h2 {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+body { letter-spacing: 0.01em; }
+
+/* logo brandmark image */
+.logo-img { height: 26px; width: auto; display: block; }
+.topbar.glass .logo-img { filter: brightness(0) invert(1); }
+@media (max-width: 640px) { .logo-img { height: 21px; } }
+
+/* small bilingual EN label */
+.en-label {
+  display: inline-block;
+  font-family: var(--font-display), serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-size: 12px;
+}
+
+/* proof strip (dark, under hero) — real figures only */
+.proof-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--charcoal);
+  color: var(--white);
+  padding: 0 clamp(12px, 4vw, 56px);
+}
+.proof-strip > div {
+  padding: 28px 14px;
+  text-align: center;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+.proof-strip > div:first-child { border-left: 0; }
+.proof-strip .v {
+  font-family: var(--font-display), serif;
+  font-size: clamp(26px, 3.6vw, 42px);
+  line-height: 1;
+  color: #ecd2a0;
+}
+.proof-strip .l { margin-top: 10px; font-size: 13px; font-weight: 700; }
+.proof-strip .n { margin-top: 5px; font-size: 11px; color: rgba(255, 255, 255, 0.6); line-height: 1.5; }
+@media (max-width: 700px) {
+  .proof-strip { grid-template-columns: repeat(2, 1fr); }
+  .proof-strip > div:nth-child(odd) { border-left: 0; }
+  .proof-strip > div:nth-child(n + 3) { border-top: 1px solid rgba(255, 255, 255, 0.1); }
+}
+
+/* offer / pricing section */
+.offer-section { padding: clamp(70px, 9vw, 120px) clamp(18px, 5vw, 72px); background: #efe7da; }
+.offer-card {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(28px, 5vw, 52px);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 30px 70px rgba(28, 24, 19, 0.08);
+}
+.offer-card .price { font-size: clamp(46px, 8vw, 84px); line-height: 1; color: var(--ink); }
+.offer-card .price small { font-size: 0.3em; color: var(--muted); margin-left: 8px; }
+.offer-points {
+  list-style: none;
+  padding: 0;
+  margin: 26px auto 30px;
+  display: grid;
+  gap: 10px;
+  max-width: 440px;
+  text-align: left;
+}
+.offer-points li { padding-left: 28px; position: relative; line-height: 1.6; }
+.offer-points li::before { content: "\2713"; position: absolute; left: 0; color: var(--gold); font-weight: 800; }
+
+/* disclaimer + footer */
+.disclaimer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px clamp(18px, 5vw, 72px) 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+.site-footer {
+  padding: 44px clamp(18px, 5vw, 72px) 96px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.95;
+  border-top: 1px solid var(--line);
+}
+.site-footer strong {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-family: var(--font-display), "Yu Mincho", serif;
+  font-size: 18px;
+  letter-spacing: 0.08em;
+}

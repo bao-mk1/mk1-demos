@@ -3,9 +3,12 @@
     "build:shinonome": "next build shinonome-body-peeling-src && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/sync-shinonome-export.ps1"
   },
   "dependencies": {
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.0",
     "lucide-react": "^1.18.0",
     "next": "^16.2.9",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "swiper": "^11.2.0"
   }
 }

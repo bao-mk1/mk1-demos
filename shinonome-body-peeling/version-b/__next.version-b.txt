@@ -2,4 +2,4 @@
 2:I[39756,["/mk1-demos/shinonome-body-peeling/_next/static/chunks/2ljvy7nqhgbpm.js","/mk1-demos/shinonome-body-peeling/_next/static/chunks/14mrh2-p_w84d.js"],"default"]
 3:I[37457,["/mk1-demos/shinonome-body-peeling/_next/static/chunks/2ljvy7nqhgbpm.js","/mk1-demos/shinonome-body-peeling/_next/static/chunks/14mrh2-p_w84d.js"],"default"]
 4:[]
-0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"5WhWXSZF4LLnXS_GbYRd2"}
+0:{"rsc":["$","$1","c",{"children":[null,["$","$L2",null,{"parallelRouterKey":"children","template":["$","$L3",null,{}]}]]}],"isPartial":false,"staleTime":300,"varyParams":"$W4","buildId":"na-NA82DJ4hPciLf5CIHJ"}
