@@ -12,7 +12,7 @@ export default function VersionB() {
       </nav>
 
       <section className="hero hero-emotion">
-        <Image src={`${assetBase}/images/therapist.jpg`} alt="SHINONOMEのビジュアル" fill priority sizes="100vw" />
+        <Image src={`${assetBase}/images/therapist.webp`} alt="SHINONOMEのビジュアル" fill priority sizes="100vw" />
         <div className="hero-overlay" />
         <div className="emotion-copy">
           <p className="eyebrow light">肌を見せる予定の前に</p>
@@ -65,7 +65,7 @@ export default function VersionB() {
 
       <section className="image-feature">
         <div className="feature-photo">
-          <Image src={`${assetBase}/images/body-treatment.png`} alt="背中と肩のボディケア施術イメージ" fill sizes="(max-width: 900px) 100vw, 50vw" />
+          <Image src={`${assetBase}/images/body-treatment.webp`} alt="背中と肩のボディケア施術イメージ" fill sizes="(max-width: 900px) 100vw, 50vw" />
         </div>
         <div className="feature-list">
           <p className="eyebrow">施術のポイント</p>
@@ -112,7 +112,7 @@ export default function VersionB() {
           <h2>CHRISTINA認定サロンとしての安心感。</h2>
           <p>2025/2026認定。身体のニキビ跡ケアについて登壇経験もあり、専門的な知見を日々の施術へ還元しています。</p>
         </div>
-        <Image src={`${assetBase}/images/certification.png`} alt="CHRISTINA認定サロン証明書" width={600} height={416} />
+        <Image src={`${assetBase}/images/certification.webp`} alt="CHRISTINA認定サロン証明書" width={600} height={416} />
       </section>
 
       <section className="faq-section emotion-faq">

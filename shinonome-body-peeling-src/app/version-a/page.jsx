@@ -29,7 +29,7 @@ export default function VersionA() {
           </dl>
         </div>
         <div className="hero-media">
-          <Image src={`${assetBase}/images/body-treatment.png`} alt="背中と肩のボディケア施術イメージ" fill priority sizes="(max-width: 900px) 100vw, 48vw" />
+          <Image src={`${assetBase}/images/body-treatment.webp`} alt="背中と肩のボディケア施術イメージ" fill priority sizes="(max-width: 900px) 100vw, 48vw" />
         </div>
       </section>
 
@@ -100,7 +100,7 @@ export default function VersionA() {
 
       <section className="proof-band">
         <div className="proof-image">
-          <Image src={`${assetBase}/images/certification.png`} alt="CHRISTINA認定サロン証明書" fill sizes="(max-width: 900px) 100vw, 42vw" />
+          <Image src={`${assetBase}/images/certification.webp`} alt="CHRISTINA認定サロン証明書" fill sizes="(max-width: 900px) 100vw, 42vw" />
         </div>
         <div className="proof-copy">
           <Award aria-hidden="true" />
