@@ -31,6 +31,16 @@ export default function ScrollEffects() {
 
     root.classList.add("reveal-ready");
 
+    if (!("IntersectionObserver" in window)) {
+      revealTargets.forEach((target) => target.classList.add("is-visible"));
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+      return () => {
+        window.removeEventListener("scroll", updateProgress);
+        root.classList.remove("reveal-ready");
+      };
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -44,12 +54,24 @@ export default function ScrollEffects() {
     );
 
     revealTargets.forEach((target) => observer.observe(target));
+    const showVisibleTargets = () => {
+      revealTargets.forEach((target) => {
+        const rect = target.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          target.classList.add("is-visible");
+        }
+      });
+    };
+
     window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("pageshow", showVisibleTargets);
     updateProgress();
+    requestAnimationFrame(showVisibleTargets);
 
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("pageshow", showVisibleTargets);
       root.classList.remove("reveal-ready");
     };
   }, []);

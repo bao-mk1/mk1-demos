@@ -742,9 +742,8 @@ blockquote {
   .reveal-ready .testimonial-slider blockquote,
   .reveal-ready .brand-gallery-card,
   .reveal-ready .occasion-cloud span {
-    opacity: 0;
     transform: translateY(28px);
-    transition: opacity 720ms ease, transform 720ms ease;
+    transition: transform 720ms ease;
   }
 
   .reveal-ready .landing > section.is-visible,
@@ -758,7 +757,6 @@ blockquote {
   .reveal-ready .testimonial-slider blockquote.is-visible,
   .reveal-ready .brand-gallery-card.is-visible,
   .reveal-ready .occasion-cloud span.is-visible {
-    opacity: 1;
     transform: translateY(0);
   }
 
