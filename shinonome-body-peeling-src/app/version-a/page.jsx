@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Award, CalendarDays, CheckCircle2, HelpCircle, MapPin, ShieldCheck, Sparkles } from "lucide-react";
-import { assetBase, benefits, brand, eventPlans, faq, features, flow, pains, trustPoints, voices } from "../data";
+import { assetBase, benefits, brand, brandContext, eventPlans, faq, features, flow, pains, trustPoints, voices } from "../data";
 
 export default function VersionA() {
   return (
@@ -42,6 +42,21 @@ export default function VersionA() {
           {pains.map((pain) => (
             <div className="pain-item" key={pain}><CheckCircle2 aria-hidden="true" />{pain}</div>
           ))}
+        </div>
+      </section>
+
+      <section className="brand-gallery-section">
+        <div className="brand-gallery-frame">
+          <div className="brand-gallery-copy">
+            <p className="eyebrow">{brandContext.lead}</p>
+            <h2>{brandContext.title}</h2>
+            <p>{brandContext.text}</p>
+          </div>
+          <div className="brand-gallery-card">
+            {brandContext.points.map((point, index) => (
+              <p key={point}><span>{String(index + 1).padStart(2, "0")}</span>{point}</p>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -160,6 +175,11 @@ export default function VersionA() {
           <a className="primary full" href="https://shinonome.gallery/">初回カウンセリングを予約する</a>
         </div>
       </section>
+
+      <a className="floating-reserve" href="#reserve">
+        <span>初回予約</span>
+        <strong>{brand.price}</strong>
+      </a>
     </main>
   );
 }

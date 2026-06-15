@@ -1,4 +1,5 @@
 import "./globals.css";
+import ScrollEffects from "./components/ScrollEffects";
 
 export const metadata = {
   title: "SHINONOME 肌質改善ピーリング LP案",
@@ -8,7 +9,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        <ScrollEffects />
+        {children}
+      </body>
     </html>
   );
 }

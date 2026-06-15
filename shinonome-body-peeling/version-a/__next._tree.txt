@@ -1,2 +1,2 @@
-:HL["/mk1-demos/shinonome-body-peeling/_next/static/chunks/1l-tk1_9j7wyh.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"version-a","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"fDi9RWman5WXnt2aEKALi"}
+:HL["/mk1-demos/shinonome-body-peeling/_next/static/chunks/42ikxlun7ygd8.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"version-a","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"dfPw7azxECB98uS6sww5i"}

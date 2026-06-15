@@ -11,6 +11,13 @@ export const brand = {
 
 export const assetBase = "/mk1-demos/shinonome-body-peeling";
 
+export const brandContext = {
+  lead: "Beauty Business Gallery",
+  title: "美容事業の現場知見を、肌悩みケアへ。",
+  text: "SHINONOMEは中目黒で一般のお客様へのサロンワークを行いながら、美容機器のデモ実施、導入支援、フランチャイズ、美容事業のサポートも展開しています。サロン運営と美容ビジネスの両面で得た知見を、身体の肌悩みに向き合うカウンセリングへ活かします。",
+  points: ["国内外の美容事業サポート", "各メーカー認定のデモ実施", "サロン現場から生まれる肌提案"],
+};
+
 export const pains = [
   "治ったはずのニキビ跡が何年も残っている",
   "背中・二の腕・お尻を見せる服に自信が持てない",

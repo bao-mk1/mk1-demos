@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Camera, Heart, HelpCircle, MapPin, Plane, Waves } from "lucide-react";
-import { assetBase, brand, eventPlans, faq, features, occasions, voices } from "../data";
+import { assetBase, brand, brandContext, eventPlans, faq, features, occasions, voices } from "../data";
 
 export default function VersionB() {
   return (
@@ -45,6 +45,21 @@ export default function VersionB() {
         </div>
         <div className="occasion-cloud">
           {occasions.map((item) => <span key={item}>{item}</span>)}
+        </div>
+      </section>
+
+      <section className="brand-gallery-section emotion-brand">
+        <div className="brand-gallery-frame">
+          <div className="brand-gallery-copy">
+            <p className="eyebrow">{brandContext.lead}</p>
+            <h2>サロン運営の目線で、あなたの肌予定に寄り添う。</h2>
+            <p>{brandContext.text}</p>
+          </div>
+          <div className="brand-gallery-card">
+            {brandContext.points.map((point, index) => (
+              <p key={point}><span>{String(index + 1).padStart(2, "0")}</span>{point}</p>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -129,6 +144,11 @@ export default function VersionB() {
         </a>
         <p className="address"><MapPin aria-hidden="true" /> {brand.address}</p>
       </section>
+
+      <a className="floating-reserve" href="#reserve">
+        <span>初回予約</span>
+        <strong>{brand.price}</strong>
+      </a>
     </main>
   );
 }
