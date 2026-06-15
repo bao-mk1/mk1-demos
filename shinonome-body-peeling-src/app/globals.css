@@ -292,7 +292,11 @@ p {
 
 .problem-band,
 .split-section,
+.flow-section,
 .voice-section,
+.plan-section,
+.faq-section,
+.event-section,
 .reserve,
 .story-section,
 .image-feature,
@@ -429,11 +433,116 @@ p {
   color: var(--gold);
 }
 
+.flow-section,
+.plan-section,
+.faq-section {
+  background: #fbfbf8;
+}
+
+.flow-grid,
+.plan-grid,
+.event-timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.flow-grid article,
+.plan-grid article,
+.event-timeline article {
+  padding: 28px;
+  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.flow-grid span,
+.event-timeline span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #e8efeb;
+  color: var(--sage);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.flow-grid h3,
+.plan-grid h3 {
+  margin: 22px 0 10px;
+  font-size: 22px;
+}
+
+.flow-grid p,
+.plan-grid p,
+.event-timeline p,
+.faq-list p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+.trust-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.trust-list span {
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.54);
+  border: 1px solid rgba(84, 111, 102, 0.18);
+  font-weight: 800;
+}
+
 .voice-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   margin-top: 34px;
+}
+
+.faq-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 34px;
+}
+
+.faq-list.compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.faq-list article {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 14px;
+  padding: 24px;
+  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--line);
+}
+
+.faq-list svg {
+  width: 24px;
+  height: 24px;
+  color: var(--gold);
+  margin-top: 2px;
+}
+
+.faq-list h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
 }
 
 blockquote {
@@ -597,6 +706,19 @@ blockquote cite {
   border-radius: 8px;
 }
 
+.event-section {
+  background: #f8f3f1;
+}
+
+.event-timeline article {
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.event-timeline span {
+  background: #f4dfdd;
+  color: var(--rose);
+}
+
 .feature-list {
   display: flex;
   flex-direction: column;
@@ -673,11 +795,16 @@ blockquote cite {
   .selector-grid,
   .hero-trust,
   .split-section,
+  .flow-grid,
   .proof-band,
+  .plan-grid,
   .reserve,
   .story-section,
   .image-feature,
-  .cert-section {
+  .cert-section,
+  .event-timeline,
+  .faq-list,
+  .faq-list.compact {
     grid-template-columns: 1fr;
   }
 
@@ -786,5 +913,12 @@ blockquote cite {
     white-space: normal;
     min-height: 48px;
     text-align: center;
+  }
+
+  .flow-grid article,
+  .plan-grid article,
+  .event-timeline article,
+  .faq-list article {
+    padding: 22px;
   }
 }

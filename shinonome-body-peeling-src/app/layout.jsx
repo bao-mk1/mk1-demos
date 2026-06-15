@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "SHINONOME 肌質改善ピーリング LP Demo",
+  title: "SHINONOME 肌質改善ピーリング LP案",
   description: "SHINONOME Facial Lab の肌質改善ピーリング向けランディングページデモ",
 };
 
