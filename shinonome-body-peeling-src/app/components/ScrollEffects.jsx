@@ -23,10 +23,13 @@ export default function ScrollEffects() {
     );
 
     const updateProgress = () => {
-      if (!progress) return;
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       const amount = scrollable > 0 ? window.scrollY / scrollable : 0;
-      progress.style.transform = `scaleX(${Math.min(1, Math.max(0, amount))})`;
+      const heroShift = Math.min(28, window.scrollY * 0.04);
+      root.style.setProperty("--hero-scroll-shift", `${heroShift}px`);
+      if (progress) {
+        progress.style.transform = `scaleX(${Math.min(1, Math.max(0, amount))})`;
+      }
     };
 
     root.classList.add("reveal-ready");
@@ -37,6 +40,7 @@ export default function ScrollEffects() {
       updateProgress();
       return () => {
         window.removeEventListener("scroll", updateProgress);
+        root.style.removeProperty("--hero-scroll-shift");
         root.classList.remove("reveal-ready");
       };
     }
@@ -72,6 +76,7 @@ export default function ScrollEffects() {
       observer.disconnect();
       window.removeEventListener("scroll", updateProgress);
       window.removeEventListener("pageshow", showVisibleTargets);
+      root.style.removeProperty("--hero-scroll-shift");
       root.classList.remove("reveal-ready");
     };
   }, []);
