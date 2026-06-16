@@ -1,2 +1,2 @@
-:HL["/mk1-demos/shinonome-impact/_next/static/chunks/329_uk57o0u8q.css","style"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"Gvk2zwOhn2DfUsTklGjnR"}
+:HL["/mk1-demos/shinonome-impact/_next/static/chunks/046gcas_r_2q6.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"/_not-found","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"OQKqit0UWmLixYZW67C9R"}
