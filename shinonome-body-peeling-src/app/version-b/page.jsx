@@ -27,7 +27,7 @@ export default function VersionB() {
         <div className="hero-overlay" />
         <div className="emotion-copy">
           <p className="en-label">Skin Quality Peeling</p>
-          <h1>{brand.tagline}</h1>
+          <h1>自分史上最高の<span className="accent-text">美肌</span>を、あなたに。</h1>
           <p>
             背中・二の腕・お尻のニキビ跡や色素沈着。隠すためのケアではなく、写真にも記憶にも残したくなる肌へ。
           </p>

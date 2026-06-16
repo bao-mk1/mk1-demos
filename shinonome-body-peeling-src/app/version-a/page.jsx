@@ -18,7 +18,7 @@ export default function VersionA() {
       <section className="hero hero-trust">
         <div className="hero-copy">
           <p className="eyebrow">Skin Quality Peeling ／ 中目黒</p>
-          <h1>{brand.tagline}</h1>
+          <h1>自分史上最高の<span className="accent-text">美肌</span>を、あなたに。</h1>
           <p className="lead">
             背中・二の腕・お尻・デコルテのニキビ跡や色素沈着に。肌を削るのではなく、肌本来のコンディションに着目したボディトリートメントです。
           </p>

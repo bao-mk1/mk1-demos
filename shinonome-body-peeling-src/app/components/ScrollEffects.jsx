@@ -22,20 +22,31 @@ export default function ScrollEffects() {
       ].join(",")
     );
 
+    let lastScroll = 0;
     const updateProgress = () => {
+      const y = window.scrollY;
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      const amount = scrollable > 0 ? window.scrollY / scrollable : 0;
-      const heroShift = Math.min(28, window.scrollY * 0.04);
+      const amount = scrollable > 0 ? y / scrollable : 0;
+      const heroShift = Math.min(28, y * 0.04);
       root.style.setProperty("--hero-scroll-shift", `${heroShift}px`);
       if (progress) {
         progress.style.transform = `scaleX(${Math.min(1, Math.max(0, amount))})`;
       }
+      // Hide-on-scroll-down / show-on-scroll-up glass header.
+      const bar = document.querySelector(".topbar");
+      if (bar) {
+        if (y > lastScroll && y > 140) bar.classList.add("is-hidden");
+        else bar.classList.remove("is-hidden");
+      }
+      lastScroll = y;
     };
 
     root.classList.add("reveal-ready");
 
+    const reveal = (el) => el.classList.add("is-visible");
+
     if (!("IntersectionObserver" in window)) {
-      revealTargets.forEach((target) => target.classList.add("is-visible"));
+      revealTargets.forEach(reveal);
       window.addEventListener("scroll", updateProgress, { passive: true });
       updateProgress();
       return () => {
@@ -49,7 +60,7 @@ export default function ScrollEffects() {
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
+            reveal(entry.target);
             observer.unobserve(entry.target);
           }
         });
@@ -58,12 +69,12 @@ export default function ScrollEffects() {
     );
 
     revealTargets.forEach((target) => observer.observe(target));
+
+    // Fail-safe: anything already in view on load / bfcache restore is shown.
     const showVisibleTargets = () => {
       revealTargets.forEach((target) => {
         const rect = target.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          target.classList.add("is-visible");
-        }
+        if (rect.top < window.innerHeight && rect.bottom > 0) reveal(target);
       });
     };
 

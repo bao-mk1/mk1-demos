@@ -1,4 +1,4 @@
-:HL["/mk1-demos/shinonome-body-peeling/_next/static/chunks/322pfdyfzjp0f.css","style"]
+:HL["/mk1-demos/shinonome-body-peeling/_next/static/chunks/31vfk8ky2nigu.css","style"]
 :HL["/mk1-demos/shinonome-body-peeling/_next/static/media/2a65768255d6b625-s.p.3u4lli0-axodc.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/mk1-demos/shinonome-body-peeling/images/logo.webp","image"]
-0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"version-b","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"na-NA82DJ4hPciLf5CIHJ"}
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"version-b","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}},"staleTime":300,"buildId":"ZpK23HkAvsyjsIfmo24Hc"}

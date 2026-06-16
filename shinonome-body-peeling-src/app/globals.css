@@ -1392,3 +1392,109 @@ body { letter-spacing: 0.01em; }
   font-size: 18px;
   letter-spacing: 0.08em;
 }
+
+/* ============================================================
+   AESTHETIC REFINEMENT v2 (refs: find-model.jp / seiryo) — appended
+   ============================================================ */
+:root {
+  --ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --shadow-soft: 0 6px 26px rgba(43, 38, 32, 0.07);
+  --shadow-card: 0 16px 42px rgba(43, 38, 32, 0.10);
+  --radius-card: 16px;
+  --accent-grad: linear-gradient(92deg, var(--gold), var(--rose));
+}
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+/* --- Typography: fluid scale + refined tracking / leading --- */
+.hero h1 { font-size: clamp(2.9rem, 6vw, 5rem); line-height: 1.12; letter-spacing: -0.02em; }
+.section-head h2, .split-section h2, .proof-copy h2, .story-section h2,
+.feature-list h2, .testimonial-band h2, .cert-section h2, .reserve h2 {
+  font-size: clamp(2rem, 3.6vw, 3.25rem);
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+}
+.lead, .hero-copy > p:not(.eyebrow) { font-size: clamp(1.0625rem, 1.35vw, 1.2rem); line-height: 1.9; }
+.method-card p, .flow-grid p, .plan-grid p, .faq-list p, .event-timeline p, blockquote { line-height: 1.9; }
+.pain-item { line-height: 1.8; }
+.eyebrow { letter-spacing: 0.22em; font-weight: 600; }
+.en-label { letter-spacing: 0.28em; }
+
+/* gradient-text accent for one key word in a heading */
+.accent-text {
+  background: var(--accent-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* --- Generous section rhythm --- */
+.problem-band, .split-section, .flow-section, .voice-section, .plan-section,
+.faq-section, .event-section, .reserve, .story-section, .image-feature,
+.cert-section, .brand-gallery-section, .offer-section {
+  padding-top: clamp(84px, 10vw, 140px);
+  padding-bottom: clamp(84px, 10vw, 140px);
+}
+
+/* --- Cards: glass-soft shadow + consistent radius + hover lift --- */
+.pain-item, .method-card article, .flow-grid article, .plan-grid article,
+.event-timeline article, .faq-list article, .voice-grid blockquote,
+.testimonial-slider blockquote {
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(43, 38, 32, 0.07);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.pain-item:hover, .method-card article:hover, .flow-grid article:hover,
+.plan-grid article:hover, .faq-list article:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-card);
+}
+
+/* --- Buttons: pill + warm glow lift, house easing --- */
+.primary, .secondary, .nav-cta, .light-button, .dark-button {
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), background-color 0.25s var(--ease);
+}
+.primary { box-shadow: 0 10px 28px rgba(169, 138, 84, 0.26); }
+.primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(169, 138, 84, 0.34); }
+
+/* --- Hero stage: layered gradient (trust) --- */
+.hero-trust {
+  background:
+    radial-gradient(ellipse 58% 48% at 82% -8%, rgba(185, 138, 131, 0.18), transparent 60%),
+    linear-gradient(90deg, #faf6f0 0%, #faf6f0 54%, #efe7da 54%, #efe7da 100%);
+}
+
+/* --- Header: glass + hide-on-scroll --- */
+.topbar {
+  background: rgba(250, 246, 240, 0.72);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  backdrop-filter: blur(18px) saturate(1.1);
+  border-bottom: 1px solid rgba(43, 38, 32, 0.06);
+  transition: transform 0.45s var(--ease), background-color 0.3s var(--ease);
+  will-change: transform;
+}
+.topbar.is-hidden { transform: translateY(-100%); }
+.topbar.glass { background: rgba(28, 24, 19, 0.2); border-bottom-color: rgba(255, 255, 255, 0.16); }
+
+/* --- Reveal: smoother house easing (still transform-only, never blank) --- */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal-ready .landing > section:not(.hero),
+  .reveal-ready .pain-item,
+  .reveal-ready .method-card article,
+  .reveal-ready .flow-grid article,
+  .reveal-ready .plan-grid article,
+  .reveal-ready .event-timeline article,
+  .reveal-ready .faq-list article,
+  .reveal-ready .voice-grid blockquote,
+  .reveal-ready .testimonial-slider blockquote,
+  .reveal-ready .brand-gallery-card,
+  .reveal-ready .occasion-cloud span {
+    transform: translateY(30px);
+    transition: transform 0.8s var(--ease);
+  }
+}
+
+/* --- Proof strip + offer polish --- */
+.proof-strip { background: linear-gradient(180deg, #221d17, var(--charcoal)); }
+.offer-card { border-radius: 22px; box-shadow: var(--shadow-card); }
