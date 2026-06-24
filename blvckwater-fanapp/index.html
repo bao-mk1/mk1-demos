@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BLVCK WATER — ファンアプリ デモ（チケット／電子チケット）</title>
+<meta name="description" content="チケット購入〜QR電子チケット〜当日入場までを実機で体験できるデモ。MK1 TECHNOLOGY VIETNAM 制作。">
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+:root{
+  --ink:#08080a; --panel:#131319; --panel2:#1a1a22;
+  --crimson:#d11f2d; --crimson2:#8a0e1a; --crimson-soft:#ff5a66;
+  --cyan:#2fd4d4; --cyan-soft:#7ff0f0;
+  --platinum:#eceef2; --muted:#9aa0aa; --line:rgba(255,255,255,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,system-ui,sans-serif;
+  background:#000;color:var(--platinum);min-height:100vh;display:flex;justify-content:center;align-items:stretch}
+.phone{width:100%;max-width:430px;background:
+  radial-gradient(ellipse at 80% -5%,rgba(47,212,212,.12) 0%,transparent 50%),
+  radial-gradient(ellipse at 0% 105%,rgba(209,31,45,.20) 0%,transparent 50%),
+  linear-gradient(170deg,#08080a 0%,#0d0d12 60%,#140609 100%);
+  min-height:100vh;position:relative;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 0 70px rgba(209,31,45,.18)}
+@media(min-width:480px){.phone{margin:18px 0;min-height:calc(100vh - 36px);border-radius:26px;border:1px solid var(--line)}}
+
+/* top bar */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 10px;position:sticky;top:0;z-index:20;
+  background:linear-gradient(180deg,rgba(8,8,10,.96),rgba(8,8,10,.6) 80%,transparent);backdrop-filter:blur(6px)}
+.logo{font-weight:900;letter-spacing:.16em;font-size:15px}
+.logo .b{color:#fff}.logo .w{color:var(--crimson-soft)}
+.logo small{display:block;font-weight:400;font-size:8.5px;letter-spacing:.34em;color:var(--muted);margin-top:2px}
+.appbar .demo-pill{font-size:9px;letter-spacing:.12em;color:var(--cyan-soft);border:1px solid rgba(47,212,212,.35);
+  background:rgba(47,212,212,.07);padding:4px 9px;border-radius:20px;font-weight:700}
+
+/* scroll area */
+.view{flex:1;overflow-y:auto;padding:6px 16px 96px;-webkit-overflow-scrolling:touch}
+.view::-webkit-scrollbar{display:none}
+
+.h-eyebrow{color:var(--crimson-soft);font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;margin:14px 2px 4px}
+.h-title{font-size:21px;font-weight:900;margin:0 2px 14px;letter-spacing:.02em}
+.h-sub{color:var(--muted);font-size:12px;margin:-8px 2px 16px;line-height:1.7}
+
+/* event card */
+.ev{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;margin-bottom:14px;
+  position:relative;transition:transform .15s,border-color .15s}
+.ev:active{transform:scale(.985)}
+.ev .cover{height:120px;position:relative;display:flex;align-items:flex-end;padding:12px 14px}
+.ev .cover .genre{position:absolute;top:10px;left:12px;font-size:9.5px;font-weight:800;letter-spacing:.1em;
+  background:rgba(0,0,0,.5);border:1px solid var(--line);padding:4px 9px;border-radius:20px;color:var(--cyan-soft)}
+.ev .cover .dt{font-size:11px;font-weight:700;color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+.ev .body{padding:12px 14px 14px}
+.ev .ttl{font-size:17px;font-weight:900;margin:0 0 5px}
+.ev .line{color:var(--muted);font-size:11.5px;margin:0 0 11px;line-height:1.6}
+.ev .foot{display:flex;align-items:center;justify-content:space-between}
+.ev .price{font-size:15px;font-weight:900}.ev .price small{font-size:10px;color:var(--muted);font-weight:600}
+.badge-left{font-size:9.5px;font-weight:800;color:#fff;background:var(--crimson);padding:3px 8px;border-radius:20px;letter-spacing:.04em}
+.badge-soldout{background:#3a3a44;color:var(--muted)}
+
+/* buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:none;cursor:pointer;
+  font-family:inherit;font-weight:800;font-size:15px;padding:15px;border-radius:13px;letter-spacing:.04em;transition:filter .15s,transform .1s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--crimson) 0%,var(--crimson2) 100%);color:#fff;box-shadow:0 8px 24px rgba(209,31,45,.32)}
+.btn-primary:active{filter:brightness(1.08)}
+.btn-cyan{background:linear-gradient(135deg,var(--cyan) 0%,#16858a 100%);color:#04201f;box-shadow:0 8px 24px rgba(47,212,212,.25)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--platinum)}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.btn-sm{font-size:12.5px;padding:10px 12px;border-radius:10px;width:auto}
+
+/* detail */
+.detail-hero{height:170px;border-radius:18px;margin:8px 0 0;position:relative;display:flex;align-items:flex-end;padding:16px;overflow:hidden}
+.detail-hero .genre{position:absolute;top:12px;left:14px}
+.dh-ttl{font-size:24px;font-weight:900;text-shadow:0 2px 10px rgba(0,0,0,.6);margin:0}
+.dh-dt{font-size:12px;color:var(--cyan-soft);font-weight:700;margin-bottom:4px}
+.info-row{display:flex;gap:10px;padding:13px 4px;border-bottom:1px solid var(--line);font-size:13px}
+.info-row .k{color:var(--cyan);font-weight:800;width:74px;flex-shrink:0;font-size:12px}
+.info-row .v{color:var(--platinum);line-height:1.6}
+
+/* ticket type select */
+.tk{display:flex;align-items:center;gap:12px;background:var(--panel);border:1.5px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:10px;cursor:pointer;transition:border-color .15s,background .15s}
+.tk.sel{border-color:var(--crimson);background:rgba(209,31,45,.08)}
+.tk .radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;position:relative}
+.tk.sel .radio{border-color:var(--crimson)}
+.tk.sel .radio::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--crimson)}
+.tk .tk-name{font-weight:800;font-size:14px}
+.tk .tk-note{font-size:10.5px;color:var(--muted);margin-top:2px}
+.tk .tk-price{margin-left:auto;font-weight:900;font-size:15px;white-space:nowrap}
+
+.qty{display:flex;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px 16px;margin:12px 0}
+.qty .lbl{font-weight:800;font-size:13px}
+.qty .ctrl{display:flex;align-items:center;gap:18px}
+.qty button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
+.qty .num{font-size:18px;font-weight:900;min-width:20px;text-align:center}
+
+.summary{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:6px 0 16px}
+.summary .r{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;color:var(--muted)}
+.summary .r.total{color:var(--platinum);font-weight:900;font-size:18px;border-top:1px solid var(--line);margin-top:7px;padding-top:11px}
+.legal{font-size:10px;color:var(--muted);line-height:1.6;margin:12px 2px 0}
+
+/* my tickets */
+.mt{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:12px;display:flex;gap:13px;align-items:center;cursor:pointer;transition:transform .15s}
+.mt:active{transform:scale(.985)}
+.mt .mini-qr{width:54px;height:54px;border-radius:9px;background:#fff;padding:5px;flex-shrink:0}
+.mt .mini-qr svg{width:100%;height:100%;display:block}
+.mt .mt-ttl{font-weight:800;font-size:14px;margin-bottom:3px}
+.mt .mt-meta{font-size:11px;color:var(--muted)}
+.mt .st{margin-left:auto;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;white-space:nowrap}
+.st-valid{color:var(--cyan-soft);background:rgba(47,212,212,.1);border:1px solid rgba(47,212,212,.3)}
+.st-used{color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--line)}
+
+/* QR fullscreen */
+.qr-screen{text-align:center;padding-top:6px}
+.qr-card{background:#fff;color:#111;border-radius:20px;padding:22px 20px 18px;margin:6px auto 0;max-width:320px;position:relative;box-shadow:0 20px 60px rgba(209,31,45,.25)}
+.qr-card .qr-ttl{font-weight:900;font-size:16px;color:#111}
+.qr-card .qr-dt{font-size:11.5px;color:#555;margin:3px 0 14px}
+.qr-box{width:200px;height:200px;margin:0 auto;background:#fff}
+.qr-box svg{width:100%;height:100%}
+.qr-code{font-family:ui-monospace,Menlo,monospace;letter-spacing:.18em;font-size:13px;color:#111;margin-top:13px;font-weight:700}
+.qr-seat{display:inline-block;margin-top:10px;font-size:11px;font-weight:800;color:var(--crimson2);background:#fbe9eb;padding:5px 12px;border-radius:20px}
+.qr-card.is-used{filter:grayscale(1) opacity(.55)}
+.qr-stamp{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-14deg);font-size:34px;font-weight:900;color:#d11f2d;border:4px solid #d11f2d;border-radius:10px;padding:6px 18px;letter-spacing:.1em;opacity:0;transition:opacity .3s,transform .3s}
+.qr-card.is-used .qr-stamp{opacity:.9}
+.qr-hint{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.7}
+
+/* staff scan */
+.scan-stat{display:flex;gap:10px;margin:6px 0 16px}
+.scan-stat .box{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px;text-align:center}
+.scan-stat .n{font-size:24px;font-weight:900}
+.scan-stat .n.cy{color:var(--cyan-soft)}.scan-stat .n.cr{color:var(--crimson-soft)}
+.scan-stat .l{font-size:10px;color:var(--muted);margin-top:3px;letter-spacing:.06em}
+.scanrow{display:flex;align-items:center;gap:11px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:9px}
+.scanrow .code{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.08em}
+.scanrow .nm{font-size:12.5px;font-weight:700}
+.scanrow .who{font-size:10px;color:var(--muted)}
+.scanrow .act{margin-left:auto}
+.scan-cam{height:150px;border:2px dashed rgba(47,212,212,.4);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--cyan-soft);font-size:12px;margin-bottom:14px;background:rgba(47,212,212,.04);position:relative;overflow:hidden}
+.scan-cam .laser{position:absolute;left:8%;right:8%;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);top:20%;animation:scan 2.2s linear infinite;box-shadow:0 0 12px var(--cyan)}
+@keyframes scan{0%{top:18%}50%{top:80%}100%{top:18%}}
+
+/* dashboard */
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:6px 0 16px}
+.kpi .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 14px;border-top:2px solid var(--crimson)}
+.kpi .box:nth-child(2),.kpi .box:nth-child(3){border-top-color:var(--cyan)}
+.kpi .n{font-size:23px;font-weight:900}
+.kpi .l{font-size:10.5px;color:var(--muted);margin-top:4px}
+.dash-ev{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:10px}
+.dash-ev .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px}
+.dash-ev .nm{font-weight:800;font-size:13px}
+.dash-ev .rev{font-weight:900;font-size:14px;color:var(--cyan-soft)}
+.bar{height:8px;border-radius:6px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--crimson),var(--crimson-soft));border-radius:6px}
+.dash-ev .sub{font-size:10.5px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+
+/* bottom nav */
+.nav{position:absolute;bottom:0;left:0;right:0;display:flex;background:rgba(10,10,13,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);z-index:30}
+.nav button{flex:1;background:none;border:none;color:var(--muted);padding:9px 0 11px;font-family:inherit;font-size:9.5px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;letter-spacing:.04em}
+.nav button .ic{font-size:19px;line-height:1}
+.nav button.on{color:var(--crimson-soft)}
+.nav button .badge{position:absolute;margin-left:18px;margin-top:-3px;background:var(--cyan);color:#04201f;font-size:8px;font-weight:900;min-width:15px;height:15px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:700;background:none;border:none;cursor:pointer;padding:8px 2px;margin-top:4px}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:108px;transform:translateX(-50%) translateY(20px);background:#111;border:1px solid var(--line);
+  color:#fff;padding:13px 20px;border-radius:13px;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.3s;z-index:50;max-width:88%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{border-color:rgba(47,212,212,.5)}.toast.warn{border-color:var(--crimson)}
+
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:50px 20px;line-height:1.8}
+.empty .ic{font-size:40px;opacity:.5;margin-bottom:10px}
+
+/* processing overlay */
+.proc{position:absolute;inset:0;background:rgba(5,5,7,.8);backdrop-filter:blur(3px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:40}
+.proc.show{display:flex}
+.spinner{width:46px;height:46px;border:4px solid rgba(255,255,255,.15);border-top-color:var(--crimson);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc .t{font-size:13px;color:var(--platinum);font-weight:700}
+
+.note{font-size:10.5px;color:var(--muted);background:rgba(47,212,212,.05);border:1px solid rgba(47,212,212,.22);border-radius:11px;padding:11px 13px;margin:4px 0 14px;line-height:1.7}
+.note b{color:var(--cyan-soft)}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="appbar">
+    <div class="logo"><span class="b">BLVCK</span> <span class="w">WATER</span><small>FAN APP</small></div>
+    <span class="demo-pill">DEMO</span>
+  </div>
+
+  <div class="view" id="view"></div>
+
+  <div class="proc" id="proc"><div class="spinner"></div><div class="t" id="procT">決済処理中…</div></div>
+
+  <div class="nav" id="nav">
+    <button data-tab="events" class="on"><span class="ic">🎫</span>公演</button>
+    <button data-tab="tickets"><span class="ic">📱</span>マイチケット</button>
+    <button data-tab="staff"><span class="ic">🪪</span>入場スキャン</button>
+    <button data-tab="dash"><span class="ic">📊</span>主催者</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ data ============ */
+var EVENTS = [
+  {id:"PF",  genre:"PSY-TRANCE", date:"2026.07.04 (SAT) 23:00-",  title:"PULSE FICTION",  line:"GROOVE ASSASSIN / NIDA / MITSUKI / VOID", g1:"#1b0b18", g2:"#4a0e2e", cap:300, sold:248,
+     types:[{n:"前売",note:"1ドリンク付",p:2500},{n:"当日",note:"1ドリンク付",p:3000},{n:"VIP",note:"優先入場+2ドリンク",p:4800}]},
+  {id:"PS",  genre:"HARD TECHNO", date:"2026.07.11 (SAT) 23:00-", title:"PSY-SISTERS",    line:"AYAKA / RINA SUZUKI / KOKO B2B LUNA", g1:"#0c0c18", g2:"#2a0e4a", cap:300, sold:171,
+     types:[{n:"前売",note:"1ドリンク付",p:2500},{n:"当日",note:"1ドリンク付",p:3000},{n:"VIP",note:"優先入場+2ドリンク",p:4800}]},
+  {id:"DJ",  genre:"JUNGLE / DnB", date:"2026.07.18 (SAT) 23:00-", title:"DEEP JUNGLE",    line:"TAKUMA / SHADE / BASS THEORY / KENT", g1:"#06121a", g2:"#0d3a40", cap:300, sold:96,
+     types:[{n:"前売",note:"1ドリンク付",p:2500},{n:"当日",note:"1ドリンク付",p:3000},{n:"VIP",note:"優先入場+2ドリンク",p:4800}]},
+  {id:"OS",  genre:"TECHNO / HOUSE", date:"2026.07.25 (FRI) 23:00-", title:"ON ▶ SET",    line:"YOU / MIO / DJ ARASHI / GUEST: TBA", g1:"#160606", g2:"#4a0e14", cap:300, sold:289,
+     types:[{n:"前売",note:"1ドリンク付",p:2500},{n:"当日",note:"1ドリンク付",p:3000},{n:"VIP",note:"優先入場+2ドリンク",p:4800}]}
+];
+
+var STORE_KEY = "bw_fanapp_v1";
+var state = load() || { tickets: [], scanned: {} };
+function load(){ try{ return JSON.parse(localStorage.getItem(STORE_KEY)); }catch(e){ return null; } }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+var tab = "events", sel = { ev:null, type:0, qty:1 };
+
+/* ============ helpers ============ */
+function yen(n){ return "¥" + n.toLocaleString("ja-JP"); }
+function el(id){ return document.getElementById(id); }
+function esc(s){ return (s+"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function toast(msg, kind){ var t=el("toast"); t.className="toast show "+(kind||""); t.textContent=msg; clearTimeout(t._t); t._t=setTimeout(function(){t.className="toast";},2200); }
+function code(){ var c="BW-"; for(var i=0;i<8;i++){ c+="0123456789ABCDEFGHJKLMNPQRSTUVWXYZ".charAt(Math.floor(Math.random()*34)); if(i==3)c+="-"; } return c; }
+function qrSVG(text){
+  try{ var qr=qrcode(0,"M"); qr.addData(text); qr.make(); return qr.createSvgTag({cellSize:5,margin:0,scalable:true}); }
+  catch(e){ return '<div style="font:700 11px monospace;color:#111;padding:30px 6px;word-break:break-all">'+esc(text)+'</div>'; }
+}
+function evById(id){ for(var i=0;i<EVENTS.length;i++) if(EVENTS[i].id===id) return EVENTS[i]; }
+
+/* ============ views ============ */
+function render(){
+  var v = el("view");
+  if(tab==="events") v.innerHTML = sel.ev ? viewDetail() : viewEvents();
+  else if(tab==="tickets") v.innerHTML = sel.qrTicket ? viewQR() : viewTickets();
+  else if(tab==="staff") v.innerHTML = viewStaff();
+  else if(tab==="dash") v.innerHTML = viewDash();
+  bind();
+  updateNav();
+  v.scrollTop = 0;
+}
+function updateNav(){
+  var btns = el("nav").querySelectorAll("button");
+  btns.forEach(function(b){ b.classList.toggle("on", b.dataset.tab===tab); });
+  // badge for ticket count
+  var tb = el("nav").querySelector('[data-tab="tickets"]');
+  var n = state.tickets.length;
+  var old = tb.querySelector(".badge"); if(old) old.remove();
+  if(n){ var s=document.createElement("span"); s.className="badge"; s.textContent=n; tb.appendChild(s); }
+}
+
+function viewEvents(){
+  var h = '<div class="h-eyebrow">UPCOMING</div><div class="h-title">公演一覧</div>'
+    + '<div class="note"><b>デモの遊び方</b>：公演を選び「チケットを購入」→「マイチケット」でQRが発行されます。「入場スキャン」でそのQRをもぎり（重複入場も検知）。実決済は行いません。</div>';
+  EVENTS.forEach(function(e){
+    var left = e.cap - e.sold, soldout = left<=0;
+    var badge = soldout ? '<span class="badge-left badge-soldout">SOLD OUT</span>'
+              : left<=30 ? '<span class="badge-left">残り'+left+'枚</span>' : '';
+    h += '<div class="ev" data-ev="'+e.id+'">'
+      + '<div class="cover" style="background:linear-gradient(135deg,'+e.g1+','+e.g2+')">'
+      + '<span class="genre">'+e.genre+'</span><span class="dt">'+e.date+'</span></div>'
+      + '<div class="body"><div class="ttl">'+e.title+'</div><div class="line">'+e.line+'</div>'
+      + '<div class="foot"><div class="price">'+yen(e.types[0].p)+'<small> 〜 / 前売</small></div>'+badge+'</div></div></div>';
+  });
+  return h;
+}
+
+function viewDetail(){
+  var e = sel.ev;
+  var left = e.cap - e.sold;
+  var t = e.types[sel.type];
+  var total = t.p * sel.qty;
+  var h = '<button class="back" data-back="events">‹ 公演一覧へ</button>'
+    + '<div class="detail-hero" style="background:linear-gradient(135deg,'+e.g1+','+e.g2+')">'
+    + '<span class="genre" style="position:absolute;top:12px;left:14px;font-size:9.5px;font-weight:800;letter-spacing:.1em;background:rgba(0,0,0,.5);border:1px solid var(--line);padding:4px 9px;border-radius:20px;color:var(--cyan-soft)">'+e.genre+'</span>'
+    + '<div><div class="dh-dt">'+e.date+'</div><h2 class="dh-ttl">'+e.title+'</h2></div></div>'
+    + '<div class="info-row"><span class="k">LINE UP</span><span class="v">'+e.line+'</span></div>'
+    + '<div class="info-row"><span class="k">会場</span><span class="v">BLVCK WATER ／ 大阪・宗右衛門町 グレース宗右衛門町ビル B1F</span></div>'
+    + '<div class="info-row"><span class="k">入場</span><span class="v">20歳未満入場不可・要顔写真付身分証（本人確認）</span></div>'
+    + '<div class="info-row"><span class="k">残席</span><span class="v">'+(left>0?left+' 枚':'<span style="color:var(--crimson-soft)">SOLD OUT</span>')+'</span></div>'
+    + '<div class="h-eyebrow" style="margin-top:18px">SELECT TICKET</div>';
+  e.types.forEach(function(tt,i){
+    h += '<div class="tk '+(i===sel.type?'sel':'')+'" data-type="'+i+'"><div class="radio"></div>'
+      + '<div><div class="tk-name">'+tt.n+'</div><div class="tk-note">'+tt.note+'</div></div>'
+      + '<div class="tk-price">'+yen(tt.p)+'</div></div>';
+  });
+  h += '<div class="qty"><span class="lbl">枚数</span><div class="ctrl">'
+    + '<button data-q="-1">−</button><span class="num">'+sel.qty+'</span><button data-q="1">+</button></div></div>'
+    + '<div class="summary"><div class="r"><span>'+t.n+' × '+sel.qty+'</span><span>'+yen(total)+'</span></div>'
+    + '<div class="r"><span>システム利用料</span><span>¥0</span></div>'
+    + '<div class="r total"><span>合計（税込）</span><span>'+yen(total)+'</span></div></div>'
+    + (left>0 ? '<button class="btn btn-primary" data-buy="1">🎫 '+yen(total)+' を購入する</button>'
+             : '<button class="btn btn-ghost" disabled>SOLD OUT</button>')
+    + '<div class="legal">※ 本デモは実決済を行いません（Stripe等の決済連携を想定）。チケットは記名式・QR動的化により不正転売を抑止します（チケット不正転売禁止法 配慮）。特定商取引法に基づく表記・キャンセルポリシーは別途。</div>';
+  return h;
+}
+
+function viewTickets(){
+  if(!state.tickets.length)
+    return '<div class="h-eyebrow">MY TICKETS</div><div class="h-title">マイチケット</div>'
+      + '<div class="empty"><div class="ic">📭</div>まだチケットがありません。<br>「公演」タブから購入してみてください。</div>';
+  var h = '<div class="h-eyebrow">MY TICKETS</div><div class="h-title">マイチケット</div>'
+    + '<div class="h-sub">タップでQR電子チケットを表示。入場時はこの画面を係員にご提示ください。</div>';
+  state.tickets.slice().reverse().forEach(function(tk){
+    var used = !!state.scanned[tk.code];
+    h += '<div class="mt" data-qr="'+tk.code+'"><div class="mini-qr">'+qrSVG(tk.code)+'</div>'
+      + '<div><div class="mt-ttl">'+tk.title+'</div><div class="mt-meta">'+tk.date+' ／ '+tk.type+' ／ 整理番号 '+tk.seat+'</div></div>'
+      + '<span class="st '+(used?'st-used':'st-valid')+'">'+(used?'入場済':'有効')+'</span></div>';
+  });
+  return h;
+}
+
+function viewQR(){
+  var tk = sel.qrTicket, used = !!state.scanned[tk.code];
+  return '<button class="back" data-back="tickets">‹ マイチケット</button>'
+    + '<div class="qr-screen"><div class="qr-card '+(used?'is-used':'')+'">'
+    + '<div class="qr-stamp">入場済</div>'
+    + '<div class="qr-ttl">'+tk.title+'</div><div class="qr-dt">'+tk.date+'</div>'
+    + '<div class="qr-box">'+qrSVG(tk.code)+'</div>'
+    + '<div class="qr-code">'+tk.code+'</div>'
+    + '<div class="qr-seat">'+tk.type+' ／ 整理番号 '+tk.seat+'</div>'
+    + '</div><div class="qr-hint">画面の明るさを上げてご提示ください。<br>QRは入場時に1回のみ有効（再入場・複製不可）。</div></div>';
+}
+
+function viewStaff(){
+  var issued = state.tickets.length;
+  var entered = Object.keys(state.scanned).length;
+  var h = '<div class="h-eyebrow">STAFF ／ 入場管理</div><div class="h-title">入場スキャン</div>'
+    + '<div class="scan-cam"><div class="laser"></div>📷 カメラでQRをスキャン<span style="font-size:10px;color:var(--muted)">（デモ：下のチケットの「スキャン」を押す）</span></div>'
+    + '<div class="scan-stat"><div class="box"><div class="n">'+issued+'</div><div class="l">発券数</div></div>'
+    + '<div class="box"><div class="n cy">'+entered+'</div><div class="l">入場済</div></div>'
+    + '<div class="box"><div class="n cr">'+(issued-entered)+'</div><div class="l">未入場</div></div></div>';
+  if(!issued) return h + '<div class="empty"><div class="ic">🎫</div>発券されたチケットがありません。<br>「公演」から購入するとここに表示されます。</div>';
+  h += '<div class="h-eyebrow">発券済みチケット</div>';
+  state.tickets.slice().reverse().forEach(function(tk){
+    var used = !!state.scanned[tk.code];
+    h += '<div class="scanrow"><div><div class="nm">'+tk.title+'</div><div class="who"><span class="code">'+tk.code+'</span> ／ '+tk.type+'</div></div>'
+      + '<div class="act">'+(used
+        ? '<button class="btn btn-ghost btn-sm" data-rescan="'+tk.code+'">再スキャン</button>'
+        : '<button class="btn btn-cyan btn-sm" data-scan="'+tk.code+'">スキャン</button>')+'</div></div>';
+  });
+  return h;
+}
+
+function viewDash(){
+  var rev=0, soldQty=0, capTot=0;
+  EVENTS.forEach(function(e){ rev += e.sold * e.types[0].p; soldQty += e.sold; capTot += e.cap; });
+  // include demo purchases
+  state.tickets.forEach(function(tk){ rev += tk.price; soldQty += 1; });
+  var entered = Object.keys(state.scanned).length;
+  var h = '<div class="h-eyebrow">ORGANIZER ／ ダッシュボード</div><div class="h-title">主催者ダッシュボード</div>'
+    + '<div class="kpi"><div class="box"><div class="n">'+yen(rev)+'</div><div class="l">総売上（税込）</div></div>'
+    + '<div class="box"><div class="n">'+soldQty.toLocaleString()+'</div><div class="l">販売枚数</div></div>'
+    + '<div class="box"><div class="n">'+Math.round(soldQty/capTot*100)+'%</div><div class="l">平均販売率</div></div>'
+    + '<div class="box"><div class="n">'+entered+'</div><div class="l">本日入場（デモ）</div></div></div>'
+    + '<div class="h-eyebrow">公演別</div>';
+  EVENTS.forEach(function(e){
+    var pct = Math.min(100, Math.round(e.sold/e.cap*100));
+    h += '<div class="dash-ev"><div class="top"><span class="nm">'+e.title+'</span><span class="rev">'+yen(e.sold*e.types[0].p)+'</span></div>'
+      + '<div class="bar"><i style="width:'+pct+'%"></i></div>'
+      + '<div class="sub"><span>'+e.sold+' / '+e.cap+' 枚</span><span>'+pct+'%</span></div></div>';
+  });
+  h += '<div class="note" style="margin-top:8px"><b>横断分析</b>：会場×アーティスト×物販×配信のデータを統合し、リピート率・LTV・休眠掘り起こしまで拡張可能（プランC：ファンCRM）。</div>';
+  return h;
+}
+
+/* ============ events / actions ============ */
+function bind(){
+  var v = el("view");
+  v.querySelectorAll("[data-ev]").forEach(function(c){ c.onclick=function(){ sel.ev=evById(c.dataset.ev); sel.type=0; sel.qty=1; render(); }; });
+  v.querySelectorAll("[data-back]").forEach(function(b){ b.onclick=function(){ sel.ev=null; sel.qrTicket=null; render(); }; });
+  v.querySelectorAll("[data-type]").forEach(function(t){ t.onclick=function(){ sel.type=+t.dataset.type; render(); }; });
+  v.querySelectorAll("[data-q]").forEach(function(b){ b.onclick=function(){ sel.qty=Math.max(1,Math.min(6,sel.qty+(+b.dataset.q))); render(); }; });
+  var buy=v.querySelector("[data-buy]"); if(buy) buy.onclick=purchase;
+  v.querySelectorAll("[data-qr]").forEach(function(m){ m.onclick=function(){ sel.qrTicket=findTicket(m.dataset.qr); render(); }; });
+  v.querySelectorAll("[data-scan]").forEach(function(b){ b.onclick=function(){ doScan(b.dataset.scan,false); }; });
+  v.querySelectorAll("[data-rescan]").forEach(function(b){ b.onclick=function(){ doScan(b.dataset.rescan,true); }; });
+}
+function findTicket(c){ for(var i=0;i<state.tickets.length;i++) if(state.tickets[i].code===c) return state.tickets[i]; }
+
+function purchase(){
+  var e=sel.ev, t=e.types[sel.type];
+  el("procT").textContent="決済処理中…"; el("proc").classList.add("show");
+  setTimeout(function(){
+    el("procT").textContent="電子チケットを発行中…";
+    setTimeout(function(){
+      for(var i=0;i<sel.qty;i++){
+        var seat = (e.sold + 1 + i);
+        state.tickets.push({ code:code(), evId:e.id, title:e.title, date:e.date, type:t.n, price:t.p, seat:("A"+("000"+seat).slice(-3)) });
+      }
+      e.sold += sel.qty;
+      save();
+      el("proc").classList.remove("show");
+      sel.ev=null;
+      tab="tickets";
+      render();
+      toast("🎫 "+sel.qty+"枚 発券しました（QRをご確認ください）","ok");
+    },800);
+  },900);
+}
+
+function doScan(c, re){
+  var tk=findTicket(c);
+  if(!tk) return;
+  if(state.scanned[c] && !re){ toast("⚠ このチケットは既に入場済みです（重複入場ブロック）","warn"); return; }
+  if(re){ toast("再スキャン：入場記録を確認しました","ok"); return; }
+  state.scanned[c]=Date.now(); save();
+  toast("✓ 入場OK — "+tk.title+" ／ "+tk.type,"ok");
+  render();
+}
+
+/* nav */
+el("nav").querySelectorAll("button").forEach(function(b){
+  b.onclick=function(){ tab=b.dataset.tab; if(tab!=="events")sel.ev=null; if(tab!=="tickets")sel.qrTicket=null; render(); };
+});
+
+render();
+</script>
+</body>
+</html>
