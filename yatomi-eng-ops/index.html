@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>治工具・ロボット案件／保守 管理 デモ（MK1 TECHNOLOGY VIETNAM 制作）</title>
+<meta name="description" content="航空機治工具の設計・工具改修メンテナンスと協働ロボット導入案件を一元管理する社内システムの実機デモ。YATOMIエンジ株式会社様向け参考構成。">
+<style>
+:root{
+  --bg:#0f1620; --panel:#17212e; --panel2:#1e2b3a; --line:#2a3a4d;
+  --ink:#e8eef5; --muted:#8ea0b5; --steel:#3a8fd0; --steel2:#2b6ca3;
+  --amber:#e0951e; --teal:#22b8b8; --ok:#2fbf71; --warn:#e0951e; --danger:#e05a5a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;background:linear-gradient(90deg,#0c1219,#17212e);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
+.brand{font-weight:800;letter-spacing:.04em;font-size:15px}
+.brand small{display:block;font-weight:400;font-size:9.5px;opacity:.65;letter-spacing:.12em;margin-top:2px;color:var(--muted)}
+.demo-pill{font-size:9px;letter-spacing:.12em;color:var(--teal);border:1px solid rgba(34,184,184,.4);background:rgba(34,184,184,.08);padding:4px 9px;border-radius:20px;font-weight:700}
+.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:50px;z-index:29;overflow-x:auto}
+.tabs button{background:none;border:none;padding:12px 16px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;white-space:nowrap}
+.tabs button.on{color:var(--steel);border-bottom-color:var(--amber)}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 70px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--steel)}
+.kpi.amber::after{background:var(--amber)}.kpi.teal::after{background:var(--teal)}.kpi.ok::after{background:var(--ok)}
+.kpi .k{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.06em}
+.kpi .v{font-size:23px;font-weight:800;margin-top:5px}
+.kpi .v small{font-size:11px;color:var(--muted);font-weight:600;margin-left:3px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar h2{font-size:15px;margin:0;flex:1}
+.filter{display:flex;gap:6px;flex-wrap:wrap}
+.filter button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:11.5px;padding:6px 11px;border-radius:20px;cursor:pointer;font-weight:700;font-family:inherit}
+.filter button.on{background:var(--steel2);border-color:var(--steel);color:#fff}
+.jobs{display:grid;gap:10px}
+.job{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:.15s;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.job:hover{border-color:var(--steel)}
+.job .tico{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--panel2)}
+.job .jt{font-weight:800;font-size:14px}
+.job .jm{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.6}
+.job .jr{text-align:right;white-space:nowrap}
+.badge{display:inline-block;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;letter-spacing:.03em}
+.b-des{background:rgba(58,143,208,.16);color:#7fbdec}
+.b-rep{background:rgba(224,149,30,.16);color:#f0b558}
+.b-rob{background:rgba(34,184,184,.16);color:#6fe0e0}
+.st{display:inline-block;font-size:10.5px;font-weight:700;margin-top:6px}
+.st.s-prog{color:var(--steel)}.st.s-wait{color:var(--warn)}.st.s-done{color:var(--ok)}.st.s-due{color:var(--danger)}
+.due{font-size:11px;color:var(--muted);margin-top:4px}
+.due.soon{color:var(--danger);font-weight:700}
+/* detail modal */
+.modal{position:fixed;inset:0;background:rgba(6,10,15,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.modal.on{display:flex}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:520px;width:100%;padding:22px;max-height:88vh;overflow-y:auto}
+.sheet h3{margin:0 0 4px;font-size:18px}
+.sheet .close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
+.sheet table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+.sheet td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+.sheet td:first-child{color:var(--muted);width:38%}
+.steps{display:flex;gap:0;margin:12px 0}
+.step{flex:1;text-align:center;font-size:10px;color:var(--muted);position:relative}
+.step .dot{width:20px;height:20px;border-radius:50%;background:var(--panel2);border:2px solid var(--line);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:10px}
+.step.done .dot{background:var(--ok);border-color:var(--ok);color:#04240f}
+.step.cur .dot{background:var(--steel);border-color:var(--steel);color:#fff}
+.step::before{content:"";position:absolute;top:9px;left:-50%;width:100%;height:2px;background:var(--line);z-index:-1}
+.step:first-child::before{display:none}
+.step.done::before,.step.cur::before{background:var(--ok)}
+/* robots */
+.rob{display:grid;gap:10px}
+.robrow{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px;display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
+.robrow .rn{font-weight:800;font-size:13.5px}
+.robrow .rd{font-size:11px;color:var(--muted);margin-top:3px}
+.gauge{width:90px}
+.gauge .track{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden}
+.gauge .fill{height:100%;border-radius:6px}
+.gauge .lab{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:20px;border-top:1px solid var(--line)}
+.hidden{display:none}
+.hint{font-size:11px;color:var(--muted);margin:0 0 14px}
+</style>
+</head>
+<body>
+<div class="appbar">
+  <div class="brand">治工具・ロボット 案件管理 <small>ENGINEERING OPS — 設計 / 工具改修 / 協働ロボット導入</small></div>
+  <span class="demo-pill">DEMO</span>
+</div>
+<div class="tabs" id="tabs">
+  <button data-v="board" class="on">案件ボード</button>
+  <button data-v="maint">工具・保守スケジュール</button>
+  <button data-v="robot">FAIRINO ロボット</button>
+</div>
+
+<!-- BOARD -->
+<div class="wrap" id="view-board">
+  <div class="kpis">
+    <div class="kpi"><div class="k">進行中 案件</div><div class="v">14<small>件</small></div></div>
+    <div class="kpi amber"><div class="k">今週 納期</div><div class="v">5<small>件</small></div></div>
+    <div class="kpi teal"><div class="k">ロボット引合</div><div class="v">7<small>社</small></div></div>
+    <div class="kpi ok"><div class="k">保守契約 稼働</div><div class="v">23<small>台</small></div></div>
+  </div>
+  <div class="bar">
+    <h2>案件ボード</h2>
+    <div class="filter" id="filter">
+      <button data-f="all" class="on">すべて</button>
+      <button data-f="des">治工具設計</button>
+      <button data-f="rep">工具改修</button>
+      <button data-f="rob">ロボット導入</button>
+    </div>
+  </div>
+  <p class="hint">カードをタップすると案件詳細（図面リビジョン・工程・担当・納期）が開きます。</p>
+  <div class="jobs" id="jobs"></div>
+</div>
+
+<!-- MAINT -->
+<div class="wrap hidden" id="view-maint">
+  <div class="bar"><h2>工具改修・保守スケジュール</h2></div>
+  <p class="hint">航空機治工具の定期改修・工具メンテの予定を一覧。期限が近いものは赤で警告します。</p>
+  <div class="jobs" id="maintlist"></div>
+</div>
+
+<!-- ROBOT -->
+<div class="wrap hidden" id="view-robot">
+  <div class="kpis">
+    <div class="kpi teal"><div class="k">導入済 稼働台数</div><div class="v">23<small>台</small></div></div>
+    <div class="kpi"><div class="k">平均 稼働率</div><div class="v">86<small>%</small></div></div>
+    <div class="kpi amber"><div class="k">要点検（近日）</div><div class="v">3<small>台</small></div></div>
+    <div class="kpi ok"><div class="k">代理店 在庫</div><div class="v">6<small>台</small></div></div>
+  </div>
+  <div class="bar"><h2>FAIRINO 協働ロボット 稼働モニタ</h2></div>
+  <p class="hint">代理店として納入した協働ロボットの稼働率・次回点検を集約（IoT稼働ログ連携を想定）。</p>
+  <div class="rob" id="roblist"></div>
+</div>
+
+<div class="footer">MK1 TECHNOLOGY VIETNAM ／ 治工具・ロボット 案件／保守 管理 実機デモ ／ For YATOMIエンジ株式会社 御中 — 参考構成</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+const JOBS = [
+  {id:"J-2418",type:"des",title:"主翼リブ 治具 新規設計",cust:"航空機メーカーA（機体構造）",cat:"治工具設計",rev:"Rev.C",due:2,status:"prog",owner:"設計 3名 / BrSE 1名",note:"3D-CAD（CATIA）データ受領済。公差検討中。",step:2},
+  {id:"J-2416",type:"rep",title:"組立治具 工具改修メンテ",cust:"航空機メーカーA（艤装ライン）",cat:"工具改修",rev:"Rev.F",due:1,status:"due",owner:"改修 2名",note:"摩耗ピン交換＋位置決め再調整。ライン停止前に完了要。",step:1},
+  {id:"J-2414",type:"rob",title:"協働ロボット 搬送セル導入",cust:"自動車部品メーカーB",cat:"ロボット導入",rev:"—",due:9,status:"prog",owner:"SIer 2名 / PLC 1名",note:"FAIRINO FR5 ×2。安全柵レス・力覚センサ構成。ティーチング工程。",step:3},
+  {id:"J-2411",type:"des",title:"検査治具（画像計測）設計",cust:"精密部品メーカーC",cat:"治工具設計",rev:"Rev.A",due:6,status:"wait",owner:"設計 1名",note:"客先仕様待ち（測定点定義）。",step:1},
+  {id:"J-2409",type:"rob",title:"パレタイズ ロボット 立上げ",cust:"食品機械メーカーD",cat:"ロボット導入",rev:"—",due:12,status:"prog",owner:"SIer 1名",note:"FAIRINO FR10。ハンド選定・サイクルタイム検証。",step:2},
+  {id:"J-2405",type:"rep",title:"航空機 位置決め治具 定期改修",cust:"航空機メーカーA",cat:"工具改修",rev:"Rev.D",due:15,status:"prog",owner:"改修 1名",note:"年次点検。基準面再研磨・トレーサビリティ記録。",step:2},
+  {id:"J-2402",type:"des",title:"溶接治具 設計＋強度検証",cust:"重工メーカーE",cat:"治工具設計",rev:"Rev.B",due:-1,status:"done",owner:"設計 2名",note:"納品完了。図面一式・検査成績書提出済。",step:4},
+];
+const STEPS=["受注","設計/準備","製作/改修","検査/納品"];
+const TICO={des:"📐",rep:"🔧",rob:"🤖"};
+const BADGE={des:["b-des","治工具設計"],rep:["b-rep","工具改修"],rob:["b-rob","ロボット導入"]};
+const STLAB={prog:["s-prog","進行中"],wait:["s-wait","仕様待ち"],done:["s-done","納品済"],due:["s-due","納期直前"]};
+
+function dueLabel(d){
+  if(d<0)return {t:"完了",c:""};
+  if(d===0)return {t:"本日納期",c:"soon"};
+  if(d<=2)return {t:"あと"+d+"日",c:"soon"};
+  return {t:"あと"+d+"日",c:""};
+}
+let filter="all";
+function renderJobs(){
+  const box=document.getElementById("jobs");
+  const list=JOBS.filter(j=>filter==="all"||j.type===filter);
+  box.innerHTML=list.map(j=>{
+    const b=BADGE[j.type],s=STLAB[j.status],dl=dueLabel(j.due);
+    return `<div class="job" data-id="${j.id}">
+      <div class="tico">${TICO[j.type]}</div>
+      <div><div class="jt">${j.title}</div>
+        <div class="jm">${j.id} ・ ${j.cust} ・ ${j.rev}</div>
+        <span class="st ${s[0]}">● ${s[1]}</span></div>
+      <div class="jr"><span class="badge ${b[0]}">${b[1]}</span>
+        <div class="due ${dl.c}">${dl.t}</div></div>
+    </div>`;}).join("");
+  box.querySelectorAll(".job").forEach(el=>el.onclick=()=>openJob(el.dataset.id));
+}
+function openJob(id){
+  const j=JOBS.find(x=>x.id===id);const s=STLAB[j.status];
+  const stepsHtml=STEPS.map((st,i)=>{
+    const cls=i<j.step?"done":i===j.step?"cur":"";
+    return `<div class="step ${cls}"><div class="dot">${i<j.step?"✓":i+1}</div>${st}</div>`;}).join("");
+  document.getElementById("sheet").innerHTML=
+    `<button class="close" onclick="closeModal()">×</button>
+     <h3>${j.title}</h3>
+     <span class="badge ${BADGE[j.type][0]}">${BADGE[j.type][1]}</span>
+     <span class="st ${s[0]}" style="margin-left:8px">● ${s[1]}</span>
+     <div class="steps">${stepsHtml}</div>
+     <table>
+       <tr><td>案件番号</td><td>${j.id}</td></tr>
+       <tr><td>顧客</td><td>${j.cust}</td></tr>
+       <tr><td>図面リビジョン</td><td>${j.rev}</td></tr>
+       <tr><td>担当体制</td><td>${j.owner}</td></tr>
+       <tr><td>納期</td><td>${dueLabel(j.due).t}</td></tr>
+       <tr><td>メモ</td><td>${j.note}</td></tr>
+     </table>
+     <p class="hint">※ デモ用サンプルデータ。図面/CADファイル・工程・改修履歴・トレーサビリティを一元管理する想定です。</p>`;
+  document.getElementById("modal").classList.add("on");
+}
+function closeModal(){document.getElementById("modal").classList.remove("on");}
+document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal();};
+document.querySelectorAll("#filter button").forEach(b=>b.onclick=()=>{
+  filter=b.dataset.f;document.querySelectorAll("#filter button").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderJobs();});
+
+function renderMaint(){
+  const M=JOBS.filter(j=>j.type==="rep").concat([
+    {id:"M-118",title:"航空機 ドリル治具 校正",cust:"航空機メーカーA",due:3,note:"校正周期到来。基準ゲージ照合。"},
+    {id:"M-121",title:"締結トルク工具 定期点検",cust:"社内 工具室",due:8,note:"トルクレンチ 12本 一括点検・記録更新。"},
+  ]);
+  document.getElementById("maintlist").innerHTML=M.map(j=>{
+    const dl=dueLabel(j.due);
+    return `<div class="job"><div class="tico">🔧</div>
+      <div><div class="jt">${j.title}</div><div class="jm">${j.id} ・ ${j.cust}${j.note?" ・ "+j.note:""}</div></div>
+      <div class="jr"><div class="due ${dl.c}">${dl.t}</div></div></div>`;}).join("");
+}
+function renderRobots(){
+  const R=[
+    {n:"FAIRINO FR5 #A-01",d:"自動車部品B ／ 搬送セル",u:92,next:"点検 12日後"},
+    {n:"FAIRINO FR5 #A-02",d:"自動車部品B ／ 搬送セル",u:88,next:"点検 12日後"},
+    {n:"FAIRINO FR10 #D-01",d:"食品機械D ／ パレタイズ",u:74,next:"点検 3日後"},
+    {n:"FAIRINO FR3 #C-05",d:"精密部品C ／ 検査補助",u:95,next:"正常"},
+    {n:"FAIRINO FR16 #E-02",d:"重工E ／ 溶接補助",u:61,next:"要点検（近日）"},
+  ];
+  document.getElementById("roblist").innerHTML=R.map(r=>{
+    const col=r.u>=85?"var(--ok)":r.u>=70?"var(--amber)":"var(--danger)";
+    return `<div class="robrow">
+      <div><div class="rn">${r.n}</div><div class="rd">${r.d} ・ ${r.next}</div></div>
+      <div class="gauge"><div class="track"><div class="fill" style="width:${r.u}%;background:${col}"></div></div><div class="lab">稼働 ${r.u}%</div></div>
+    </div>`;}).join("");
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  const v=b.dataset.v;
+  document.getElementById("view-board").classList.toggle("hidden",v!=="board");
+  document.getElementById("view-maint").classList.toggle("hidden",v!=="maint");
+  document.getElementById("view-robot").classList.toggle("hidden",v!=="robot");
+  if(v==="maint")renderMaint();if(v==="robot")renderRobots();
+});
+renderJobs();
+</script>
+</body>
+</html>

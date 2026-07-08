@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>やど直予約 デモ — 宿泊施設向け 直予約プラットフォーム（MK1 TECHNOLOGY VIETNAM 制作）</title>
+<meta name="description" content="宿泊施設の直予約サイト（多言語・在庫カレンダー・料金計算・予約確認）と管理画面を実機で体験できるデモ。株式会社リトラ様向け参考。">
+<style>
+:root{
+  --ink:#14202e; --indigo:#24567f; --indigo2:#1b3a5b; --gold:#b8863b; --gold-soft:#e0c68a;
+  --sky:#eef3f8; --paper:#fbfcfe; --line:#dfe5ec; --muted:#6b7787; --card:#fff;
+  --ok:#2e7d5b; --shadow:0 2px 14px rgba(20,32,46,.08); --shadow-lg:0 16px 44px rgba(20,32,46,.16);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--ink);color:#fff;position:sticky;top:0;z-index:30}
+.brand{font-weight:800;letter-spacing:.05em;font-size:15px}
+.brand small{display:block;font-weight:400;font-size:10px;opacity:.7;letter-spacing:.1em;margin-top:2px}
+.appbar .right{display:flex;align-items:center;gap:12px}
+.lang{display:flex;gap:4px}
+.lang button{background:rgba(255,255,255,.08);border:1px solid rgba(224,198,138,.3);color:#fff;font-size:11px;padding:4px 9px;border-radius:20px;cursor:pointer;font-weight:600}
+.lang button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.demo-pill{font-size:9px;letter-spacing:.12em;color:var(--gold-soft);border:1px solid rgba(224,198,138,.4);background:rgba(224,198,138,.08);padding:4px 9px;border-radius:20px;font-weight:700}
+.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:29}
+.tabs button{flex:1;background:none;border:none;padding:13px 8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit}
+.tabs button.on{color:var(--indigo);border-bottom-color:var(--gold)}
+.wrap{max-width:940px;margin:0 auto;padding:22px 18px 70px}
+.hero{background:linear-gradient(135deg,var(--ink),var(--indigo2) 60%,var(--indigo));color:#fff;border-radius:12px;padding:26px 26px 30px;position:relative;overflow:hidden;margin-bottom:20px}
+.hero::after{content:"";position:absolute;right:-90px;top:-70px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(224,198,138,.18),transparent 70%)}
+.hero .tag{display:inline-block;background:rgba(224,198,138,.18);color:var(--gold-soft);font-size:10px;font-weight:700;letter-spacing:.14em;padding:5px 12px;border-radius:20px;margin-bottom:12px}
+.hero h1{margin:0 0 8px;font-size:24px;font-weight:800;letter-spacing:.02em;position:relative}
+.hero p{margin:0;opacity:.9;font-size:13.5px;line-height:1.8;max-width:560px;position:relative}
+.grid{display:grid;gap:18px}
+@media(min-width:720px){.book-grid{grid-template-columns:1.5fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:20px}
+.card h2{margin:0 0 4px;font-size:16px;color:var(--ink)}
+.card .sub{color:var(--muted);font-size:12px;margin:0 0 16px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:6px;text-transform:uppercase}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(36,86,127,.12)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rooms{display:grid;gap:12px;margin-top:4px}
+.room{border:1.5px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:.15s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.room:hover{border-color:var(--gold)}
+.room.on{border-color:var(--indigo);background:var(--sky)}
+.room .rn{font-weight:800;font-size:14px}
+.room .rd{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.6}
+.room .rp{text-align:right;white-space:nowrap}
+.room .rp b{font-size:16px;color:var(--indigo)}
+.room .rp span{display:block;font-size:10px;color:var(--muted)}
+.summary{position:sticky;top:110px}
+.sumline{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line);color:#33414f}
+.sumline.total{border-bottom:none;border-top:2px solid var(--ink);margin-top:6px;padding-top:12px;font-size:18px;font-weight:800;color:var(--ink)}
+.sumline.total .tax{font-size:10px;color:var(--muted);font-weight:600}
+.btn{display:block;width:100%;margin-top:16px;background:var(--indigo);color:#fff;border:none;border-radius:9px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.03em}
+.btn:hover{background:var(--indigo2)}
+.btn.gold{background:var(--gold);color:var(--ink)}
+.btn:disabled{background:#c3ccd6;cursor:not-allowed}
+.chan{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.chan span{font-size:10.5px;background:var(--sky);border:1px solid var(--line);color:var(--indigo);padding:4px 9px;border-radius:6px;font-weight:600}
+.note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7}
+/* confirmation */
+.conf{text-align:center;padding:12px 6px}
+.conf .chk{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:34px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.conf h2{font-size:20px;margin:0 0 6px}
+.conf .code{font-size:26px;font-weight:900;letter-spacing:.12em;color:var(--indigo);background:var(--sky);border:1px dashed var(--indigo);border-radius:10px;padding:12px;margin:14px 0;font-family:"SF Mono",Menlo,monospace}
+.conf table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.conf td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.conf td:first-child{color:var(--muted);width:40%}
+/* admin */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}.row2{grid-template-columns:1fr}}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+.kpi .k{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.kpi .v{font-size:24px;font-weight:800;color:var(--ink);margin-top:4px}
+.kpi .v small{font-size:11px;color:var(--indigo);font-weight:700;margin-left:3px}
+.cal{overflow-x:auto}
+.cal table{border-collapse:collapse;width:100%;min-width:560px;font-size:12px}
+.cal th,.cal td{border:1px solid var(--line);padding:7px 6px;text-align:center}
+.cal th{background:var(--indigo2);color:#fff;font-weight:700;font-size:11px}
+.cal td .rmname{text-align:left;background:var(--sky);font-weight:700;color:var(--indigo)}
+.cell{cursor:default;font-weight:700}
+.cell.free{color:var(--ok)}
+.cell.few{color:#c07a1a}
+.cell.full{color:#c0392b;background:#fdecea}
+.legend{font-size:11px;color:var(--muted);margin-top:8px}
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:20px;border-top:1px solid var(--line)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="appbar">
+  <div class="brand">やど直予約 <small>DIRECT BOOKING — 宿泊施設向けプラットフォーム</small></div>
+  <div class="right">
+    <div class="lang" id="lang">
+      <button data-l="ja" class="on">日本語</button>
+      <button data-l="en">EN</button>
+      <button data-l="zh">中文</button>
+    </div>
+    <span class="demo-pill">DEMO</span>
+  </div>
+</div>
+<div class="tabs" id="tabs">
+  <button data-v="guest" class="on">宿泊者：予約</button>
+  <button data-v="admin">管理画面：在庫・予約</button>
+</div>
+
+<!-- ============ GUEST ============ -->
+<div class="wrap" id="view-guest">
+  <div class="hero">
+    <span class="tag" id="h-tag">DIRECT BOOKING · 脱OTA · 多言語</span>
+    <h1 id="h-title">公式サイトから、そのまま直予約。</h1>
+    <p id="h-lead">OTA手数料をかけずに、多言語・多通貨で「そのまま予約完了」まで。在庫はチャネルマネージャーで各OTAと自動同期します。</p>
+  </div>
+
+  <div class="grid book-grid" id="book-area">
+    <div class="card">
+      <h2 id="c-stay">ご宿泊内容</h2>
+      <p class="sub" id="c-staysub">日程・人数を選ぶと、空室と料金がリアルタイムで反映されます。</p>
+      <div class="row2">
+        <div class="field"><label id="l-in">チェックイン</label><input type="date" id="din"></div>
+        <div class="field"><label id="l-out">チェックアウト</label><input type="date" id="dout"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label id="l-guests">人数</label>
+          <select id="guests"><option value="1">1名</option><option value="2" selected>2名</option><option value="3">3名</option><option value="4">4名</option></select>
+        </div>
+        <div class="field"><label id="l-nights">泊数</label><input id="nights" value="1泊" readonly></div>
+      </div>
+      <div class="field"><label id="l-room">お部屋タイプ</label>
+        <div class="rooms" id="rooms"></div>
+      </div>
+    </div>
+
+    <div class="card summary">
+      <h2 id="c-sum">ご予約サマリ</h2>
+      <p class="sub" id="c-sumsub">税込・日本円表示</p>
+      <div id="sumbody"></div>
+      <button class="btn" id="bookbtn">予約へ進む</button>
+      <div class="chan">
+        <span>楽天トラベル 同期</span><span>じゃらん 同期</span><span>Booking.com</span><span>Airbnb</span>
+      </div>
+      <p class="note" id="note">※ デモ用のサンプル料金・在庫です。実決済は行いません。チャネル在庫はチャネルマネージャー連携を想定。</p>
+    </div>
+  </div>
+
+  <div class="card hidden" id="confcard">
+    <div class="conf">
+      <div class="chk">✓</div>
+      <h2 id="cf-title">ご予約が確定しました</h2>
+      <p class="sub" id="cf-sub">確認メールを送信しました（デモ）。当日はこの予約番号をご提示ください。</p>
+      <div class="code" id="cf-code">YD-000000</div>
+      <table id="cf-table"></table>
+      <button class="btn gold" id="againbtn">別の日程で試す</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN ============ -->
+<div class="wrap hidden" id="view-admin">
+  <div class="hero">
+    <span class="tag">MANAGEMENT · 稼働率最大化</span>
+    <h1>予約・在庫を、一画面で。</h1>
+    <p>直予約とOTA経由の予約を統合。空室カレンダー、稼働率、直予約比率をリアルタイムで把握し、料金を機動的に調整できます。</p>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="card">
+    <h2>空室カレンダー（今後7日）</h2>
+    <p class="sub">数字＝残室数。チャネル横断の在庫を単一マスターで管理（ダブルブッキング防止）。</p>
+    <div class="cal"><table id="caltable"></table></div>
+    <div class="legend">■ <span style="color:var(--ok);font-weight:700">緑=空室あり</span>　■ <span style="color:#c07a1a;font-weight:700">橙=残りわずか</span>　■ <span style="color:#c0392b;font-weight:700">赤=満室</span></div>
+  </div>
+</div>
+
+<div class="footer">MK1 TECHNOLOGY VIETNAM ／ 宿泊施設向け 直予約プラットフォーム 実機デモ ／ For 株式会社リトラ 御中 — 参考構成</div>
+
+<script>
+// ---------- i18n ----------
+const T = {
+  ja:{htag:"DIRECT BOOKING · 脱OTA · 多言語",htitle:"公式サイトから、そのまま直予約。",
+    hlead:"OTA手数料をかけずに、多言語・多通貨で「そのまま予約完了」まで。在庫はチャネルマネージャーで各OTAと自動同期します。",
+    cstay:"ご宿泊内容",cstaysub:"日程・人数を選ぶと、空室と料金がリアルタイムで反映されます。",
+    lin:"チェックイン",lout:"チェックアウト",lguests:"人数",lnights:"泊数",lroom:"お部屋タイプ",
+    csum:"ご予約サマリ",csumsub:"税込・日本円表示",book:"予約へ進む",
+    cftitle:"ご予約が確定しました",cfsub:"確認メールを送信しました（デモ）。当日はこの予約番号をご提示ください。",again:"別の日程で試す",
+    unit:"名",night:"泊",room:"室料",guestfee:"人数追加",subtotal:"小計",tax:"（税込）",total:"合計",
+    perNight:"／泊〜",pick:"お部屋を選択してください"},
+  en:{htag:"DIRECT BOOKING · Commission-free · Multilingual",htitle:"Book direct, right from the official site.",
+    hlead:"Complete the booking on-site in multiple languages and currencies — no OTA commission. Inventory auto-syncs to every OTA via a channel manager.",
+    cstay:"Your stay",cstaysub:"Pick dates & guests — availability and price update live.",
+    lin:"Check-in",lout:"Check-out",lguests:"Guests",lnights:"Nights",lroom:"Room type",
+    csum:"Booking summary",csumsub:"Tax included · JPY",book:"Continue to book",
+    cftitle:"Your booking is confirmed",cfsub:"A confirmation email has been sent (demo). Please show this booking code on arrival.",again:"Try other dates",
+    unit:"guests",night:"night(s)",room:"Room",guestfee:"Extra guests",subtotal:"Subtotal",tax:"(tax incl.)",total:"Total",
+    perNight:"/night~",pick:"Please select a room"},
+  zh:{htag:"官网直订 · 免OTA佣金 · 多语言",htitle:"从官网，直接完成预订。",
+    hlead:"无需OTA佣金，多语言多币种一站式完成预订。库存通过渠道管理器与各OTA自动同步。",
+    cstay:"入住信息",cstaysub:"选择日期与人数，空房与价格实时更新。",
+    lin:"入住",lout:"退房",lguests:"人数",lnights:"晚数",lroom:"房型",
+    csum:"预订摘要",csumsub:"含税 · 日元",book:"继续预订",
+    cftitle:"预订已确认",cfsub:"确认邮件已发送（演示）。入住当天请出示此预订号。",again:"换个日期再试",
+    unit:"人",night:"晚",room:"房费",guestfee:"加人",subtotal:"小计",tax:"（含税）",total:"合计",
+    perNight:"/晚起",pick:"请选择房型"}
+};
+let L = "ja";
+
+const ROOMS = [
+  {id:"std", ja:"和室スタンダード", en:"Japanese-style Standard", zh:"日式标准间", d_ja:"8畳・定員3名・Wi-Fi・温泉利用", d_en:"8-tatami · up to 3 · Wi-Fi · onsen", d_zh:"8榻榻米·限3人·Wi-Fi·温泉", base:14800},
+  {id:"twin", ja:"モダンツイン", en:"Modern Twin", zh:"现代双床间", d_ja:"22㎡・定員2名・シモンズベッド", d_en:"22㎡ · 2 guests · Simmons beds", d_zh:"22㎡·限2人·席梦思床", base:18600},
+  {id:"suite", ja:"露天風呂付スイート", en:"Suite w/ Open-air Bath", zh:"带露天风吕套房", d_ja:"48㎡・定員4名・専用露天風呂", d_en:"48㎡ · up to 4 · private open-air bath", d_zh:"48㎡·限4人·专用露天风吕", base:38000},
+];
+let sel = "twin";
+
+function fmt(n){return "¥"+n.toLocaleString();}
+function todayPlus(d){const t=new Date();t.setDate(t.getDate()+d);return t.toISOString().slice(0,10);}
+function nights(){const a=new Date(document.getElementById("din").value),b=new Date(document.getElementById("dout").value);
+  const n=Math.round((b-a)/86400000);return isNaN(n)||n<1?1:n;}
+
+function renderRooms(){
+  const t=T[L];const box=document.getElementById("rooms");box.innerHTML="";
+  ROOMS.forEach(r=>{
+    const el=document.createElement("div");el.className="room"+(r.id===sel?" on":"");
+    el.innerHTML=`<div><div class="rn">${r[L]}</div><div class="rd">${r["d_"+L]}</div></div>
+      <div class="rp"><b>${fmt(r.base)}</b><span>${t.perNight}</span></div>`;
+    el.onclick=()=>{sel=r.id;renderRooms();renderSum();};
+    box.appendChild(el);
+  });
+}
+function renderSum(){
+  const t=T[L];const r=ROOMS.find(x=>x.id===sel);const n=nights();
+  const g=parseInt(document.getElementById("guests").value);
+  document.getElementById("nights").value=n+ (L==="ja"?"泊":L==="en"?" night(s)":"晚");
+  const roomFee=r.base*n;
+  const extra=Math.max(0,g-2)*3500*n;
+  const subtotal=roomFee+extra;
+  document.getElementById("sumbody").innerHTML=
+    `<div class="sumline"><span>${r[L]} × ${n}${t.night}</span><span>${fmt(roomFee)}</span></div>`+
+    (extra>0?`<div class="sumline"><span>${t.guestfee}</span><span>${fmt(extra)}</span></div>`:"")+
+    `<div class="sumline"><span>${t.subtotal}</span><span>${fmt(subtotal)}</span></div>`+
+    `<div class="sumline total"><span>${t.total} <span class="tax">${t.tax}</span></span><span>${fmt(subtotal)}</span></div>`;
+}
+function book(){
+  const t=T[L];const r=ROOMS.find(x=>x.id===sel);const n=nights();
+  const g=document.getElementById("guests").value;
+  const code="YD-"+Math.floor(100000+Math.random()*899999);
+  document.getElementById("book-area").classList.add("hidden");
+  document.getElementById("confcard").classList.remove("hidden");
+  document.getElementById("cf-title").textContent=t.cftitle;
+  document.getElementById("cf-sub").textContent=t.cfsub;
+  document.getElementById("cf-code").textContent=code;
+  document.getElementById("againbtn").textContent=t.again;
+  const roomFee=r.base*n,extra=Math.max(0,parseInt(g)-2)*3500*n,tot=roomFee+extra;
+  document.getElementById("cf-table").innerHTML=
+    `<tr><td>${t.lroom}</td><td>${r[L]}</td></tr>
+     <tr><td>${t.lin} / ${t.lout}</td><td>${document.getElementById("din").value} 〜 ${document.getElementById("dout").value}</td></tr>
+     <tr><td>${t.lguests} / ${t.lnights}</td><td>${g}${t.unit} / ${n}${t.night}</td></tr>
+     <tr><td>${t.total}</td><td><b>${fmt(tot)}</b> ${t.tax}</td></tr>`;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function again(){
+  document.getElementById("confcard").classList.add("hidden");
+  document.getElementById("book-area").classList.remove("hidden");
+}
+function applyLang(){
+  const t=T[L];
+  document.getElementById("h-tag").textContent=t.htag;
+  document.getElementById("h-title").textContent=t.htitle;
+  document.getElementById("h-lead").textContent=t.hlead;
+  document.getElementById("c-stay").textContent=t.cstay;
+  document.getElementById("c-staysub").textContent=t.cstaysub;
+  document.getElementById("l-in").textContent=t.lin;
+  document.getElementById("l-out").textContent=t.lout;
+  document.getElementById("l-guests").textContent=t.lguests;
+  document.getElementById("l-nights").textContent=t.lnights;
+  document.getElementById("l-room").textContent=t.lroom;
+  document.getElementById("c-sum").textContent=t.csum;
+  document.getElementById("c-sumsub").textContent=t.csumsub;
+  document.getElementById("bookbtn").textContent=t.book;
+  renderRooms();renderSum();
+}
+
+// admin
+function renderAdmin(){
+  const kp=[["直予約比率","48%","+11pt 目標"],["本日の稼働率","82%",""],["今月 直予約","126件",""],["OTA手数料 削減","¥312k",""]];
+  document.getElementById("kpis").innerHTML=kp.map(k=>
+    `<div class="kpi"><div class="k">${k[0]}</div><div class="v">${k[1]}${k[2]?`<small>${k[2]}</small>`:""}</div></div>`).join("");
+  const days=[];for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()+i);days.push((d.getMonth()+1)+"/"+d.getDate());}
+  let head="<tr><th>お部屋</th>"+days.map(d=>`<th>${d}</th>`).join("")+"</tr>";
+  const seed=[[3,2,1,0,2,3,1],[2,1,1,2,0,1,2],[1,1,0,1,1,0,1]];
+  let body=ROOMS.map((r,ri)=>{
+    return `<tr><td class="rmname">${r.ja}</td>`+seed[ri].map(v=>{
+      const cls=v===0?"full":v<=1?"few":"free";const lab=v===0?"満室":v;
+      return `<td class="cell ${cls}">${lab}</td>`;}).join("")+"</tr>";
+  }).join("");
+  document.getElementById("caltable").innerHTML=head+body;
+}
+
+// wiring
+document.getElementById("din").value=todayPlus(7);
+document.getElementById("dout").value=todayPlus(8);
+["din","dout","guests"].forEach(id=>document.getElementById(id).addEventListener("change",renderSum));
+document.getElementById("bookbtn").onclick=book;
+document.getElementById("againbtn").onclick=again;
+document.querySelectorAll("#lang button").forEach(b=>b.onclick=()=>{
+  L=b.dataset.l;document.querySelectorAll("#lang button").forEach(x=>x.classList.remove("on"));b.classList.add("on");applyLang();});
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  const v=b.dataset.v;
+  document.getElementById("view-guest").classList.toggle("hidden",v!=="guest");
+  document.getElementById("view-admin").classList.toggle("hidden",v!=="admin");
+  if(v==="admin")renderAdmin();
+});
+applyLang();
+</script>
+</body>
+</html>
