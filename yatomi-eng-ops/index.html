@@ -1,242 +1,1293 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>治工具・ロボット案件／保守 管理 デモ（MK1 TECHNOLOGY VIETNAM 制作）</title>
-<meta name="description" content="航空機治工具の設計・工具改修メンテナンスと協働ロボット導入案件を一元管理する社内システムの実機デモ。YATOMIエンジ株式会社様向け参考構成。">
-<style>
-:root{
-  --bg:#0f1620; --panel:#17212e; --panel2:#1e2b3a; --line:#2a3a4d;
-  --ink:#e8eef5; --muted:#8ea0b5; --steel:#3a8fd0; --steel2:#2b6ca3;
-  --amber:#e0951e; --teal:#22b8b8; --ok:#2fbf71; --warn:#e0951e; --danger:#e05a5a;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
-.appbar{display:flex;align-items:center;justify-content:space-between;padding:13px 20px;background:linear-gradient(90deg,#0c1219,#17212e);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30}
-.brand{font-weight:800;letter-spacing:.04em;font-size:15px}
-.brand small{display:block;font-weight:400;font-size:9.5px;opacity:.65;letter-spacing:.12em;margin-top:2px;color:var(--muted)}
-.demo-pill{font-size:9px;letter-spacing:.12em;color:var(--teal);border:1px solid rgba(34,184,184,.4);background:rgba(34,184,184,.08);padding:4px 9px;border-radius:20px;font-weight:700}
-.tabs{display:flex;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:50px;z-index:29;overflow-x:auto}
-.tabs button{background:none;border:none;padding:12px 16px;font-size:12.5px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit;white-space:nowrap}
-.tabs button.on{color:var(--steel);border-bottom-color:var(--amber)}
-.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 70px}
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;position:relative;overflow:hidden}
-.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--steel)}
-.kpi.amber::after{background:var(--amber)}.kpi.teal::after{background:var(--teal)}.kpi.ok::after{background:var(--ok)}
-.kpi .k{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.06em}
-.kpi .v{font-size:23px;font-weight:800;margin-top:5px}
-.kpi .v small{font-size:11px;color:var(--muted);font-weight:600;margin-left:3px}
-.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.bar h2{font-size:15px;margin:0;flex:1}
-.filter{display:flex;gap:6px;flex-wrap:wrap}
-.filter button{background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:11.5px;padding:6px 11px;border-radius:20px;cursor:pointer;font-weight:700;font-family:inherit}
-.filter button.on{background:var(--steel2);border-color:var(--steel);color:#fff}
-.jobs{display:grid;gap:10px}
-.job{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:.15s;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
-.job:hover{border-color:var(--steel)}
-.job .tico{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:19px;background:var(--panel2)}
-.job .jt{font-weight:800;font-size:14px}
-.job .jm{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.6}
-.job .jr{text-align:right;white-space:nowrap}
-.badge{display:inline-block;font-size:10px;font-weight:800;padding:4px 9px;border-radius:20px;letter-spacing:.03em}
-.b-des{background:rgba(58,143,208,.16);color:#7fbdec}
-.b-rep{background:rgba(224,149,30,.16);color:#f0b558}
-.b-rob{background:rgba(34,184,184,.16);color:#6fe0e0}
-.st{display:inline-block;font-size:10.5px;font-weight:700;margin-top:6px}
-.st.s-prog{color:var(--steel)}.st.s-wait{color:var(--warn)}.st.s-done{color:var(--ok)}.st.s-due{color:var(--danger)}
-.due{font-size:11px;color:var(--muted);margin-top:4px}
-.due.soon{color:var(--danger);font-weight:700}
-/* detail modal */
-.modal{position:fixed;inset:0;background:rgba(6,10,15,.72);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
-.modal.on{display:flex}
-.sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:520px;width:100%;padding:22px;max-height:88vh;overflow-y:auto}
-.sheet h3{margin:0 0 4px;font-size:18px}
-.sheet .close{float:right;background:none;border:none;color:var(--muted);font-size:22px;cursor:pointer;line-height:1}
-.sheet table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
-.sheet td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
-.sheet td:first-child{color:var(--muted);width:38%}
-.steps{display:flex;gap:0;margin:12px 0}
-.step{flex:1;text-align:center;font-size:10px;color:var(--muted);position:relative}
-.step .dot{width:20px;height:20px;border-radius:50%;background:var(--panel2);border:2px solid var(--line);margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:10px}
-.step.done .dot{background:var(--ok);border-color:var(--ok);color:#04240f}
-.step.cur .dot{background:var(--steel);border-color:var(--steel);color:#fff}
-.step::before{content:"";position:absolute;top:9px;left:-50%;width:100%;height:2px;background:var(--line);z-index:-1}
-.step:first-child::before{display:none}
-.step.done::before,.step.cur::before{background:var(--ok)}
-/* robots */
-.rob{display:grid;gap:10px}
-.robrow{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 15px;display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center}
-.robrow .rn{font-weight:800;font-size:13.5px}
-.robrow .rd{font-size:11px;color:var(--muted);margin-top:3px}
-.gauge{width:90px}
-.gauge .track{height:8px;background:var(--panel2);border-radius:6px;overflow:hidden}
-.gauge .fill{height:100%;border-radius:6px}
-.gauge .lab{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
-.footer{text-align:center;color:var(--muted);font-size:11px;padding:20px;border-top:1px solid var(--line)}
-.hidden{display:none}
-.hint{font-size:11px;color:var(--muted);margin:0 0 14px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YATOMI エンジニアリング業務統合デモ | MK1 TECHNOLOGY VIETNAM</title>
+  <meta name="description" content="治工具設計、工具改修メンテナンス、協働ロボットSI、FAIRINO販売代理店業務を横断管理する社内業務システムのデモ。">
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --surface:#ffffff;
+      --surface-2:#f9fbfd;
+      --surface-3:#eef3f8;
+      --line:#dfe7ef;
+      --line-strong:#cbd8e5;
+      --ink:#1c2530;
+      --muted:#637183;
+      --subtle:#8996a6;
+      --steel:#2b6ca3;
+      --steel-dark:#22506f;
+      --steel-soft:#e7f0f8;
+      --amber:#c07a1a;
+      --amber-soft:#fff4df;
+      --green:#1f9d64;
+      --green-soft:#e7f7ef;
+      --red:#d74242;
+      --red-soft:#fff0f0;
+      --violet:#7664d8;
+      --violet-soft:#f0efff;
+      --cyan:#0f8f9b;
+      --cyan-soft:#e5f7fa;
+      --shadow:0 18px 45px rgba(28,37,48,.08);
+      --shadow-sm:0 8px 20px rgba(28,37,48,.06);
+      --radius:16px;
+      --radius-sm:12px;
+      --font:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","Noto Sans JP","Segoe UI",sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:var(--font)}
+    body{overflow-x:hidden}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    svg{display:block}
+    .app{display:grid;grid-template-columns:280px minmax(0,1fr);min-height:100vh}
+    .sidebar{
+      position:sticky;top:0;height:100vh;background:rgba(255,255,255,.88);backdrop-filter:blur(18px);
+      border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:20px;z-index:10;
+    }
+    .brand{display:flex;gap:12px;align-items:center;padding:0 8px}
+    .mark{
+      width:42px;height:42px;border-radius:14px;background:linear-gradient(145deg,var(--steel),var(--steel-dark));
+      display:grid;place-items:center;box-shadow:0 12px 24px rgba(43,108,163,.22);color:#fff;flex:0 0 auto;
+    }
+    .brand-title{font-weight:800;letter-spacing:.02em;line-height:1.15}
+    .brand-title small{display:block;margin-top:5px;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em}
+    .demo-pill{
+      display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid #d8a253;
+      background:var(--amber-soft);color:#8e5711;font-size:11px;font-weight:800;letter-spacing:.12em;
+    }
+    .nav{display:grid;gap:6px}
+    .nav button{
+      width:100%;border:0;background:transparent;color:var(--muted);display:flex;align-items:center;gap:11px;
+      padding:11px 12px;border-radius:12px;text-align:left;font-weight:750;transition:background .18s,color .18s,transform .18s;
+    }
+    .nav button:hover{background:var(--surface-3);color:var(--ink)}
+    .nav button.active{background:var(--steel-soft);color:var(--steel-dark);box-shadow:inset 0 0 0 1px rgba(43,108,163,.12)}
+    .nav svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .side-card{
+      margin-top:auto;background:linear-gradient(180deg,#fff,#f8fbfe);border:1px solid var(--line);border-radius:16px;
+      padding:15px;box-shadow:var(--shadow-sm);
+    }
+    .side-card .label{font-size:11px;font-weight:850;color:var(--steel-dark);letter-spacing:.08em}
+    .side-card p{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+    .side-meter{margin-top:13px;height:8px;background:var(--surface-3);border-radius:999px;overflow:hidden}
+    .side-meter span{display:block;width:76%;height:100%;background:linear-gradient(90deg,var(--steel),var(--amber));border-radius:inherit}
+    .main{min-width:0}
+    .topbar{
+      position:sticky;top:0;z-index:9;background:rgba(246,248,251,.86);backdrop-filter:blur(20px);
+      border-bottom:1px solid rgba(223,231,239,.78);padding:18px 28px;display:flex;justify-content:space-between;gap:18px;align-items:center;
+    }
+    .eyebrow{font-size:12px;color:var(--muted);font-weight:750;letter-spacing:.02em}
+    h1{font-size:24px;line-height:1.2;margin:5px 0 0;letter-spacing:0}
+    .top-actions{display:flex;align-items:center;gap:10px;min-width:360px;justify-content:flex-end}
+    .search{
+      position:relative;flex:1;max-width:360px;min-width:210px;
+    }
+    .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--subtle)}
+    .search input{
+      width:100%;height:40px;border:1px solid var(--line);border-radius:12px;background:var(--surface);
+      padding:0 12px 0 38px;color:var(--ink);outline:none;transition:border .18s,box-shadow .18s;
+    }
+    .search input:focus{border-color:rgba(43,108,163,.52);box-shadow:0 0 0 4px rgba(43,108,163,.12)}
+    .icon-btn{
+      width:40px;height:40px;border:1px solid var(--line);background:var(--surface);border-radius:12px;color:var(--muted);
+      display:grid;place-items:center;position:relative;transition:border .18s,transform .18s,box-shadow .18s;
+    }
+    .icon-btn:hover{border-color:var(--line-strong);transform:translateY(-1px);box-shadow:var(--shadow-sm)}
+    .icon-btn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+    .notif-dot{position:absolute;right:8px;top:8px;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 0 2px #fff}
+    .avatar{
+      width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#24384b,var(--steel));
+      color:#fff;display:grid;place-items:center;font-size:12px;font-weight:850;box-shadow:0 10px 22px rgba(43,108,163,.18)
+    }
+    .content{padding:28px;max-width:1540px;margin:0 auto}
+    .section{display:none;animation:fadeIn .22s ease}
+    .section.active{display:block}
+    @keyframes fadeIn{from{opacity:.45;transform:translateY(4px)}to{opacity:1;transform:none}}
+    .grid{display:grid;gap:18px}
+    .grid.cols-2{grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr)}
+    .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .grid.cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .panel{
+      background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);
+      padding:18px;min-width:0;
+    }
+    .panel:hover{box-shadow:0 14px 34px rgba(28,37,48,.075)}
+    .panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:15px}
+    .panel-title{font-size:15px;font-weight:850;margin:0}
+    .panel-sub{font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+    .kpi-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .kpi{
+      background:linear-gradient(180deg,#fff,#fbfdff);border:1px solid var(--line);border-radius:16px;padding:16px;
+      box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:transform .18s,box-shadow .18s,border .18s;
+    }
+    .kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:var(--line-strong)}
+    .kpi::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:var(--steel)}
+    .kpi.amber::before{background:var(--amber)}
+    .kpi.green::before{background:var(--green)}
+    .kpi.red::before{background:var(--red)}
+    .kpi.violet::before{background:var(--violet)}
+    .kpi.cyan::before{background:var(--cyan)}
+    .kpi-label{color:var(--muted);font-size:12px;font-weight:800;line-height:1.45}
+    .kpi-value{font-size:27px;font-weight:880;margin-top:10px;letter-spacing:0}
+    .kpi-value small{font-size:12px;color:var(--subtle);font-weight:750;margin-left:4px}
+    .kpi-note{margin-top:8px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+    .trend-up{color:var(--green);font-weight:850}
+    .trend-down{color:var(--red);font-weight:850}
+    .metric-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+    .metric-row:last-child{border-bottom:0}
+    .metric-name{font-size:13px;font-weight:750}
+    .metric-desc{font-size:12px;color:var(--muted);margin-top:3px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:850;white-space:nowrap;
+      background:var(--surface-3);color:var(--muted);border:1px solid transparent;
+    }
+    .pill.blue{background:var(--steel-soft);color:var(--steel-dark)}
+    .pill.amber{background:var(--amber-soft);color:#8e5711}
+    .pill.green{background:var(--green-soft);color:#11623d}
+    .pill.red{background:var(--red-soft);color:#a82929}
+    .pill.violet{background:var(--violet-soft);color:#5845b9}
+    .pill.cyan{background:var(--cyan-soft);color:#09717b}
+    .dot{width:7px;height:7px;border-radius:50%;background:currentColor;display:inline-block}
+    .chart-wrap{min-height:240px;display:grid;place-items:center}
+    .donut-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:18px;align-items:center}
+    .legend{display:grid;gap:9px}
+    .legend-item{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--muted)}
+    .legend-left{display:flex;align-items:center;gap:8px;font-weight:750;color:var(--ink)}
+    .swatch{width:10px;height:10px;border-radius:3px;background:var(--steel)}
+    .svg-text{font-family:var(--font)}
+    .timeline-list{display:grid;gap:10px}
+    .activity{
+      display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:12px;align-items:start;padding:12px;
+      background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
+    }
+    .activity-icon{width:34px;height:34px;border-radius:11px;background:var(--steel-soft);color:var(--steel-dark);display:grid;place-items:center;font-weight:900}
+    .activity-title{font-size:13px;font-weight:850}
+    .activity-meta{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+    .toolbar{
+      display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px;flex-wrap:wrap;
+    }
+    .filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .segmented{display:inline-flex;background:var(--surface-3);border:1px solid var(--line);padding:3px;border-radius:12px}
+    .segmented button{
+      border:0;background:transparent;color:var(--muted);font-weight:850;font-size:12px;padding:7px 12px;border-radius:9px;transition:background .18s,color .18s,box-shadow .18s;
+    }
+    .segmented button.active{background:#fff;color:var(--steel-dark);box-shadow:0 4px 12px rgba(28,37,48,.08)}
+    .select,.filter-input{
+      height:38px;border:1px solid var(--line);background:#fff;border-radius:12px;padding:0 12px;color:var(--ink);outline:none;
+    }
+    .filter-input{min-width:220px}
+    .select:focus,.filter-input:focus{border-color:rgba(43,108,163,.5);box-shadow:0 0 0 4px rgba(43,108,163,.1)}
+    .kanban{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:15px;align-items:start}
+    .kanban-col{background:#f2f6fa;border:1px solid var(--line);border-radius:16px;padding:12px;min-height:380px}
+    .col-head{display:flex;justify-content:space-between;align-items:center;margin:2px 2px 12px}
+    .col-title{font-size:13px;font-weight:900;color:var(--steel-dark)}
+    .count-badge{min-width:24px;height:24px;border-radius:999px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:850;color:var(--muted)}
+    .project-card{
+      background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 6px 16px rgba(28,37,48,.05);
+      transition:transform .18s,border .18s,box-shadow .18s;position:relative;overflow:hidden;
+    }
+    .project-card:hover{transform:translateY(-2px);border-color:rgba(43,108,163,.34);box-shadow:0 13px 28px rgba(28,37,48,.09)}
+    .project-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--steel)}
+    .project-card.repair::before{background:var(--amber)}
+    .project-card.robot::before{background:var(--cyan)}
+    .project-card .title{font-size:14px;font-weight:900;line-height:1.45;margin:10px 0 9px}
+    .card-meta{display:grid;gap:6px;font-size:12px;color:var(--muted)}
+    .meta-line{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .owner-line{display:flex;align-items:center;justify-content:space-between;margin-top:11px;padding-top:10px;border-top:1px solid var(--line)}
+    .owner{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:12px;font-weight:800}
+    .mini-avatar{width:24px;height:24px;border-radius:9px;background:var(--steel-soft);color:var(--steel-dark);display:grid;place-items:center;font-size:10px;font-weight:900}
+    .urgent{color:var(--red);font-weight:900}
+    .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+    th{font-size:12px;color:var(--muted);font-weight:900;background:#f9fbfd;position:sticky;top:0;z-index:1}
+    tr:last-child td{border-bottom:0}
+    tbody tr{transition:background .16s}
+    tbody tr:hover{background:#f7fbff}
+    .click-row{cursor:pointer}
+    .hidden{display:none!important}
+    .empty{
+      border:1px dashed var(--line-strong);background:#fff;border-radius:16px;padding:34px;text-align:center;color:var(--muted);
+    }
+    .empty strong{display:block;color:var(--ink);margin-bottom:6px}
+    .drawings-layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start}
+    .trace-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow-sm)}
+    .trace-card h3{margin:0 0 10px;font-size:15px}
+    .history{position:relative;padding-left:20px;display:grid;gap:13px}
+    .history::before{content:"";position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--line)}
+    .hist-item{position:relative}
+    .hist-item::before{content:"";position:absolute;left:-19px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--steel);box-shadow:0 0 0 4px #fff}
+    .hist-title{font-size:13px;font-weight:850}
+    .hist-meta{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+    .schedule-layout{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:18px;align-items:start}
+    .calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+    .weekday{font-size:11px;color:var(--muted);font-weight:900;text-align:center;padding:4px}
+    .day{
+      min-height:92px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px;display:flex;flex-direction:column;gap:7px;
+      transition:border .16s,box-shadow .16s;
+    }
+    .day:hover{border-color:rgba(43,108,163,.32);box-shadow:var(--shadow-sm)}
+    .day.muted{background:#f8fafc;color:var(--subtle)}
+    .day-num{font-size:12px;font-weight:850;color:var(--muted)}
+    .day.today{border-color:rgba(43,108,163,.55);box-shadow:0 0 0 3px rgba(43,108,163,.1)}
+    .cal-event{
+      border-radius:9px;padding:6px 7px;font-size:11px;line-height:1.3;font-weight:850;background:var(--steel-soft);color:var(--steel-dark);
+      overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    }
+    .cal-event.warn{background:var(--amber-soft);color:#8e5711}
+    .cal-event.danger{background:var(--red-soft);color:#a82929}
+    .cal-event.done{background:var(--green-soft);color:#11623d}
+    .maintenance-list{display:grid;gap:10px}
+    .maintenance-item{
+      background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px;display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;
+    }
+    .maintenance-item.overdue{border-color:#f1c4c4;background:linear-gradient(180deg,#fff,#fff8f8)}
+    .maintenance-title{font-size:13px;font-weight:900}
+    .maintenance-meta{font-size:12px;color:var(--muted);line-height:1.6;margin-top:4px}
+    .robot-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+    .robot-list{display:grid;gap:12px}
+    .robot-card{
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;display:grid;grid-template-columns:minmax(0,1.1fr) 142px 148px auto;gap:16px;align-items:center;
+      transition:transform .18s,border .18s,box-shadow .18s;
+    }
+    .robot-card:hover{transform:translateY(-2px);border-color:rgba(15,143,155,.32);box-shadow:var(--shadow-sm)}
+    .robot-name{font-weight:900;font-size:14px}
+    .robot-meta{font-size:12px;color:var(--muted);line-height:1.6;margin-top:3px}
+    .gauge{display:grid;gap:6px}
+    .gauge-bar{height:10px;background:var(--surface-3);border-radius:999px;overflow:hidden}
+    .gauge-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--steel),var(--cyan));width:0;transition:width .5s}
+    .gauge-label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+    .spark svg{width:148px;height:46px}
+    .stock-card{display:grid;gap:12px}
+    .stock-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:10px}
+    .stock-row:last-child{border-bottom:0;padding-bottom:0}
+    .stock-model{font-size:13px;font-weight:900}
+    .stock-num{font-size:22px;font-weight:900;color:var(--steel-dark)}
+    .lead-box{
+      background:linear-gradient(145deg,#f7fbff,#fff6e6);border:1px solid #e6d8bd;border-radius:16px;padding:15px;
+    }
+    .lead-num{font-size:34px;font-weight:950;color:var(--amber);line-height:1}
+    .lead-box p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.6}
+    .ai-grid{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;align-items:start}
+    .alert-list{display:grid;gap:12px}
+    .ai-alert{
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;display:grid;grid-template-columns:1fr auto;gap:14px;
+      transition:transform .18s,border .18s,box-shadow .18s;
+    }
+    .ai-alert:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
+    .ai-alert.high{border-color:#efc3c3;background:linear-gradient(180deg,#fff,#fff8f8)}
+    .ai-alert.mid{border-color:#ead6ad;background:linear-gradient(180deg,#fff,#fffaf0)}
+    .ai-alert.low{border-color:#bfe4ce;background:linear-gradient(180deg,#fff,#f8fffb)}
+    .confidence{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;font-weight:950;color:var(--steel-dark);background:conic-gradient(var(--steel) 0deg,var(--steel) var(--deg),#e8eef5 var(--deg));position:relative}
+    .confidence::before{content:"";position:absolute;inset:8px;border-radius:50%;background:#fff}
+    .confidence span{position:relative}
+    .ai-title{font-size:14px;font-weight:900;line-height:1.45}
+    .ai-meta{font-size:12px;color:var(--muted);line-height:1.7;margin-top:6px}
+    .action-line{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .ack-btn{
+      border:1px solid var(--line);background:#fff;color:var(--steel-dark);border-radius:10px;padding:7px 10px;font-size:12px;font-weight:850;
+      transition:background .16s,border .16s;
+    }
+    .ack-btn:hover{background:var(--steel-soft);border-color:#bed3e6}
+    .ack-btn.done{background:var(--green-soft);color:#11623d;border-color:#bfe4ce}
+    .customer-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .customer-card{
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow-sm);
+      transition:transform .18s,border .18s,box-shadow .18s;
+    }
+    .customer-card:hover{transform:translateY(-2px);border-color:rgba(43,108,163,.32);box-shadow:var(--shadow)}
+    .customer-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .customer-name{font-size:15px;font-weight:950;line-height:1.45}
+    .customer-sector{font-size:12px;color:var(--muted);margin-top:4px}
+    .customer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
+    .stat{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+    .stat strong{display:block;font-size:20px;color:var(--steel-dark)}
+    .stat span{font-size:11px;color:var(--muted);font-weight:750}
+    .contact-log{display:grid;gap:8px}
+    .contact-log li{margin:0;padding:0 0 0 16px;color:var(--muted);font-size:12px;line-height:1.55}
+    .footer{
+      margin:24px 28px 26px;padding:18px;border-top:1px solid var(--line);text-align:center;color:var(--muted);
+      font-size:12px;line-height:1.8;
+    }
+    .modal{
+      position:fixed;inset:0;background:rgba(15,24,34,.42);backdrop-filter:blur(8px);z-index:50;display:none;align-items:center;justify-content:center;padding:22px;
+    }
+    .modal.open{display:flex}
+    .sheet{
+      width:min(820px,100%);max-height:90vh;overflow:auto;background:#fff;border:1px solid var(--line);
+      border-radius:20px;box-shadow:0 30px 90px rgba(28,37,48,.28);padding:22px;
+    }
+    .sheet-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;margin-bottom:16px}
+    .sheet h2{margin:0;font-size:20px;line-height:1.35}
+    .sheet-sub{margin-top:6px;color:var(--muted);font-size:13px;line-height:1.6}
+    .close{
+      width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:12px;color:var(--muted);
+      display:grid;place-items:center;font-size:22px;line-height:1;transition:background .16s,color .16s;
+    }
+    .close:hover{background:var(--surface-3);color:var(--ink)}
+    .stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0 18px}
+    .step{
+      position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:13px;padding:10px 8px;text-align:center;min-height:74px;
+    }
+    .step strong{display:block;font-size:12px;color:var(--muted);line-height:1.4}
+    .step span{display:grid;place-items:center;margin:0 auto 7px;width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid var(--line);font-size:11px;font-weight:900;color:var(--muted)}
+    .step.done{background:var(--green-soft);border-color:#bfe4ce}
+    .step.done strong,.step.done span{color:#11623d}
+    .step.done span{border-color:#bfe4ce}
+    .step.current{background:var(--steel-soft);border-color:#bdd2e6}
+    .step.current strong,.step.current span{color:var(--steel-dark)}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .info-box{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--surface-2)}
+    .info-box h3{font-size:13px;margin:0 0 10px;color:var(--steel-dark)}
+    .def-list{display:grid;gap:9px;font-size:13px}
+    .def-row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+    .def-row:last-child{border-bottom:0;padding-bottom:0}
+    .def-row span:first-child{color:var(--muted)}
+    .files{display:flex;flex-wrap:wrap;gap:8px}
+    .file-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;color:var(--muted);font-weight:750}
+    .drawer-mobile-toggle{display:none}
+    @media(max-width:1180px){
+      .app{grid-template-columns:86px minmax(0,1fr)}
+      .sidebar{padding:18px 12px}
+      .brand-title,.nav span,.side-card{display:none}
+      .brand{justify-content:center;padding:0}
+      .nav button{justify-content:center;padding:12px}
+      .kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .grid.cols-4{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .customer-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .robot-card{grid-template-columns:1fr 132px 140px}
+      .robot-card .pill{justify-self:start}
+    }
+    @media(max-width:900px){
+      .app{display:block}
+      .sidebar{
+        position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;border-right:0;border-top:1px solid var(--line);
+        padding:8px;display:block;background:rgba(255,255,255,.96)
+      }
+      .brand,.side-card{display:none}
+      .nav{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+      .nav button{padding:9px 4px;border-radius:10px}
+      .nav span{display:none}
+      .topbar{padding:15px 16px;align-items:flex-start;flex-direction:column}
+      .top-actions{min-width:0;width:100%;justify-content:stretch}
+      .search{max-width:none;min-width:0}
+      .content{padding:18px 16px 84px}
+      .grid.cols-2,.drawings-layout,.schedule-layout,.robot-grid,.ai-grid{grid-template-columns:1fr}
+      .kanban{grid-template-columns:1fr}
+      .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .donut-layout{grid-template-columns:1fr}
+      .robot-card{grid-template-columns:1fr}
+      .spark svg{width:100%}
+      .customer-grid{grid-template-columns:1fr}
+      .modal-grid{grid-template-columns:1fr}
+      .stepper{grid-template-columns:1fr}
+      .footer{margin-bottom:86px}
+    }
+    @media(max-width:560px){
+      h1{font-size:20px}
+      .kpi-grid,.grid.cols-3,.grid.cols-4{grid-template-columns:1fr}
+      .top-actions{gap:7px}
+      .demo-pill{display:none}
+      .avatar,.icon-btn{width:38px;height:38px;border-radius:12px}
+      .calendar{gap:5px}
+      .day{min-height:78px;padding:7px;border-radius:12px}
+      .cal-event{font-size:10px}
+      th,td{padding:11px 12px}
+    }
+  </style>
 </head>
 <body>
-<div class="appbar">
-  <div class="brand">治工具・ロボット 案件管理 <small>ENGINEERING OPS — 設計 / 工具改修 / 協働ロボット導入</small></div>
-  <span class="demo-pill">DEMO</span>
-</div>
-<div class="tabs" id="tabs">
-  <button data-v="board" class="on">案件ボード</button>
-  <button data-v="maint">工具・保守スケジュール</button>
-  <button data-v="robot">FAIRINO ロボット</button>
-</div>
+  <div class="app">
+    <aside class="sidebar" aria-label="メインナビゲーション">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M4 16.5V7.5L12 3l8 4.5v9L12 21l-8-4.5Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M8 9.5 12 7l4 2.5v5L12 17l-4-2.5v-5Z" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+        <div class="brand-title">YATOMI Ops<small>MK1 TECHNOLOGY VIETNAM</small></div>
+      </div>
+      <nav class="nav" id="nav">
+        <button class="active" data-section="dashboard" data-title="統合ダッシュボード" aria-label="統合ダッシュボード">
+          <svg viewBox="0 0 24 24"><path d="M4 13h7V4H4v9Zm9 7h7V4h-7v16ZM4 20h7v-5H4v5Z"/></svg><span>統合ダッシュボード</span>
+        </button>
+        <button data-section="projects" data-title="案件管理" aria-label="案件管理">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M7 4v16"/></svg><span>案件管理</span>
+        </button>
+        <button data-section="drawings" data-title="図面・設計変更管理" aria-label="図面・設計変更管理">
+          <svg viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6V3Z"/><path d="M14 3v4h4M9 12h6M9 16h6M9 8h2"/></svg><span>図面・設計変更</span>
+        </button>
+        <button data-section="maintenance" data-title="保守・点検スケジュール" aria-label="保守・点検スケジュール">
+          <svg viewBox="0 0 24 24"><path d="M7 3v4M17 3v4M4 8h16M5 5h14v16H5V5Z"/><path d="m8 14 2 2 5-5"/></svg><span>保守スケジュール</span>
+        </button>
+        <button data-section="fairino" data-title="FAIRINO ロボット稼働管理" aria-label="FAIRINO ロボット稼働管理">
+          <svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3"/><path d="M5 11h14v8H5v-8Z"/><path d="M9 15h.01M15 15h.01M10 19v2M14 19v2"/></svg><span>FAIRINO稼働</span>
+        </button>
+        <button data-section="ai" data-title="AI保守予測" aria-label="AI保守予測">
+          <svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/><path d="M8 8h8v8H8V8Z"/><path d="M10 10h4v4h-4v-4Z"/></svg><span>AI保守予測</span>
+        </button>
+        <button data-section="customers" data-title="顧客管理" aria-label="顧客管理">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>顧客管理</span>
+        </button>
+      </nav>
+      <div class="side-card">
+        <div class="label">MK1 連携モデル</div>
+        <p>業務システム開発、設計データ連携、保守運用まで、準委任・請負・ラボ型から最適な形で支援します。</p>
+        <div class="side-meter" aria-hidden="true"><span></span></div>
+      </div>
+    </aside>
 
-<!-- BOARD -->
-<div class="wrap" id="view-board">
-  <div class="kpis">
-    <div class="kpi"><div class="k">進行中 案件</div><div class="v">14<small>件</small></div></div>
-    <div class="kpi amber"><div class="k">今週 納期</div><div class="v">5<small>件</small></div></div>
-    <div class="kpi teal"><div class="k">ロボット引合</div><div class="v">7<small>社</small></div></div>
-    <div class="kpi ok"><div class="k">保守契約 稼働</div><div class="v">23<small>台</small></div></div>
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">YATOMIエンジ株式会社様向け / 社内業務システムデモ</div>
+          <h1 id="pageTitle">統合ダッシュボード</h1>
+        </div>
+        <div class="top-actions">
+          <label class="search" aria-label="全体検索">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m16.5 16.5 4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input id="globalSearch" type="search" placeholder="案件・図面・顧客を検索">
+          </label>
+          <button class="icon-btn" aria-label="通知">
+            <span class="notif-dot" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          </button>
+          <span class="demo-pill">DEMO</span>
+          <div class="avatar" aria-label="ログインユーザー">YA</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="section active" id="dashboard">
+          <div class="kpi-grid" id="kpiGrid"></div>
+          <div class="grid cols-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">案件カテゴリ別構成</h2>
+                  <p class="panel-sub">治工具設計、改修メンテ、協働ロボットSIを横断集計</p>
+                </div>
+                <span class="pill blue">今月 12件</span>
+              </div>
+              <div class="donut-layout">
+                <div id="donutChart" class="chart-wrap"></div>
+                <div class="legend" id="donutLegend"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">売上見込 / 納期リスク</h2>
+                  <p class="panel-sub">月次の見込金額と赤信号案件の推移</p>
+                </div>
+                <span class="pill amber">7月更新</span>
+              </div>
+              <div id="barChart" class="chart-wrap"></div>
+            </div>
+          </div>
+          <div class="grid cols-2" style="margin-top:18px">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">本日確認すべき作業</h2>
+                  <p class="panel-sub">設計承認、納期調整、保守手配の優先順</p>
+                </div>
+                <span class="pill red">要対応 4件</span>
+              </div>
+              <div class="timeline-list" id="todayList"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">業務メモ</h2>
+                  <p class="panel-sub">社内体制とYATOMI様向け運用観点</p>
+                </div>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">図面・Rev・承認ログの一元化</div>
+                  <div class="metric-desc">治工具設計と改修履歴を案件単位で紐づけ、監査時に追跡可能。</div>
+                </div>
+                <span class="pill green">標準化</span>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">FAIRINO導入後の稼働状況</div>
+                  <div class="metric-desc">IoTデータ、次回点検、消耗部品を同じ画面で確認。</div>
+                </div>
+                <span class="pill cyan">可視化</span>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">MK1との開発連携</div>
+                  <div class="metric-desc">準委任・請負・ラボ型のいずれにも対応。社内システムの段階導入を想定。</div>
+                </div>
+                <span class="pill amber">小さく開始</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="projects">
+          <div class="toolbar">
+            <div class="filters">
+              <div class="segmented" aria-label="表示切替">
+                <button class="active" data-project-view="kanban">カンバン</button>
+                <button data-project-view="table">テーブル</button>
+              </div>
+              <select class="select" id="typeFilter" aria-label="案件種別"></select>
+              <select class="select" id="customerFilter" aria-label="顧客"></select>
+              <input class="filter-input" id="projectSearch" type="search" placeholder="案件名・担当者で検索">
+            </div>
+            <span class="pill blue" id="projectCount">0件</span>
+          </div>
+          <div id="kanbanView" class="kanban"></div>
+          <div id="tableView" class="table-wrap hidden"></div>
+        </section>
+
+        <section class="section" id="drawings">
+          <div class="drawings-layout">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">図面・設計変更一覧</h2>
+                  <p class="panel-sub">Rev、変更理由、承認、関連案件を紐づけて管理</p>
+                </div>
+                <span class="pill blue" id="drawingCount"></span>
+              </div>
+              <div class="table-wrap" id="drawingTable"></div>
+            </div>
+            <aside class="trace-card" id="drawingTrace"></aside>
+          </div>
+        </section>
+
+        <section class="section" id="maintenance">
+          <div class="schedule-layout">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">2026年7月 保守・点検カレンダー</h2>
+                  <p class="panel-sub">治工具メンテ、ロボット年次点検、部品交換を一覧化</p>
+                </div>
+                <span class="pill red">期限超過あり</span>
+              </div>
+              <div class="calendar" id="calendar"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">保守タスク一覧</h2>
+                  <p class="panel-sub">担当者別の期日と緊急度</p>
+                </div>
+              </div>
+              <div class="maintenance-list" id="maintenanceList"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="fairino">
+          <div class="robot-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">FAIRINO ロボット稼働状況</h2>
+                  <p class="panel-sub">顧客サイト別の稼働率、IoT信号、次回保守を確認</p>
+                </div>
+                <div class="filters">
+                  <select class="select" id="robotStatusFilter" aria-label="ロボットステータス"></select>
+                </div>
+              </div>
+              <div class="robot-list" id="robotList"></div>
+            </div>
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">国内在庫・商談</h2>
+                  <p class="panel-sub">販売代理店業務の管理指標</p>
+                </div>
+              </div>
+              <div class="stock-card" id="stockPanel"></div>
+              <div class="lead-box" style="margin-top:16px">
+                <div class="lead-num" id="leadCount">0</div>
+                <p>FAIRINO導入リード。うち3件は実機デモ後の見積準備中。</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="section" id="ai">
+          <div class="ai-grid">
+            <div class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">AI保守予測アラート</h2>
+                  <p class="panel-sub">IoT稼働ログと修理履歴から推定した予兆。最終判断は担当者レビュー。</p>
+                </div>
+                <span class="pill violet">AI推定</span>
+              </div>
+              <div class="alert-list" id="aiAlerts"></div>
+            </div>
+            <aside class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2 class="panel-title">予測モデル監視</h2>
+                  <p class="panel-sub">デモ用の品質指標</p>
+                </div>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">推定対象</div>
+                  <div class="metric-desc">ロボット、治工具、消耗部品、空圧系</div>
+                </div>
+                <span class="pill blue">36設備</span>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">今月の検知</div>
+                  <div class="metric-desc">高リスク2件、中リスク4件、低リスク5件</div>
+                </div>
+                <span class="pill amber">11件</span>
+              </div>
+              <div class="metric-row">
+                <div>
+                  <div class="metric-name">推奨対応の採用率</div>
+                  <div class="metric-desc">保守担当者が承認したアクション比率</div>
+                </div>
+                <span class="pill green">78%</span>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="section" id="customers">
+          <div class="toolbar">
+            <div>
+              <h2 class="panel-title">顧客管理</h2>
+              <p class="panel-sub">航空機、精密機器、自動車部品などの案件状況と対応履歴</p>
+            </div>
+            <span class="pill blue" id="customerCount"></span>
+          </div>
+          <div class="customer-grid" id="customerGrid"></div>
+        </section>
+      </div>
+
+      <footer class="footer">
+        MK1 TECHNOLOGY VIETNAM － オフショア開発パートナー / 業務システムデモ － For YATOMIエンジ株式会社 様 － 社内検討用
+      </footer>
+    </main>
   </div>
-  <div class="bar">
-    <h2>案件ボード</h2>
-    <div class="filter" id="filter">
-      <button data-f="all" class="on">すべて</button>
-      <button data-f="des">治工具設計</button>
-      <button data-f="rep">工具改修</button>
-      <button data-f="rob">ロボット導入</button>
+
+  <div class="modal" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h2 id="modalTitle"></h2>
+          <div class="sheet-sub" id="modalSub"></div>
+        </div>
+        <button class="close" data-close-modal aria-label="閉じる">&times;</button>
+      </div>
+      <div id="modalBody"></div>
     </div>
   </div>
-  <p class="hint">カードをタップすると案件詳細（図面リビジョン・工程・担当・納期）が開きます。</p>
-  <div class="jobs" id="jobs"></div>
-</div>
 
-<!-- MAINT -->
-<div class="wrap hidden" id="view-maint">
-  <div class="bar"><h2>工具改修・保守スケジュール</h2></div>
-  <p class="hint">航空機治工具の定期改修・工具メンテの予定を一覧。期限が近いものは赤で警告します。</p>
-  <div class="jobs" id="maintlist"></div>
-</div>
+  <script>
+    const today = new Date('2026-07-08T09:00:00+09:00');
+    const typeMap = {
+      design: { label:'治工具設計', pill:'blue', className:'design' },
+      repair: { label:'工具改修・保守', pill:'amber', className:'repair' },
+      robot: { label:'協働ロボットSI', pill:'cyan', className:'robot' }
+    };
+    const stageMap = {
+      intake:'見積・要件定義',
+      build:'設計・製作中',
+      delivery:'検収・納品準備'
+    };
+    const projects = [
+      {
+        id:'PJ-2607-041', type:'design', title:'主翼リブ組立用 位置決め治具',
+        customer:'航空機部品メーカーA', owner:'森田', rev:'Rev.C', status:'詳細設計中', stage:'build', due:'2026-07-16', amount:820,
+        progress:62, files:['APJ-041_仕様確認.pdf','JIG-26041-ASSY_RevC.step','検討メモ_20260705.xlsx'],
+        note:'Rev.Cでクランプ干渉を解消。7/12までに顧客承認図へ反映予定。',
+        revs:[['Rev.A','2026-06-12','初版レイアウト'],['Rev.B','2026-06-25','基準ピン位置を変更'],['Rev.C','2026-07-05','クランプ逃げ形状を追加']]
+      },
+      {
+        id:'PJ-2607-012', type:'robot', title:'FAIRINO FR10 接着工程セル導入',
+        customer:'精密機器製造B', owner:'佐藤', rev:'Rev.B', status:'現地調整', stage:'delivery', due:'2026-07-22', amount:1480,
+        progress:78, files:['FR10_セル配置図_RevB.pdf','IOリスト_現地版.xlsx','安全柵仕様書.pdf'],
+        note:'接着剤ディスペンサの吐出信号をPLC側で確認中。立会い検収は7/22予定。',
+        revs:[['Rev.A','2026-05-30','初期セルレイアウト'],['Rev.B','2026-06-28','安全柵と作業者導線を修正']]
+      },
+      {
+        id:'PJ-2607-008', type:'repair', title:'複合材トリム治具 オーバーホール',
+        customer:'航空機装備品D', owner:'田中', rev:'Rev.A', status:'部品待ち', stage:'build', due:'2026-07-10', amount:360,
+        progress:48, files:['分解点検レポート.pdf','交換部品リスト.xlsx','現物写真_0704.zip'],
+        note:'ガイドブッシュ摩耗が想定より大きい。代替部品の納期回答待ち。',
+        revs:[['Rev.A','2026-07-02','摩耗箇所と交換方針を記録']]
+      },
+      {
+        id:'PJ-2607-033', type:'design', title:'胴体パネル検査用 可変支持治具',
+        customer:'航空機組立メーカーC', owner:'山口', rev:'Rev.B', status:'顧客レビュー待ち', stage:'intake', due:'2026-07-18', amount:640,
+        progress:35, files:['要求仕様整理.xlsx','可変支持コンセプト_RevB.pdf'],
+        note:'パネルサイズの追加バリエーションについて顧客確認中。',
+        revs:[['Rev.A','2026-06-18','概念案'],['Rev.B','2026-07-03','支持点を6点から8点へ変更']]
+      },
+      {
+        id:'PJ-2607-019', type:'robot', title:'FR5 ネジ締め補助セル PoC',
+        customer:'自動車部品サプライヤE', owner:'鈴木', rev:'Rev.A', status:'PoC準備', stage:'intake', due:'2026-07-29', amount:520,
+        progress:28, files:['PoC計画書.pdf','ワークサンプル評価.xlsx'],
+        note:'7/15にサンプルワーク受領。トルク管理ログの出力形式を確認する。',
+        revs:[['Rev.A','2026-07-01','PoC範囲定義']]
+      },
+      {
+        id:'PJ-2606-055', type:'repair', title:'穴あけテンプレート治具 定期再校正',
+        customer:'航空機部品メーカーA', owner:'森田', rev:'Rev.D', status:'校正完了', stage:'delivery', due:'2026-07-08', amount:190,
+        progress:92, files:['校正証明書_RevD.pdf','測定結果.csv'],
+        note:'社内検査完了。7/9午前に返却予定。',
+        revs:[['Rev.C','2026-02-14','前回校正'],['Rev.D','2026-07-06','摩耗補正値を更新']]
+      },
+      {
+        id:'PJ-2607-027', type:'design', title:'溶接ポジショナ用 専用チャック',
+        customer:'産業機械メーカーF', owner:'高橋', rev:'Rev.A', status:'材料手配', stage:'build', due:'2026-07-24', amount:430,
+        progress:51, files:['チャック構想図.pdf','材料手配表.xlsx'],
+        note:'焼入れ条件を協力工場と確認済み。3Dモデルは7/11レビュー。',
+        revs:[['Rev.A','2026-06-30','初版設計']]
+      },
+      {
+        id:'PJ-2606-044', type:'robot', title:'FR16 パレタイズ工程 立上げ支援',
+        customer:'食品包装メーカーG', owner:'佐藤', rev:'Rev.C', status:'検収書待ち', stage:'delivery', due:'2026-07-12', amount:1120,
+        progress:88, files:['検収チェックリスト.xlsx','FR16_ティーチングバックアップ.zip'],
+        note:'連続8時間運転は合格。検収書の押印待ち。',
+        revs:[['Rev.A','2026-05-20','標準パターン'],['Rev.B','2026-06-04','段積み高さ変更'],['Rev.C','2026-06-29','速度条件を最適化']]
+      },
+      {
+        id:'PJ-2607-038', type:'repair', title:'リベット治具 クランプユニット交換',
+        customer:'航空機組立メーカーC', owner:'田中', rev:'Rev.B', status:'現地作業予定', stage:'intake', due:'2026-07-14', amount:270,
+        progress:41, files:['現地作業計画.pdf','交換ユニット図_RevB.pdf'],
+        note:'夜間停止枠で作業予定。安全教育記録の提出が必要。',
+        revs:[['Rev.A','2026-06-27','交換方針'],['Rev.B','2026-07-07','作業手順を現地仕様へ変更']]
+      }
+    ];
 
-<!-- ROBOT -->
-<div class="wrap hidden" id="view-robot">
-  <div class="kpis">
-    <div class="kpi teal"><div class="k">導入済 稼働台数</div><div class="v">23<small>台</small></div></div>
-    <div class="kpi"><div class="k">平均 稼働率</div><div class="v">86<small>%</small></div></div>
-    <div class="kpi amber"><div class="k">要点検（近日）</div><div class="v">3<small>台</small></div></div>
-    <div class="kpi ok"><div class="k">代理店 在庫</div><div class="v">6<small>台</small></div></div>
-  </div>
-  <div class="bar"><h2>FAIRINO 協働ロボット 稼働モニタ</h2></div>
-  <p class="hint">代理店として納入した協働ロボットの稼働率・次回点検を集約（IoT稼働ログ連携を想定）。</p>
-  <div class="rob" id="roblist"></div>
-</div>
+    const drawings = [
+      {
+        no:'JIG-26041-ASSY', name:'主翼リブ組立用 位置決め治具 組立図', rev:'Rev.C', reason:'クランプ干渉回避と基準ピン逃げ追加', approval:'承認待ち', project:'PJ-2607-041', trace:'設計レビューDR-14 → 顧客コメントYAT-22 → Rev.C反映',
+        history:[['Rev.A','2026-06-12','初版作成','山口'],['Rev.B','2026-06-25','基準ピン位置変更','森田'],['Rev.C','2026-07-05','クランプ逃げ追加','森田']]
+      },
+      {
+        no:'FR10-CELL-LAY', name:'FR10 接着工程セル レイアウト', rev:'Rev.B', reason:'安全柵と作業者導線の見直し', approval:'承認済', project:'PJ-2607-012', trace:'リスクアセスメントRA-06 → 安全柵仕様更新',
+        history:[['Rev.A','2026-05-30','初期レイアウト','佐藤'],['Rev.B','2026-06-28','安全柵を拡張','佐藤']]
+      },
+      {
+        no:'TRIM-OVH-CHK', name:'複合材トリム治具 点検図', rev:'Rev.A', reason:'摩耗箇所の交換基準を追加', approval:'社内確認中', project:'PJ-2607-008', trace:'現物測定LOG-178 → 交換部品リストへ転記',
+        history:[['Rev.A','2026-07-02','オーバーホール点検図作成','田中']]
+      },
+      {
+        no:'PANEL-VS-001', name:'胴体パネル 可変支持治具 構想図', rev:'Rev.B', reason:'支持点数変更と幅調整機構追加', approval:'顧客確認中', project:'PJ-2607-033', trace:'仕様質問Q-31 → 顧客回答待ち',
+        history:[['Rev.A','2026-06-18','概念案','山口'],['Rev.B','2026-07-03','支持点を8点化','山口']]
+      },
+      {
+        no:'SCREW-FR5-POC', name:'FR5 ネジ締めPoC セル図', rev:'Rev.A', reason:'PoC範囲の明確化', approval:'作成中', project:'PJ-2607-019', trace:'営業ヒアリング → 技術検証タスクへ展開',
+        history:[['Rev.A','2026-07-01','PoC初版','鈴木']]
+      },
+      {
+        no:'DRILL-TMP-CAL', name:'穴あけテンプレート治具 校正記録図', rev:'Rev.D', reason:'摩耗補正値更新', approval:'承認済', project:'PJ-2606-055', trace:'測定結果CSV → 校正証明書Rev.D',
+        history:[['Rev.B','2025-09-18','前年度校正','森田'],['Rev.C','2026-02-14','半期校正','森田'],['Rev.D','2026-07-06','摩耗補正値更新','森田']]
+      },
+      {
+        no:'WELD-CHK-020', name:'溶接ポジショナ専用チャック 部品図', rev:'Rev.A', reason:'初回部品図作成', approval:'社内確認中', project:'PJ-2607-027', trace:'構想レビュー → 材料手配表と連携',
+        history:[['Rev.A','2026-06-30','初回部品図','高橋']]
+      }
+    ];
 
-<div class="footer">MK1 TECHNOLOGY VIETNAM ／ 治工具・ロボット 案件／保守 管理 実機デモ ／ For YATOMIエンジ株式会社 御中 — 参考構成</div>
+    const maintenance = [
+      { date:'2026-07-06', title:'FR3 外観検査・グリス確認', target:'電子部品工場H / FR3-24-018', owner:'鈴木', urgency:'overdue', status:'期限超過' },
+      { date:'2026-07-08', title:'穴あけテンプレート治具 返却前検査', target:'航空機部品メーカーA', owner:'森田', urgency:'today', status:'本日' },
+      { date:'2026-07-10', title:'複合材トリム治具 ブッシュ交換', target:'航空機装備品D', owner:'田中', urgency:'high', status:'高' },
+      { date:'2026-07-12', title:'FR16 パレタイズ連続運転ログ確認', target:'食品包装メーカーG', owner:'佐藤', urgency:'high', status:'高' },
+      { date:'2026-07-14', title:'リベット治具 現地クランプ交換', target:'航空機組立メーカーC', owner:'田中', urgency:'high', status:'高' },
+      { date:'2026-07-18', title:'可変支持治具 顧客レビュー回答期限', target:'航空機組立メーカーC', owner:'山口', urgency:'mid', status:'中' },
+      { date:'2026-07-22', title:'FR10 接着セル 立会い検収', target:'精密機器製造B', owner:'佐藤', urgency:'mid', status:'中' },
+      { date:'2026-07-29', title:'FR5 PoC サンプル試験', target:'自動車部品サプライヤE', owner:'鈴木', urgency:'low', status:'通常' }
+    ];
 
-<!-- MODAL -->
-<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+    const robots = [
+      { id:'FR3-24-018', model:'FR3', site:'電子部品工場H', process:'検査治具へのワーク搬送', utilization:64, status:'注意', next:'2026-07-06', spark:[42,48,46,52,57,55,51,64,60,63] },
+      { id:'FR5-25-004', model:'FR5', site:'自動車部品サプライヤE', process:'ネジ締めPoC', utilization:37, status:'準備中', next:'2026-07-29', spark:[12,18,24,30,28,32,35,34,36,37] },
+      { id:'FR10-25-012', model:'FR10', site:'精密機器製造B', process:'接着剤ディスペンス', utilization:82, status:'稼働中', next:'2026-07-22', spark:[68,71,73,76,72,78,80,79,81,82] },
+      { id:'FR16-24-031', model:'FR16', site:'食品包装メーカーG', process:'パレタイズ', utilization:91, status:'稼働中', next:'2026-07-12', spark:[84,86,87,88,90,89,92,91,93,91] },
+      { id:'FR5-24-022', model:'FR5', site:'産業機械メーカーF', process:'溶接前ハンドリング', utilization:58, status:'保守中', next:'2026-07-17', spark:[62,60,59,55,50,48,52,57,58,58] }
+    ];
 
-<script>
-const JOBS = [
-  {id:"J-2418",type:"des",title:"主翼リブ 治具 新規設計",cust:"航空機メーカーA（機体構造）",cat:"治工具設計",rev:"Rev.C",due:2,status:"prog",owner:"設計 3名 / BrSE 1名",note:"3D-CAD（CATIA）データ受領済。公差検討中。",step:2},
-  {id:"J-2416",type:"rep",title:"組立治具 工具改修メンテ",cust:"航空機メーカーA（艤装ライン）",cat:"工具改修",rev:"Rev.F",due:1,status:"due",owner:"改修 2名",note:"摩耗ピン交換＋位置決め再調整。ライン停止前に完了要。",step:1},
-  {id:"J-2414",type:"rob",title:"協働ロボット 搬送セル導入",cust:"自動車部品メーカーB",cat:"ロボット導入",rev:"—",due:9,status:"prog",owner:"SIer 2名 / PLC 1名",note:"FAIRINO FR5 ×2。安全柵レス・力覚センサ構成。ティーチング工程。",step:3},
-  {id:"J-2411",type:"des",title:"検査治具（画像計測）設計",cust:"精密部品メーカーC",cat:"治工具設計",rev:"Rev.A",due:6,status:"wait",owner:"設計 1名",note:"客先仕様待ち（測定点定義）。",step:1},
-  {id:"J-2409",type:"rob",title:"パレタイズ ロボット 立上げ",cust:"食品機械メーカーD",cat:"ロボット導入",rev:"—",due:12,status:"prog",owner:"SIer 1名",note:"FAIRINO FR10。ハンド選定・サイクルタイム検証。",step:2},
-  {id:"J-2405",type:"rep",title:"航空機 位置決め治具 定期改修",cust:"航空機メーカーA",cat:"工具改修",rev:"Rev.D",due:15,status:"prog",owner:"改修 1名",note:"年次点検。基準面再研磨・トレーサビリティ記録。",step:2},
-  {id:"J-2402",type:"des",title:"溶接治具 設計＋強度検証",cust:"重工メーカーE",cat:"治工具設計",rev:"Rev.B",due:-1,status:"done",owner:"設計 2名",note:"納品完了。図面一式・検査成績書提出済。",step:4},
-];
-const STEPS=["受注","設計/準備","製作/改修","検査/納品"];
-const TICO={des:"📐",rep:"🔧",rob:"🤖"};
-const BADGE={des:["b-des","治工具設計"],rep:["b-rep","工具改修"],rob:["b-rob","ロボット導入"]};
-const STLAB={prog:["s-prog","進行中"],wait:["s-wait","仕様待ち"],done:["s-done","納品済"],due:["s-due","納期直前"]};
+    const stock = [
+      ['FR3', 2], ['FR5', 4], ['FR10', 1], ['FR16', 1]
+    ];
 
-function dueLabel(d){
-  if(d<0)return {t:"完了",c:""};
-  if(d===0)return {t:"本日納期",c:"soon"};
-  if(d<=2)return {t:"あと"+d+"日",c:"soon"};
-  return {t:"あと"+d+"日",c:""};
-}
-let filter="all";
-function renderJobs(){
-  const box=document.getElementById("jobs");
-  const list=JOBS.filter(j=>filter==="all"||j.type===filter);
-  box.innerHTML=list.map(j=>{
-    const b=BADGE[j.type],s=STLAB[j.status],dl=dueLabel(j.due);
-    return `<div class="job" data-id="${j.id}">
-      <div class="tico">${TICO[j.type]}</div>
-      <div><div class="jt">${j.title}</div>
-        <div class="jm">${j.id} ・ ${j.cust} ・ ${j.rev}</div>
-        <span class="st ${s[0]}">● ${s[1]}</span></div>
-      <div class="jr"><span class="badge ${b[0]}">${b[1]}</span>
-        <div class="due ${dl.c}">${dl.t}</div></div>
-    </div>`;}).join("");
-  box.querySelectorAll(".job").forEach(el=>el.onclick=()=>openJob(el.dataset.id));
-}
-function openJob(id){
-  const j=JOBS.find(x=>x.id===id);const s=STLAB[j.status];
-  const stepsHtml=STEPS.map((st,i)=>{
-    const cls=i<j.step?"done":i===j.step?"cur":"";
-    return `<div class="step ${cls}"><div class="dot">${i<j.step?"✓":i+1}</div>${st}</div>`;}).join("");
-  document.getElementById("sheet").innerHTML=
-    `<button class="close" onclick="closeModal()">×</button>
-     <h3>${j.title}</h3>
-     <span class="badge ${BADGE[j.type][0]}">${BADGE[j.type][1]}</span>
-     <span class="st ${s[0]}" style="margin-left:8px">● ${s[1]}</span>
-     <div class="steps">${stepsHtml}</div>
-     <table>
-       <tr><td>案件番号</td><td>${j.id}</td></tr>
-       <tr><td>顧客</td><td>${j.cust}</td></tr>
-       <tr><td>図面リビジョン</td><td>${j.rev}</td></tr>
-       <tr><td>担当体制</td><td>${j.owner}</td></tr>
-       <tr><td>納期</td><td>${dueLabel(j.due).t}</td></tr>
-       <tr><td>メモ</td><td>${j.note}</td></tr>
-     </table>
-     <p class="hint">※ デモ用サンプルデータ。図面/CADファイル・工程・改修履歴・トレーサビリティを一元管理する想定です。</p>`;
-  document.getElementById("modal").classList.add("on");
-}
-function closeModal(){document.getElementById("modal").classList.remove("on");}
-document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal();};
-document.querySelectorAll("#filter button").forEach(b=>b.onclick=()=>{
-  filter=b.dataset.f;document.querySelectorAll("#filter button").forEach(x=>x.classList.remove("on"));b.classList.add("on");renderJobs();});
+    const aiAlerts = [
+      { id:'AI-01', risk:'high', title:'FR3-24-018 第2軸グリス劣化の可能性', target:'電子部品工場H / FR3', confidence:86, recommended:'7/10までにグリス確認と温度ログ再取得', cause:'第2軸温度が直近10日で平均+6.8℃。低速時の電流値も上昇。' },
+      { id:'AI-02', risk:'high', title:'複合材トリム治具 ガイドブッシュ摩耗進行', target:'航空機装備品D', confidence:81, recommended:'交換部品を前倒し手配し、作業枠を2時間追加', cause:'過去3回の測定値から摩耗速度が基準比1.4倍。' },
+      { id:'AI-03', risk:'mid', title:'FR16 パレタイズ吸着パッド交換時期', target:'食品包装メーカーG / FR16', confidence:73, recommended:'検収前に予備パッドへ交換し、リーク率を確認', cause:'真空到達時間が6月末から緩やかに増加。' },
+      { id:'AI-04', risk:'low', title:'穴あけテンプレート治具 次回再校正候補', target:'航空機部品メーカーA', confidence:61, recommended:'11月の定期校正枠を仮押さえ', cause:'今回の補正値は許容内。長期傾向のみ監視。' }
+    ];
 
-function renderMaint(){
-  const M=JOBS.filter(j=>j.type==="rep").concat([
-    {id:"M-118",title:"航空機 ドリル治具 校正",cust:"航空機メーカーA",due:3,note:"校正周期到来。基準ゲージ照合。"},
-    {id:"M-121",title:"締結トルク工具 定期点検",cust:"社内 工具室",due:8,note:"トルクレンチ 12本 一括点検・記録更新。"},
-  ]);
-  document.getElementById("maintlist").innerHTML=M.map(j=>{
-    const dl=dueLabel(j.due);
-    return `<div class="job"><div class="tico">🔧</div>
-      <div><div class="jt">${j.title}</div><div class="jm">${j.id} ・ ${j.cust}${j.note?" ・ "+j.note:""}</div></div>
-      <div class="jr"><div class="due ${dl.c}">${dl.t}</div></div></div>`;}).join("");
-}
-function renderRobots(){
-  const R=[
-    {n:"FAIRINO FR5 #A-01",d:"自動車部品B ／ 搬送セル",u:92,next:"点検 12日後"},
-    {n:"FAIRINO FR5 #A-02",d:"自動車部品B ／ 搬送セル",u:88,next:"点検 12日後"},
-    {n:"FAIRINO FR10 #D-01",d:"食品機械D ／ パレタイズ",u:74,next:"点検 3日後"},
-    {n:"FAIRINO FR3 #C-05",d:"精密部品C ／ 検査補助",u:95,next:"正常"},
-    {n:"FAIRINO FR16 #E-02",d:"重工E ／ 溶接補助",u:61,next:"要点検（近日）"},
-  ];
-  document.getElementById("roblist").innerHTML=R.map(r=>{
-    const col=r.u>=85?"var(--ok)":r.u>=70?"var(--amber)":"var(--danger)";
-    return `<div class="robrow">
-      <div><div class="rn">${r.n}</div><div class="rd">${r.d} ・ ${r.next}</div></div>
-      <div class="gauge"><div class="track"><div class="fill" style="width:${r.u}%;background:${col}"></div></div><div class="lab">稼働 ${r.u}%</div></div>
-    </div>`;}).join("");
-}
-document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
-  const v=b.dataset.v;
-  document.getElementById("view-board").classList.toggle("hidden",v!=="board");
-  document.getElementById("view-maint").classList.toggle("hidden",v!=="maint");
-  document.getElementById("view-robot").classList.toggle("hidden",v!=="robot");
-  if(v==="maint")renderMaint();if(v==="robot")renderRobots();
-});
-renderJobs();
-</script>
+    const customers = [
+      { name:'航空機部品メーカーA', sector:'航空機構造部品', active:2, revenue:1010, robots:0, owner:'森田', history:['2026-07-08 校正証明書を共有','2026-07-05 主翼リブ治具 Rev.C コメント受領','2026-06-28 次期治具標準化の相談'] },
+      { name:'精密機器製造B', sector:'電子・精密組立', active:1, revenue:1480, robots:1, owner:'佐藤', history:['2026-07-07 FR10現地IO確認','2026-06-28 安全柵仕様を承認','2026-06-12 接着工程セルの現地調査'] },
+      { name:'航空機組立メーカーC', sector:'航空機最終組立', active:2, revenue:910, robots:0, owner:'山口', history:['2026-07-07 リベット治具作業枠を確定','2026-07-03 可変支持治具 Rev.B提出','2026-06-18 パネルサイズ追加相談'] },
+      { name:'航空機装備品D', sector:'航空機内装・装備品', active:1, revenue:360, robots:0, owner:'田中', history:['2026-07-04 現物写真と測定ログ受領','2026-07-02 点検図Rev.A作成','2026-06-30 緊急オーバーホール依頼'] },
+      { name:'自動車部品サプライヤE', sector:'自動車部品', active:1, revenue:520, robots:1, owner:'鈴木', history:['2026-07-01 FR5 PoC計画書提出','2026-06-24 ネジ締め条件ヒアリング','2026-06-10 FAIRINO実機デモ実施'] },
+      { name:'食品包装メーカーG', sector:'食品包装ライン', active:1, revenue:1120, robots:1, owner:'佐藤', history:['2026-07-06 連続運転ログを確認','2026-06-29 FR16速度条件を最適化','2026-05-20 パレタイズ工程の現地調査'] }
+    ];
+
+    const $ = (selector, root=document) => root.querySelector(selector);
+    const $$ = (selector, root=document) => [...root.querySelectorAll(selector)];
+
+    function fmtDate(dateStr){
+      const d = new Date(dateStr + 'T00:00:00+09:00');
+      return `${d.getMonth()+1}/${d.getDate()}`;
+    }
+    function daysUntil(dateStr){
+      const target = new Date(dateStr + 'T00:00:00+09:00');
+      const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      return Math.round((target - base) / 86400000);
+    }
+    function dueText(dateStr){
+      const diff = daysUntil(dateStr);
+      if(diff < 0) return `${Math.abs(diff)}日超過`;
+      if(diff === 0) return '本日';
+      return `あと${diff}日`;
+    }
+    function pill(text, tone='blue'){
+      return `<span class="pill ${tone}">${text}</span>`;
+    }
+    function typePill(type){
+      return pill(typeMap[type].label, typeMap[type].pill);
+    }
+    function statusTone(status){
+      if(['期限超過','要確認','注意'].includes(status)) return 'red';
+      if(['部品待ち','現地調整','顧客レビュー待ち','準備中','保守中'].some(s => status.includes(s))) return 'amber';
+      if(['校正完了','稼働中','承認済'].includes(status)) return 'green';
+      return 'blue';
+    }
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function renderDashboard(){
+      const activeProjects = projects.filter(p => p.stage !== 'delivery' || daysUntil(p.due) >= 0).length;
+      const urgentCount = [...projects, ...maintenance].filter(item => daysUntil(item.due || item.date) <= 3).length;
+      const totalAmount = projects.reduce((sum,p) => sum + p.amount, 0);
+      const openDrawings = drawings.filter(d => d.approval !== '承認済').length;
+      const robotRunning = robots.filter(r => r.status === '稼働中').length;
+      const aiHigh = aiAlerts.filter(a => a.risk === 'high').length;
+      const kpis = [
+        ['進行中案件', activeProjects, '件', '+3 今月着手', 'blue'],
+        ['売上見込', (totalAmount/1000).toFixed(1), '百万円', '+12% 前月比', 'green'],
+        ['納期注意', urgentCount, '件', '3日以内/超過', 'red'],
+        ['未承認図面', openDrawings, '枚', 'Rev確認待ち', 'amber'],
+        ['FAIRINO稼働', robotRunning, '台', `${robots.length}台管理中`, 'cyan'],
+        ['AI高リスク', aiHigh, '件', '担当者確認要', 'violet']
+      ];
+      $('#kpiGrid').innerHTML = kpis.map(([label,value,unit,note,tone]) => `
+        <article class="kpi ${tone}">
+          <div class="kpi-label">${label}</div>
+          <div class="kpi-value">${value}<small>${unit}</small></div>
+          <div class="kpi-note"><span class="${tone === 'red' ? 'trend-down' : 'trend-up'}">${tone === 'red' ? '●' : '▲'}</span>${note}</div>
+        </article>`).join('');
+      renderDonut();
+      renderBarChart();
+      const items = [
+        ['承認','主翼リブ治具 Rev.C のクランプ逃げ形状を顧客へ確認','PJ-2607-041 / 森田','red'],
+        ['保守','FR3 第2軸グリス確認。AI予測が高リスクを検知','電子部品工場H / 鈴木','amber'],
+        ['検収','FR16 パレタイズ工程の8時間連続ログを検収書へ添付','PJ-2606-044 / 佐藤','green'],
+        ['調整','複合材トリム治具の代替ブッシュ納期回答を追跡','PJ-2607-008 / 田中','red']
+      ];
+      $('#todayList').innerHTML = items.map(([icon,title,meta,tone]) => `
+        <div class="activity">
+          <div class="activity-icon">${icon.slice(0,1)}</div>
+          <div>
+            <div class="activity-title">${title}</div>
+            <div class="activity-meta">${meta}</div>
+          </div>
+          ${pill(tone === 'red' ? '急ぎ' : tone === 'amber' ? '確認' : '完了前', tone)}
+        </div>`).join('');
+    }
+
+    function renderDonut(){
+      const counts = ['design','repair','robot'].map(type => ({
+        type,
+        label:typeMap[type].label,
+        value:projects.filter(p => p.type === type).length,
+        color:type === 'design' ? '#2b6ca3' : type === 'repair' ? '#c07a1a' : '#0f8f9b'
+      }));
+      const total = counts.reduce((s,c) => s + c.value, 0);
+      const radius = 70;
+      const circumference = 2 * Math.PI * radius;
+      let offset = 0;
+      const segments = counts.map(c => {
+        const length = circumference * (c.value / total);
+        const seg = `<circle cx="95" cy="95" r="${radius}" fill="none" stroke="${c.color}" stroke-width="22" stroke-dasharray="${length} ${circumference - length}" stroke-dashoffset="${-offset}" transform="rotate(-90 95 95)" stroke-linecap="round"/>`;
+        offset += length;
+        return seg;
+      }).join('');
+      $('#donutChart').innerHTML = `
+        <svg viewBox="0 0 190 190" width="190" height="190" role="img" aria-label="案件カテゴリ別ドーナツチャート">
+          <circle cx="95" cy="95" r="${radius}" fill="none" stroke="#edf2f7" stroke-width="22"/>
+          ${segments}
+          <text class="svg-text" x="95" y="90" text-anchor="middle" font-size="28" font-weight="850" fill="#1c2530">${total}</text>
+          <text class="svg-text" x="95" y="112" text-anchor="middle" font-size="12" font-weight="750" fill="#637183">進行案件</text>
+        </svg>`;
+      $('#donutLegend').innerHTML = counts.map(c => `
+        <div class="legend-item">
+          <span class="legend-left"><span class="swatch" style="background:${c.color}"></span>${c.label}</span>
+          <strong>${c.value}件</strong>
+        </div>`).join('');
+    }
+
+    function renderBarChart(){
+      const months = [
+        ['2月', 38, 1], ['3月', 44, 2], ['4月', 41, 2], ['5月', 52, 3], ['6月', 57, 4], ['7月', 63, 5]
+      ];
+      const max = 70;
+      const bars = months.map((m,i) => {
+        const x = 38 + i * 62;
+        const h = Math.round((m[1] / max) * 138);
+        const y = 170 - h;
+        const riskY = 170 - (m[2] * 18);
+        return `
+          <rect x="${x}" y="${y}" width="32" height="${h}" rx="8" fill="${i === months.length-1 ? '#2b6ca3' : '#cfe0ef'}"/>
+          <circle cx="${x+16}" cy="${riskY}" r="5" fill="#d74242"/>
+          <text class="svg-text" x="${x+16}" y="198" text-anchor="middle" font-size="11" font-weight="750" fill="#637183">${m[0]}</text>`;
+      }).join('');
+      const linePoints = months.map((m,i) => {
+        const x = 54 + i * 62;
+        const y = 170 - (m[2] * 18);
+        return `${x},${y}`;
+      }).join(' ');
+      $('#barChart').innerHTML = `
+        <svg viewBox="0 0 420 220" width="100%" height="240" role="img" aria-label="売上見込と納期リスクの棒グラフ">
+          <line x1="30" y1="170" x2="390" y2="170" stroke="#dfe7ef"/>
+          <line x1="30" y1="124" x2="390" y2="124" stroke="#edf2f7"/>
+          <line x1="30" y1="78" x2="390" y2="78" stroke="#edf2f7"/>
+          <line x1="30" y1="32" x2="390" y2="32" stroke="#edf2f7"/>
+          ${bars}
+          <polyline points="${linePoints}" fill="none" stroke="#d74242" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text class="svg-text" x="34" y="22" font-size="11" font-weight="750" fill="#637183">売上見込（百万円）</text>
+          <text class="svg-text" x="252" y="22" font-size="11" font-weight="750" fill="#d74242">● 納期リスク件数</text>
+        </svg>`;
+    }
+
+    function initProjectFilters(){
+      $('#typeFilter').innerHTML = `<option value="all">全種別</option>` + Object.entries(typeMap).map(([key,val]) => `<option value="${key}">${val.label}</option>`).join('');
+      const customersList = [...new Set(projects.map(p => p.customer))].sort();
+      $('#customerFilter').innerHTML = `<option value="all">全顧客</option>` + customersList.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      ['typeFilter','customerFilter','projectSearch','globalSearch'].forEach(id => {
+        const el = $('#' + id);
+        el.addEventListener(id.includes('Search') ? 'input' : 'change', renderProjects);
+      });
+      $$('[data-project-view]').forEach(btn => btn.addEventListener('click', () => {
+        $$('[data-project-view]').forEach(b => b.classList.toggle('active', b === btn));
+        const view = btn.dataset.projectView;
+        $('#kanbanView').classList.toggle('hidden', view !== 'kanban');
+        $('#tableView').classList.toggle('hidden', view !== 'table');
+      }));
+    }
+
+    function getProjectFilterText(){
+      return `${$('#projectSearch').value} ${$('#globalSearch').value}`.trim().toLowerCase();
+    }
+    function filteredProjects(){
+      const type = $('#typeFilter').value;
+      const customer = $('#customerFilter').value;
+      const q = getProjectFilterText();
+      return projects.filter(p => {
+        const hay = `${p.id} ${p.title} ${p.customer} ${p.owner} ${p.status} ${typeMap[p.type].label}`.toLowerCase();
+        return (type === 'all' || p.type === type) && (customer === 'all' || p.customer === customer) && (!q || hay.includes(q));
+      });
+    }
+    function renderProjects(){
+      const rows = filteredProjects();
+      $('#projectCount').textContent = `${rows.length}件`;
+      renderKanban(rows);
+      renderProjectTable(rows);
+    }
+    function renderKanban(rows){
+      const stages = ['intake','build','delivery'];
+      $('#kanbanView').innerHTML = stages.map(stage => {
+        const items = rows.filter(p => p.stage === stage);
+        return `
+          <section class="kanban-col">
+            <div class="col-head"><div class="col-title">${stageMap[stage]}</div><div class="count-badge">${items.length}</div></div>
+            ${items.length ? items.map(projectCard).join('') : `<div class="empty"><strong>該当案件なし</strong>条件を変更すると表示されます</div>`}
+          </section>`;
+      }).join('');
+      $$('.project-card').forEach(card => card.addEventListener('click', () => openProjectModal(card.dataset.id)));
+    }
+    function projectCard(p){
+      const diff = daysUntil(p.due);
+      return `
+        <article class="project-card ${typeMap[p.type].className}" data-id="${p.id}" tabindex="0" role="button" aria-label="${escapeHtml(p.title)}">
+          ${typePill(p.type)}
+          <div class="title">${escapeHtml(p.title)}</div>
+          <div class="card-meta">
+            <div class="meta-line"><span>顧客</span><strong>${escapeHtml(p.customer)}</strong></div>
+            <div class="meta-line"><span>図面</span><strong>${p.rev}</strong></div>
+            <div class="meta-line"><span>状態</span><strong>${escapeHtml(p.status)}</strong></div>
+            <div class="meta-line"><span>期限</span><strong class="${diff <= 3 ? 'urgent' : ''}">${fmtDate(p.due)} ${dueText(p.due)}</strong></div>
+          </div>
+          <div class="owner-line">
+            <span class="owner"><span class="mini-avatar">${p.owner.slice(0,1)}</span>${p.owner}</span>
+            <span class="pill ${statusTone(p.status)}">${p.progress}%</span>
+          </div>
+        </article>`;
+    }
+    function renderProjectTable(rows){
+      $('#tableView').innerHTML = `
+        <table>
+          <thead><tr><th>案件ID</th><th>案件名</th><th>種別</th><th>顧客</th><th>Rev</th><th>状態</th><th>期限</th><th>担当</th><th>見込</th></tr></thead>
+          <tbody>
+            ${rows.map(p => `<tr class="click-row" data-id="${p.id}">
+              <td><strong>${p.id}</strong></td><td>${escapeHtml(p.title)}</td><td>${typePill(p.type)}</td><td>${escapeHtml(p.customer)}</td>
+              <td>${p.rev}</td><td>${pill(p.status,statusTone(p.status))}</td><td class="${daysUntil(p.due) <= 3 ? 'urgent' : ''}">${fmtDate(p.due)} ${dueText(p.due)}</td>
+              <td>${p.owner}</td><td>${p.amount}万円</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+      $$('#tableView .click-row').forEach(row => row.addEventListener('click', () => openProjectModal(row.dataset.id)));
+    }
+    function openProjectModal(id){
+      const p = projects.find(item => item.id === id);
+      if(!p) return;
+      $('#modalTitle').textContent = p.title;
+      $('#modalSub').textContent = `${p.id} / ${p.customer} / ${typeMap[p.type].label}`;
+      const steps = ['要件確認','設計','製作・実装','検査','納品・保守'];
+      const currentIndex = Math.min(4, Math.max(0, Math.floor(p.progress / 22)));
+      $('#modalBody').innerHTML = `
+        <div class="stepper">
+          ${steps.map((s,i) => `<div class="step ${i < currentIndex ? 'done' : i === currentIndex ? 'current' : ''}"><span>${i+1}</span><strong>${s}</strong></div>`).join('')}
+        </div>
+        <div class="modal-grid">
+          <div class="info-box">
+            <h3>案件情報</h3>
+            <div class="def-list">
+              <div class="def-row"><span>担当者</span><strong>${p.owner}</strong></div>
+              <div class="def-row"><span>期限</span><strong class="${daysUntil(p.due) <= 3 ? 'urgent' : ''}">${p.due}（${dueText(p.due)}）</strong></div>
+              <div class="def-row"><span>ステータス</span><strong>${p.status}</strong></div>
+              <div class="def-row"><span>見込金額</span><strong>${p.amount}万円</strong></div>
+            </div>
+          </div>
+          <div class="info-box">
+            <h3>図面Rev履歴</h3>
+            <div class="history">
+              ${p.revs.map(r => `<div class="hist-item"><div class="hist-title">${r[0]} / ${r[1]}</div><div class="hist-meta">${r[2]}</div></div>`).join('')}
+            </div>
+          </div>
+          <div class="info-box">
+            <h3>添付ファイル</h3>
+            <div class="files">${p.files.map(f => `<span class="file-chip">□ ${escapeHtml(f)}</span>`).join('')}</div>
+          </div>
+          <div class="info-box">
+            <h3>メモ</h3>
+            <div class="hist-meta">${escapeHtml(p.note)}</div>
+          </div>
+        </div>`;
+      $('#projectModal').classList.add('open');
+    }
+
+    function renderDrawings(){
+      $('#drawingCount').textContent = `${drawings.length}枚`;
+      $('#drawingTable').innerHTML = `
+        <table>
+          <thead><tr><th>図番</th><th>図面名</th><th>Rev</th><th>変更理由</th><th>承認</th><th>関連案件</th></tr></thead>
+          <tbody>
+            ${drawings.map((d,i) => `<tr class="click-row" data-index="${i}">
+              <td><strong>${d.no}</strong></td><td>${escapeHtml(d.name)}</td><td>${d.rev}</td><td>${escapeHtml(d.reason)}</td>
+              <td>${pill(d.approval,statusTone(d.approval))}</td><td>${d.project}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+      $$('#drawingTable .click-row').forEach(row => row.addEventListener('click', () => renderDrawingTrace(Number(row.dataset.index))));
+      renderDrawingTrace(0);
+    }
+    function renderDrawingTrace(index){
+      const d = drawings[index];
+      $('#drawingTrace').innerHTML = `
+        <h3>${escapeHtml(d.name)}</h3>
+        <div class="def-list" style="margin-bottom:14px">
+          <div class="def-row"><span>図番</span><strong>${d.no}</strong></div>
+          <div class="def-row"><span>現Rev</span><strong>${d.rev}</strong></div>
+          <div class="def-row"><span>関連案件</span><strong>${d.project}</strong></div>
+        </div>
+        <div class="info-box" style="background:#fff;margin-bottom:14px">
+          <h3>設計変更トレース</h3>
+          <div class="hist-meta">${escapeHtml(d.trace)}</div>
+        </div>
+        <div class="history">
+          ${d.history.map(item => `<div class="hist-item"><div class="hist-title">${item[0]} / ${item[1]}</div><div class="hist-meta">${escapeHtml(item[2])}<br>作成・確認: ${item[3]}</div></div>`).join('')}
+        </div>`;
+    }
+
+    function renderCalendar(){
+      const weekdays = ['月','火','水','木','金','土','日'];
+      const eventsByDay = maintenance.reduce((acc,m) => {
+        const day = Number(m.date.slice(-2));
+        (acc[day] ||= []).push(m);
+        return acc;
+      }, {});
+      let html = weekdays.map(w => `<div class="weekday">${w}</div>`).join('');
+      const firstPadding = 2; // 2026-07-01 is Wednesday when Monday starts the week.
+      for(let i=0; i<firstPadding; i++) html += `<div class="day muted"></div>`;
+      for(let day=1; day<=31; day++){
+        const items = eventsByDay[day] || [];
+        const isToday = day === 8;
+        html += `<div class="day ${isToday ? 'today' : ''}">
+          <div class="day-num">${day}</div>
+          ${items.map(m => `<div class="cal-event ${m.urgency === 'overdue' || m.urgency === 'high' ? 'danger' : m.urgency === 'mid' ? 'warn' : m.urgency === 'today' ? 'done' : ''}">${escapeHtml(m.title)}</div>`).join('')}
+        </div>`;
+      }
+      $('#calendar').innerHTML = html;
+      $('#maintenanceList').innerHTML = maintenance.map(m => {
+        const overdue = daysUntil(m.date) < 0;
+        const tone = overdue || m.urgency === 'high' ? 'red' : m.urgency === 'mid' ? 'amber' : m.urgency === 'today' ? 'green' : 'blue';
+        return `<article class="maintenance-item ${overdue ? 'overdue' : ''}">
+          <div>
+            <div class="maintenance-title">${escapeHtml(m.title)}</div>
+            <div class="maintenance-meta">${m.date} / ${escapeHtml(m.target)}<br>担当: ${m.owner}</div>
+          </div>
+          ${pill(overdue ? '期限超過' : m.status, tone)}
+        </article>`;
+      }).join('');
+    }
+
+    function initRobotFilters(){
+      const statuses = ['全ステータス', ...new Set(robots.map(r => r.status))];
+      $('#robotStatusFilter').innerHTML = statuses.map(s => `<option value="${s}">${s}</option>`).join('');
+      $('#robotStatusFilter').addEventListener('change', renderRobots);
+    }
+    function renderRobots(){
+      const filter = $('#robotStatusFilter').value;
+      const rows = robots.filter(r => filter === '全ステータス' || r.status === filter);
+      $('#robotList').innerHTML = rows.map(r => {
+        const tone = r.status === '稼働中' ? 'green' : r.status === '注意' ? 'red' : r.status === '保守中' ? 'amber' : 'blue';
+        return `<article class="robot-card">
+          <div>
+            <div class="robot-name">${r.model} / ${r.id}</div>
+            <div class="robot-meta">${escapeHtml(r.site)}<br>${escapeHtml(r.process)}<br>次回点検: ${r.next}</div>
+          </div>
+          <div class="gauge">
+            <div class="gauge-label"><span>稼働率</span><strong>${r.utilization}%</strong></div>
+            <div class="gauge-bar"><div class="gauge-fill" style="width:${r.utilization}%"></div></div>
+          </div>
+          <div class="spark">${sparkline(r.spark)}</div>
+          ${pill(r.status,tone)}
+        </article>`;
+      }).join('') || `<div class="empty"><strong>対象ロボットなし</strong>ステータス条件を変更してください</div>`;
+      $('#stockPanel').innerHTML = stock.map(([model,num]) => `<div class="stock-row"><div class="stock-model">${model}</div><div class="stock-num">${num}</div></div>`).join('');
+      $('#leadCount').textContent = '12';
+    }
+    function sparkline(values){
+      const w = 148, h = 46, pad = 6;
+      const min = Math.min(...values), max = Math.max(...values);
+      const range = max - min || 1;
+      const pts = values.map((v,i) => {
+        const x = pad + i * ((w - pad*2) / (values.length - 1));
+        const y = h - pad - ((v - min) / range) * (h - pad*2);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="IoT稼働スパークライン">
+        <path d="M${pad} ${h-pad}H${w-pad}" stroke="#edf2f7"/>
+        <polyline points="${pts}" fill="none" stroke="#0f8f9b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="${pts.split(' ').at(-1).split(',')[0]}" cy="${pts.split(' ').at(-1).split(',')[1]}" r="3.5" fill="#0f8f9b"/>
+      </svg>`;
+    }
+
+    function renderAI(){
+      $('#aiAlerts').innerHTML = aiAlerts.map(a => {
+        const deg = Math.round(a.confidence * 3.6) + 'deg';
+        const tone = a.risk === 'high' ? 'red' : a.risk === 'mid' ? 'amber' : 'green';
+        return `<article class="ai-alert ${a.risk}">
+          <div>
+            <div>${pill('AI推定', 'violet')} ${pill(a.risk === 'high' ? '高リスク' : a.risk === 'mid' ? '中リスク' : '低リスク', tone)}</div>
+            <div class="ai-title" style="margin-top:10px">${escapeHtml(a.title)}</div>
+            <div class="ai-meta">${escapeHtml(a.target)}<br>${escapeHtml(a.cause)}</div>
+            <div class="action-line">
+              <strong style="font-size:12px;color:var(--ink)">推奨対応:</strong>
+              <span class="ai-meta" style="margin:0">${escapeHtml(a.recommended)}</span>
+            </div>
+            <div class="action-line"><button class="ack-btn" data-ai-id="${a.id}">担当者レビュー済みにする</button></div>
+          </div>
+          <div class="confidence" style="--deg:${deg}"><span>${a.confidence}%</span></div>
+        </article>`;
+      }).join('');
+      $$('.ack-btn').forEach(btn => btn.addEventListener('click', () => {
+        btn.classList.toggle('done');
+        btn.textContent = btn.classList.contains('done') ? 'レビュー済み' : '担当者レビュー済みにする';
+      }));
+    }
+
+    function renderCustomers(){
+      $('#customerCount').textContent = `${customers.length}社`;
+      const q = $('#globalSearch').value.trim().toLowerCase();
+      const rows = customers.filter(c => !q || `${c.name} ${c.sector} ${c.owner}`.toLowerCase().includes(q));
+      $('#customerGrid').innerHTML = rows.map(c => `
+        <article class="customer-card">
+          <div class="customer-top">
+            <div>
+              <div class="customer-name">${escapeHtml(c.name)}</div>
+              <div class="customer-sector">${escapeHtml(c.sector)} / 主担当 ${c.owner}</div>
+            </div>
+            ${pill(c.active >= 2 ? '重点' : '通常', c.active >= 2 ? 'amber' : 'blue')}
+          </div>
+          <div class="customer-stats">
+            <div class="stat"><strong>${c.active}</strong><span>稼働案件</span></div>
+            <div class="stat"><strong>${c.revenue}</strong><span>万円</span></div>
+            <div class="stat"><strong>${c.robots}</strong><span>ロボット</span></div>
+          </div>
+          <ul class="contact-log">
+            ${c.history.map(h => `<li>${escapeHtml(h)}</li>`).join('')}
+          </ul>
+        </article>`).join('') || `<div class="empty"><strong>該当顧客なし</strong>検索条件を変更してください</div>`;
+    }
+
+    function bindNavigation(){
+      $$('#nav button').forEach(btn => btn.addEventListener('click', () => {
+        $$('#nav button').forEach(b => b.classList.toggle('active', b === btn));
+        $$('.section').forEach(sec => sec.classList.toggle('active', sec.id === btn.dataset.section));
+        $('#pageTitle').textContent = btn.dataset.title;
+      }));
+      $('#globalSearch').addEventListener('input', () => {
+        renderProjects();
+        renderCustomers();
+      });
+      $('[data-close-modal]').addEventListener('click', closeModal);
+      $('#projectModal').addEventListener('click', (e) => {
+        if(e.target.id === 'projectModal') closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape') closeModal();
+        const card = document.activeElement;
+        if(e.key === 'Enter' && card && card.classList.contains('project-card')) openProjectModal(card.dataset.id);
+      });
+    }
+    function closeModal(){
+      $('#projectModal').classList.remove('open');
+    }
+
+    function boot(){
+      bindNavigation();
+      initProjectFilters();
+      initRobotFilters();
+      renderDashboard();
+      renderProjects();
+      renderDrawings();
+      renderCalendar();
+      renderRobots();
+      renderAI();
+      renderCustomers();
+    }
+    boot();
+  </script>
 </body>
 </html>

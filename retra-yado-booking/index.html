@@ -1,318 +1,2342 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>やど直予約 デモ — 宿泊施設向け 直予約プラットフォーム（MK1 TECHNOLOGY VIETNAM 制作）</title>
-<meta name="description" content="宿泊施設の直予約サイト（多言語・在庫カレンダー・料金計算・予約確認）と管理画面を実機で体験できるデモ。株式会社リトラ様向け参考。">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>やど直予約 Platform Demo | MK1 TECHNOLOGY VIETNAM for retra.jp</title>
+<meta name="description" content="宿泊施設向け公式直予約サイトと施設管理ダッシュボードを統合した、MK1 TECHNOLOGY VIETNAMによる株式会社リトラ様向けデモ。">
 <style>
 :root{
-  --ink:#14202e; --indigo:#24567f; --indigo2:#1b3a5b; --gold:#b8863b; --gold-soft:#e0c68a;
-  --sky:#eef3f8; --paper:#fbfcfe; --line:#dfe5ec; --muted:#6b7787; --card:#fff;
-  --ok:#2e7d5b; --shadow:0 2px 14px rgba(20,32,46,.08); --shadow-lg:0 16px 44px rgba(20,32,46,.16);
+  --bg:#f7f9fc;
+  --bg-2:#eef3f8;
+  --surface:#ffffff;
+  --surface-2:#fbfdff;
+  --ink:#162231;
+  --muted:#647386;
+  --soft:#d9e2ec;
+  --line:#e4eaf1;
+  --indigo:#24567f;
+  --indigo-dark:#1b3a5b;
+  --gold:#b8863b;
+  --gold-soft:#f3e6cf;
+  --green:#20855f;
+  --green-soft:#e8f7f0;
+  --amber:#c77d16;
+  --amber-soft:#fff4df;
+  --red:#c94c4c;
+  --red-soft:#fff0f0;
+  --blue-soft:#eef6ff;
+  --shadow:0 12px 34px rgba(22,34,49,.08);
+  --shadow-lg:0 24px 70px rgba(22,34,49,.16);
+  --radius:16px;
+  --radius-sm:12px;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{font-family:"Hiragino Sans","Yu Gothic","Noto Sans JP",-apple-system,system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
-.appbar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;background:var(--ink);color:#fff;position:sticky;top:0;z-index:30}
-.brand{font-weight:800;letter-spacing:.05em;font-size:15px}
-.brand small{display:block;font-weight:400;font-size:10px;opacity:.7;letter-spacing:.1em;margin-top:2px}
-.appbar .right{display:flex;align-items:center;gap:12px}
-.lang{display:flex;gap:4px}
-.lang button{background:rgba(255,255,255,.08);border:1px solid rgba(224,198,138,.3);color:#fff;font-size:11px;padding:4px 9px;border-radius:20px;cursor:pointer;font-weight:600}
-.lang button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
-.demo-pill{font-size:9px;letter-spacing:.12em;color:var(--gold-soft);border:1px solid rgba(224,198,138,.4);background:rgba(224,198,138,.08);padding:4px 9px;border-radius:20px;font-weight:700}
-.tabs{display:flex;gap:0;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:29}
-.tabs button{flex:1;background:none;border:none;padding:13px 8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;font-family:inherit}
-.tabs button.on{color:var(--indigo);border-bottom-color:var(--gold)}
-.wrap{max-width:940px;margin:0 auto;padding:22px 18px 70px}
-.hero{background:linear-gradient(135deg,var(--ink),var(--indigo2) 60%,var(--indigo));color:#fff;border-radius:12px;padding:26px 26px 30px;position:relative;overflow:hidden;margin-bottom:20px}
-.hero::after{content:"";position:absolute;right:-90px;top:-70px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(224,198,138,.18),transparent 70%)}
-.hero .tag{display:inline-block;background:rgba(224,198,138,.18);color:var(--gold-soft);font-size:10px;font-weight:700;letter-spacing:.14em;padding:5px 12px;border-radius:20px;margin-bottom:12px}
-.hero h1{margin:0 0 8px;font-size:24px;font-weight:800;letter-spacing:.02em;position:relative}
-.hero p{margin:0;opacity:.9;font-size:13.5px;line-height:1.8;max-width:560px;position:relative}
-.grid{display:grid;gap:18px}
-@media(min-width:720px){.book-grid{grid-template-columns:1.5fr 1fr}}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:20px}
-.card h2{margin:0 0 4px;font-size:16px;color:var(--ink)}
-.card .sub{color:var(--muted);font-size:12px;margin:0 0 16px}
-.field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-bottom:6px;text-transform:uppercase}
-.field input,.field select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;color:var(--ink);background:#fff}
-.field input:focus,.field select:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(36,86,127,.12)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.rooms{display:grid;gap:12px;margin-top:4px}
-.room{border:1.5px solid var(--line);border-radius:10px;padding:14px;cursor:pointer;transition:.15s;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.room:hover{border-color:var(--gold)}
-.room.on{border-color:var(--indigo);background:var(--sky)}
-.room .rn{font-weight:800;font-size:14px}
-.room .rd{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.6}
-.room .rp{text-align:right;white-space:nowrap}
-.room .rp b{font-size:16px;color:var(--indigo)}
-.room .rp span{display:block;font-size:10px;color:var(--muted)}
-.summary{position:sticky;top:110px}
-.sumline{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line);color:#33414f}
-.sumline.total{border-bottom:none;border-top:2px solid var(--ink);margin-top:6px;padding-top:12px;font-size:18px;font-weight:800;color:var(--ink)}
-.sumline.total .tax{font-size:10px;color:var(--muted);font-weight:600}
-.btn{display:block;width:100%;margin-top:16px;background:var(--indigo);color:#fff;border:none;border-radius:9px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.03em}
-.btn:hover{background:var(--indigo2)}
-.btn.gold{background:var(--gold);color:var(--ink)}
-.btn:disabled{background:#c3ccd6;cursor:not-allowed}
-.chan{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.chan span{font-size:10.5px;background:var(--sky);border:1px solid var(--line);color:var(--indigo);padding:4px 9px;border-radius:6px;font-weight:600}
-.note{font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7}
-/* confirmation */
-.conf{text-align:center;padding:12px 6px}
-.conf .chk{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:34px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
-.conf h2{font-size:20px;margin:0 0 6px}
-.conf .code{font-size:26px;font-weight:900;letter-spacing:.12em;color:var(--indigo);background:var(--sky);border:1px dashed var(--indigo);border-radius:10px;padding:12px;margin:14px 0;font-family:"SF Mono",Menlo,monospace}
-.conf table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
-.conf td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
-.conf td:first-child{color:var(--muted);width:40%}
-/* admin */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
-@media(max-width:640px){.kpis{grid-template-columns:repeat(2,1fr)}.row2{grid-template-columns:1fr}}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
-.kpi .k{font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
-.kpi .v{font-size:24px;font-weight:800;color:var(--ink);margin-top:4px}
-.kpi .v small{font-size:11px;color:var(--indigo);font-weight:700;margin-left:3px}
-.cal{overflow-x:auto}
-.cal table{border-collapse:collapse;width:100%;min-width:560px;font-size:12px}
-.cal th,.cal td{border:1px solid var(--line);padding:7px 6px;text-align:center}
-.cal th{background:var(--indigo2);color:#fff;font-weight:700;font-size:11px}
-.cal td .rmname{text-align:left;background:var(--sky);font-weight:700;color:var(--indigo)}
-.cell{cursor:default;font-weight:700}
-.cell.free{color:var(--ok)}
-.cell.few{color:#c07a1a}
-.cell.full{color:#c0392b;background:#fdecea}
-.legend{font-size:11px;color:var(--muted);margin-top:8px}
-.footer{text-align:center;color:var(--muted);font-size:11px;padding:20px;border-top:1px solid var(--line)}
-.hidden{display:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic","Noto Sans JP","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    linear-gradient(180deg,#fbfcff 0%,var(--bg) 44%,#f4f7fb 100%);
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed}
+.page{min-height:100vh;display:flex;flex-direction:column}
+.global-header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(255,255,255,.86);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(217,226,236,.9);
+}
+.header-inner{
+  max-width:1440px;
+  margin:0 auto;
+  padding:14px 24px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:16px;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.brand-mark{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:linear-gradient(135deg,var(--indigo-dark),var(--indigo) 62%,#4e83aa);
+  box-shadow:0 10px 26px rgba(36,86,127,.22);
+}
+.brand-title{font-weight:850;letter-spacing:.01em;white-space:nowrap}
+.brand-sub{display:block;color:var(--muted);font-size:11px;font-weight:650;margin-top:2px;white-space:nowrap}
+.segmented{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  padding:4px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#f1f5f9;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.72);
+}
+.segmented button{
+  border:0;
+  background:transparent;
+  color:#607083;
+  padding:10px 16px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+  transition:.18s ease;
+  white-space:nowrap;
+}
+.segmented button:hover{color:var(--indigo)}
+.segmented button.active{
+  color:var(--indigo-dark);
+  background:#fff;
+  box-shadow:0 8px 22px rgba(27,58,91,.12);
+}
+.header-actions{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:10px;
+}
+.demo-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid #ead9bb;
+  color:#805a22;
+  background:#fff8ec;
+  border-radius:999px;
+  padding:7px 11px;
+  font-size:11px;
+  font-weight:850;
+  letter-spacing:.08em;
+}
+.demo-pill::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--gold);
+  box-shadow:0 0 0 4px rgba(184,134,59,.14);
+}
+.icon-btn{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--indigo);
+  display:grid;
+  place-items:center;
+  transition:.18s ease;
+}
+.icon-btn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.mode-panel{display:none;animation:fadeIn .26s ease}
+.mode-panel.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.container{max-width:1200px;margin:0 auto;padding:28px 24px 54px}
+.footer{
+  margin-top:auto;
+  border-top:1px solid var(--line);
+  background:#fff;
+  color:#68768a;
+  font-size:12px;
+  padding:18px 24px;
+  text-align:center;
+}
+
+/* Guest site */
+.guest-hero{
+  display:grid;
+  grid-template-columns:minmax(0,1.04fr) minmax(340px,.96fr);
+  gap:26px;
+  align-items:stretch;
+  margin-bottom:22px;
+}
+.hero-copy{
+  padding:38px 0 28px;
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--indigo);
+  background:#eef5fb;
+  border:1px solid #dceaf4;
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:850;
+}
+.eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 4px rgba(32,133,95,.12)}
+.hero-copy h1{
+  margin:18px 0 14px;
+  font-size:clamp(32px,5vw,58px);
+  line-height:1.05;
+  letter-spacing:0;
+  color:#132133;
+}
+.hero-copy p{
+  margin:0;
+  max-width:690px;
+  color:#586779;
+  font-size:16px;
+  line-height:1.9;
+}
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  margin-top:24px;
+}
+.lang-switch{
+  display:flex;
+  padding:4px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:999px;
+  box-shadow:0 8px 20px rgba(22,34,49,.06);
+}
+.lang-switch button{
+  border:0;
+  background:transparent;
+  color:#68768a;
+  font-size:12px;
+  font-weight:850;
+  border-radius:999px;
+  padding:8px 12px;
+}
+.lang-switch button.active{background:var(--indigo);color:#fff}
+.hero-metric{
+  display:inline-flex;
+  gap:9px;
+  align-items:center;
+  padding:9px 12px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:#4a596b;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:0 8px 20px rgba(22,34,49,.06);
+}
+.hero-metric b{color:var(--green)}
+.hero-photo{
+  position:relative;
+  min-height:430px;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  border:1px solid rgba(255,255,255,.8);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,0) 34%),
+    radial-gradient(ellipse at 75% 18%,rgba(255,255,255,.78) 0 12%,rgba(255,255,255,0) 13%),
+    linear-gradient(160deg,#ddecf6 0 28%,#9cc2d8 29% 40%,#6d9bb5 41% 53%,#2c688f 54% 62%,#d5b881 63% 67%,#f4f0e4 68% 100%);
+}
+.hero-photo::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(150deg,transparent 0 46%,rgba(27,58,91,.62) 47% 52%,transparent 53%),
+    linear-gradient(26deg,transparent 0 56%,rgba(255,255,255,.42) 57% 60%,transparent 61%),
+    linear-gradient(0deg,rgba(11,40,65,.32),rgba(11,40,65,0) 48%);
+}
+.photo-card{
+  position:absolute;
+  left:22px;
+  right:22px;
+  bottom:22px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.8);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:0 18px 46px rgba(22,34,49,.16);
+}
+.photo-card strong{display:block;color:#152337;font-size:15px}
+.photo-card span{display:block;color:#607083;font-size:12px;margin-top:4px}
+.sync-mini{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:var(--green);
+  background:#ecfbf4;
+  border:1px solid #d0f0df;
+  border-radius:999px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:850;
+}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(32,133,95,.34)}70%{box-shadow:0 0 0 8px rgba(32,133,95,0)}100%{box-shadow:0 0 0 0 rgba(32,133,95,0)}}
+.trust-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  margin:0 0 22px;
+  padding:14px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.trust-label{font-size:12px;font-weight:850;color:#4c5d70;margin-right:2px}
+.sync-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:8px 10px;
+  border-radius:999px;
+  color:#3b5169;
+  background:#f7fafc;
+  border:1px solid var(--line);
+  font-size:12px;
+  font-weight:800;
+}
+.sync-badge .pulse-dot{width:6px;height:6px}
+.search-card,.panel-card,.summary-card,.admin-card{
+  background:rgba(255,255,255,.94);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+}
+.search-card{
+  padding:18px;
+  margin-bottom:18px;
+}
+.search-grid{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:12px;
+  align-items:end;
+}
+.field label{
+  display:block;
+  margin-bottom:7px;
+  color:#596a7d;
+  font-size:12px;
+  font-weight:850;
+}
+.field input,.field select{
+  width:100%;
+  min-height:44px;
+  border:1px solid #d8e1ea;
+  border-radius:12px;
+  background:#fff;
+  color:#1c2a3a;
+  padding:10px 12px;
+  outline:0;
+  transition:.18s ease;
+}
+.field input:focus,.field select:focus{
+  border-color:#86a8c5;
+  box-shadow:0 0 0 4px rgba(36,86,127,.12);
+}
+.stepper{
+  display:flex;
+  align-items:center;
+  min-height:44px;
+  border:1px solid #d8e1ea;
+  border-radius:12px;
+  background:#fff;
+  overflow:hidden;
+}
+.stepper button{
+  width:40px;
+  height:42px;
+  border:0;
+  background:#f5f8fb;
+  color:var(--indigo);
+  font-size:18px;
+  font-weight:850;
+}
+.stepper span{
+  flex:1;
+  text-align:center;
+  font-weight:850;
+}
+.guest-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:22px;
+  align-items:start;
+}
+.panel-card{padding:20px;margin-bottom:18px}
+.section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+}
+.section-head h2{margin:0;color:#172539;font-size:20px;letter-spacing:0}
+.section-head p{margin:5px 0 0;color:#68768a;font-size:13px;line-height:1.6}
+.result-count{
+  color:var(--indigo);
+  background:#eef6ff;
+  border:1px solid #d6e9fb;
+  border-radius:999px;
+  padding:7px 10px;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:850;
+}
+.room-list{display:grid;gap:14px}
+.room-card{
+  display:grid;
+  grid-template-columns:190px minmax(0,1fr) auto;
+  gap:16px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  transition:.18s ease;
+}
+.room-card:hover{transform:translateY(-2px);box-shadow:0 18px 42px rgba(22,34,49,.1);border-color:#cfdae6}
+.room-card.selected{border-color:#96b1ca;box-shadow:0 18px 46px rgba(36,86,127,.14)}
+.room-card.unavailable{opacity:.56;background:#f7f9fc}
+.room-photo{
+  min-height:136px;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.9);
+  position:relative;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.28);
+}
+.room-photo::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(10,34,54,.18));
+}
+.room-photo.r0{background:linear-gradient(155deg,#e8f2f7 0 32%,#7ca8be 33% 53%,#2f6486 54% 66%,#f6efe1 67% 100%)}
+.room-photo.r1{background:linear-gradient(145deg,#eef7fb 0 28%,#87bbcf 29% 45%,#d9c19b 46% 54%,#f7f1e7 55% 100%)}
+.room-photo.r2{background:linear-gradient(140deg,#f3efe6 0 26%,#c9ae78 27% 38%,#315e62 39% 55%,#fdf8ef 56% 100%)}
+.room-photo.r3{background:linear-gradient(160deg,#edf4ff 0 29%,#b6c8d5 30% 45%,#4e7893 46% 57%,#fff6e8 58% 100%)}
+.room-photo.r4{background:linear-gradient(150deg,#f7fafc 0 30%,#91a9bb 31% 44%,#244b67 45% 55%,#f5efe6 56% 100%)}
+.room-photo .photo-label{
+  position:absolute;
+  left:10px;
+  bottom:10px;
+  z-index:2;
+  color:#fff;
+  background:rgba(20,37,55,.44);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:850;
+  backdrop-filter:blur(10px);
+}
+.room-body h3{margin:2px 0 7px;font-size:18px;color:#172539}
+.room-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;color:#607083;font-size:12px;font-weight:750}
+.amenities{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  border:1px solid #e1e8ef;
+  background:#f8fafc;
+  color:#4b5d70;
+  border-radius:999px;
+  padding:6px 8px;
+  font-size:11px;
+  font-weight:800;
+}
+.room-desc{margin:8px 0 0;color:#667589;font-size:13px;line-height:1.65}
+.room-side{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:flex-end;
+  min-width:136px;
+  gap:12px;
+}
+.price{
+  text-align:right;
+}
+.price small{display:block;color:#7b8898;font-size:11px;font-weight:750}
+.price strong{display:block;color:var(--indigo-dark);font-size:23px;letter-spacing:0}
+.primary-btn,.secondary-btn,.small-btn{
+  border:0;
+  border-radius:12px;
+  font-weight:850;
+  transition:.18s ease;
+}
+.primary-btn{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  min-height:46px;
+  padding:0 18px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--indigo),var(--indigo-dark));
+  box-shadow:0 12px 24px rgba(36,86,127,.22);
+}
+.primary-btn:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(36,86,127,.28)}
+.primary-btn:disabled{background:#b8c4cf;box-shadow:none;transform:none;color:#fff}
+.secondary-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  padding:0 15px;
+  background:#fff;
+  color:var(--indigo);
+  border:1px solid #cfdae6;
+}
+.secondary-btn:hover{background:#f5f9fc}
+.small-btn{
+  min-height:34px;
+  padding:0 11px;
+  background:#f4f7fb;
+  color:#315673;
+  border:1px solid var(--line);
+  font-size:12px;
+}
+.small-btn:hover{background:#edf4fa}
+.addon-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.addon-card{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+  padding:14px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:12px;
+  align-items:start;
+  transition:.18s ease;
+}
+.addon-card:hover{border-color:#c9d6e3;box-shadow:0 10px 24px rgba(22,34,49,.07)}
+.addon-card.active{border-color:#9db9d0;background:#f8fbff}
+.checkmark{
+  width:22px;
+  height:22px;
+  border-radius:7px;
+  border:1px solid #cfd9e4;
+  background:#fff;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+  transition:.18s ease;
+}
+.addon-card.active .checkmark{background:var(--indigo);border-color:var(--indigo)}
+.addon-card h3{font-size:14px;margin:0 0 4px;color:#1d2b3c}
+.addon-card p{font-size:12px;color:#667589;line-height:1.55;margin:0}
+.addon-price{font-weight:850;color:#1b3a5b;white-space:nowrap;font-size:13px}
+.summary-card{
+  position:sticky;
+  top:86px;
+  padding:18px;
+}
+.summary-card h2{margin:0 0 6px;font-size:18px}
+.summary-note{margin:0 0 14px;color:#68768a;font-size:12px;line-height:1.5}
+.summary-line{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:10px 0;
+  border-top:1px solid #edf1f5;
+  color:#435367;
+  font-size:13px;
+}
+.summary-line:first-of-type{border-top:0}
+.summary-line strong{color:#172539}
+.summary-total{
+  margin-top:6px;
+  padding-top:14px;
+  border-top:2px solid #1d2b3c;
+}
+.summary-total .summary-line{
+  padding:0;
+  border:0;
+  align-items:flex-end;
+}
+.summary-total strong{font-size:24px;color:#122033}
+.tax-note{display:block;text-align:right;margin-top:5px;color:#7a8797;font-size:11px;font-weight:750}
+.capacity-warning{
+  display:none;
+  margin:12px 0 0;
+  color:#9b4b14;
+  background:#fff4df;
+  border:1px solid #f4d4a3;
+  border-radius:12px;
+  padding:10px;
+  font-size:12px;
+  line-height:1.55;
+}
+.capacity-warning.show{display:block}
+.confirmation{
+  max-width:960px;
+  margin:0 auto 30px;
+  padding:28px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:24px;
+  box-shadow:var(--shadow-lg);
+  display:none;
+}
+.confirmation.show{display:block;animation:fadeIn .24s ease}
+.success-head{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:18px;
+  align-items:center;
+  margin-bottom:22px;
+}
+.success-icon{
+  width:62px;
+  height:62px;
+  border-radius:18px;
+  color:#fff;
+  background:linear-gradient(135deg,#2ba875,var(--green));
+  display:grid;
+  place-items:center;
+  font-size:31px;
+  box-shadow:0 14px 28px rgba(32,133,95,.24);
+}
+.success-head h2{margin:0 0 5px;font-size:24px}
+.success-head p{margin:0;color:#68768a;line-height:1.6}
+.confirm-grid{
+  display:grid;
+  grid-template-columns:240px minmax(0,1fr);
+  gap:22px;
+  align-items:start;
+}
+.code-box{
+  padding:16px;
+  border:1px dashed #b8c7d5;
+  background:#f8fbff;
+  border-radius:18px;
+  text-align:center;
+}
+.code-label{font-size:12px;font-weight:850;color:#637589;margin-bottom:6px}
+.booking-code{
+  color:var(--indigo-dark);
+  font-weight:900;
+  letter-spacing:.12em;
+  font-size:23px;
+  margin-bottom:12px;
+}
+.qr svg{width:168px;height:168px;display:block;margin:0 auto;background:#fff;border-radius:8px}
+.details-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.details-table th,.details-table td{
+  text-align:left;
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+}
+.details-table th{width:34%;color:#667589;background:#f8fafc;font-weight:850}
+.details-table tr:last-child th,.details-table tr:last-child td{border-bottom:0}
+.confirm-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+
+/* Admin */
+.admin-shell{
+  display:grid;
+  grid-template-columns:248px minmax(0,1fr);
+  max-width:1440px;
+  margin:0 auto;
+  min-height:calc(100vh - 68px);
+}
+.sidebar{
+  position:sticky;
+  top:67px;
+  height:calc(100vh - 67px);
+  padding:22px 16px;
+  border-right:1px solid var(--line);
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(16px);
+}
+.property-card{
+  padding:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 24px rgba(22,34,49,.06);
+  margin-bottom:14px;
+}
+.property-card strong{display:block;font-size:14px}
+.property-card span{display:block;font-size:12px;color:#68768a;margin-top:4px}
+.admin-nav{display:grid;gap:6px}
+.admin-nav button{
+  width:100%;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+  border:0;
+  background:transparent;
+  color:#56677a;
+  padding:11px 12px;
+  border-radius:13px;
+  font-weight:850;
+  transition:.18s ease;
+}
+.admin-nav button:hover{background:#f2f6fa;color:var(--indigo)}
+.admin-nav button.active{
+  color:var(--indigo-dark);
+  background:#eef6ff;
+  box-shadow:inset 3px 0 0 var(--indigo);
+}
+.nav-icon{
+  width:24px;
+  height:24px;
+  border-radius:8px;
+  background:#fff;
+  border:1px solid #dfe7ef;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+}
+.admin-main{min-width:0;padding:22px 24px 54px}
+.admin-topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:18px;
+  margin-bottom:18px;
+}
+.admin-topbar h1{margin:0;font-size:24px;color:#172539}
+.admin-topbar p{margin:5px 0 0;color:#68768a;font-size:13px}
+.admin-cluster{display:flex;align-items:center;gap:10px}
+.avatar{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#dde9f3,#fff);
+  border:1px solid #cdd9e5;
+  display:grid;
+  place-items:center;
+  color:var(--indigo);
+  font-weight:900;
+}
+.admin-section{display:none}
+.admin-section.active{display:block;animation:fadeIn .22s ease}
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+.kpi-card{
+  padding:15px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+.kpi-label{color:#647386;font-size:11px;font-weight:850;line-height:1.35}
+.kpi-value{margin-top:8px;font-size:25px;font-weight:900;color:#152337;letter-spacing:0}
+.kpi-delta{display:inline-flex;margin-top:7px;color:var(--green);background:var(--green-soft);border-radius:999px;padding:5px 8px;font-size:11px;font-weight:850}
+.dash-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(310px,.8fr);
+  gap:18px;
+  margin-bottom:18px;
+}
+.admin-card{padding:18px}
+.admin-card h2{margin:0 0 4px;font-size:18px}
+.admin-card .sub{margin:0 0 15px;color:#68768a;font-size:12px}
+.chart-box svg{display:block;width:100%;height:auto}
+.line-labels{display:flex;justify-content:space-between;color:#7a8797;font-size:11px;margin-top:6px}
+.donut-wrap{
+  display:grid;
+  grid-template-columns:160px 1fr;
+  align-items:center;
+  gap:14px;
+}
+.legend{display:grid;gap:8px}
+.legend-item{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#4d5f72}
+.legend-item i{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:7px}
+.action-list{display:grid;gap:10px}
+.action-item{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:11px;
+  align-items:center;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fff;
+}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--indigo)}
+.status-dot.amber{background:var(--amber)}
+.status-dot.green{background:var(--green)}
+.action-item strong{display:block;font-size:13px}
+.action-item span{display:block;font-size:12px;color:#68768a;margin-top:2px}
+.sync-strip{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  padding:12px;
+  border:1px solid #d6eadf;
+  background:#f4fcf8;
+  border-radius:16px;
+  margin-bottom:16px;
+}
+.sync-strip span{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  color:#245b43;
+  font-size:12px;
+  font-weight:850;
+}
+.inventory-wrap,.rate-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+.grid-table{
+  width:100%;
+  min-width:900px;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.grid-table th,.grid-table td{
+  border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  text-align:center;
+  padding:10px;
+  font-size:12px;
+}
+.grid-table th{
+  position:sticky;
+  top:0;
+  z-index:2;
+  background:#f8fafc;
+  color:#526477;
+  font-weight:850;
+}
+.grid-table th:first-child,.grid-table td:first-child{
+  position:sticky;
+  left:0;
+  z-index:3;
+  background:#fff;
+  text-align:left;
+  min-width:174px;
+  font-weight:850;
+}
+.grid-table th:first-child{background:#f8fafc;z-index:4}
+.grid-table tr:last-child td{border-bottom:0}
+.grid-table td:last-child,.grid-table th:last-child{border-right:0}
+.inv-cell{
+  min-width:66px;
+  border-radius:12px;
+  padding:9px 6px;
+  font-weight:900;
+  transition:.16s ease;
+}
+.inv-cell:hover{transform:scale(1.03)}
+.inv-cell.good{background:var(--green-soft);color:var(--green)}
+.inv-cell.warn{background:var(--amber-soft);color:#96611a}
+.inv-cell.sold{background:var(--red-soft);color:var(--red)}
+.inventory-popover{
+  position:fixed;
+  z-index:90;
+  display:none;
+  width:250px;
+  padding:14px;
+  border:1px solid #d6e0e9;
+  border-radius:16px;
+  background:#fff;
+  box-shadow:var(--shadow-lg);
+}
+.inventory-popover.show{display:block;animation:fadeIn .14s ease}
+.inventory-popover strong{display:block;margin-bottom:6px}
+.inventory-popover p{margin:0;color:#647386;font-size:12px;line-height:1.6}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+.filters{display:flex;flex-wrap:wrap;gap:10px}
+.filters input,.filters select{
+  border:1px solid #d8e1ea;
+  border-radius:12px;
+  background:#fff;
+  color:#223247;
+  min-height:40px;
+  padding:8px 11px;
+  outline:0;
+}
+.filters input:focus,.filters select:focus{border-color:#86a8c5;box-shadow:0 0 0 4px rgba(36,86,127,.1)}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:16px;background:#fff}
+.data-table{
+  width:100%;
+  min-width:860px;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.data-table th,.data-table td{
+  text-align:left;
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  white-space:nowrap;
+}
+.data-table th{background:#f8fafc;color:#5f7186;font-size:12px;font-weight:900}
+.data-table tr:hover td{background:#fbfdff}
+.data-table tr:last-child td{border-bottom:0}
+.data-table tbody tr[data-reservation]{cursor:pointer}
+.status-cell{display:flex;align-items:center;gap:8px}
+.channel-badge,.status-badge{
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:11px;
+  font-weight:850;
+}
+.channel-badge.direct{color:#1d5d45;background:#e9f8f0}
+.channel-badge.jalan{color:#755318;background:#fff3d7}
+.channel-badge.booking{color:#24567f;background:#eaf4ff}
+.channel-badge.airbnb{color:#a84854;background:#fff0f2}
+.channel-badge.rakuten{color:#863d69;background:#fbedf7}
+.status-badge.ok{color:#1d5d45;background:#e9f8f0}
+.status-badge.pending{color:#8b5c12;background:#fff2d6}
+.status-badge.cancel{color:#a33a3a;background:#fff0f0}
+.drawer-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  background:rgba(19,31,46,.28);
+  opacity:0;
+  pointer-events:none;
+  transition:.18s ease;
+}
+.drawer-backdrop.show{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;
+  top:0;
+  right:0;
+  z-index:101;
+  width:min(460px,100vw);
+  height:100vh;
+  background:#fff;
+  box-shadow:-18px 0 50px rgba(22,34,49,.2);
+  transform:translateX(105%);
+  transition:.22s ease;
+  padding:22px;
+  overflow:auto;
+}
+.drawer.show{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+.drawer h2{margin:0;font-size:21px}
+.drawer p{color:#667589;line-height:1.7}
+.detail-list{display:grid;gap:10px;margin:16px 0}
+.detail-row{display:flex;justify-content:space-between;gap:18px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#fbfdff;font-size:13px}
+.detail-row span:first-child{color:#647386;font-weight:850}
+.rate-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
+}
+.ai-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 11px;
+  border:1px solid #d8e1ea;
+  background:#fff;
+  border-radius:999px;
+  color:#405268;
+  font-size:13px;
+  font-weight:850;
+}
+.switch{
+  width:42px;
+  height:24px;
+  border-radius:999px;
+  background:#cbd6e0;
+  padding:3px;
+  transition:.18s ease;
+}
+.switch i{
+  display:block;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 5px rgba(22,34,49,.22);
+  transition:.18s ease;
+}
+.ai-toggle.on .switch{background:var(--indigo)}
+.ai-toggle.on .switch i{transform:translateX(18px)}
+.rate-cell{
+  min-width:96px;
+}
+.rate-cell input{
+  width:86px;
+  border:1px solid #d8e1ea;
+  border-radius:10px;
+  padding:7px 6px;
+  text-align:right;
+  font-weight:850;
+  color:#203146;
+}
+.ai-hint{
+  display:block;
+  margin-top:5px;
+  font-size:10px;
+  color:#8a611e;
+  background:#fff5df;
+  border-radius:999px;
+  padding:3px 5px;
+  font-weight:850;
+}
+.guest-crm-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(340px,.72fr);
+  gap:18px;
+}
+.guest-list,.review-list{display:grid;gap:12px}
+.guest-card,.review-card{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#fff;
+}
+.guest-card{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:12px;
+  align-items:center;
+}
+.guest-card h3,.review-card h3{margin:0 0 4px;font-size:15px}
+.guest-card p,.review-card p{margin:0;color:#667589;font-size:12px;line-height:1.6}
+.repeat-flag{
+  color:#7a4f12;
+  background:#fff3d8;
+  border:1px solid #f0d59e;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:11px;
+  font-weight:900;
+}
+.stars{color:#d49424;letter-spacing:.06em;font-size:13px;margin-bottom:6px}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  z-index:120;
+  transform:translateX(-50%) translateY(18px);
+  opacity:0;
+  pointer-events:none;
+  background:#122033;
+  color:#fff;
+  border-radius:999px;
+  padding:12px 16px;
+  box-shadow:0 18px 42px rgba(22,34,49,.22);
+  font-size:13px;
+  font-weight:800;
+  transition:.2s ease;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:1120px){
+  .guest-hero{grid-template-columns:1fr}
+  .hero-copy{padding:20px 0 0}
+  .hero-photo{min-height:320px}
+  .guest-grid{grid-template-columns:1fr}
+  .summary-card{position:static}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .dash-grid,.guest-crm-grid{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .header-inner{grid-template-columns:1fr;justify-items:stretch}
+  .brand{justify-content:center}
+  .segmented{justify-content:center}
+  .header-actions{justify-content:center}
+  .container{padding:22px 16px 44px}
+  .search-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .search-grid .field:first-child,.search-grid .field:nth-child(2){grid-column:auto}
+  .room-card{grid-template-columns:1fr}
+  .room-photo{min-height:180px}
+  .room-side{align-items:flex-start;flex-direction:row}
+  .admin-shell{grid-template-columns:1fr}
+  .sidebar{
+    position:relative;
+    top:0;
+    height:auto;
+    border-right:0;
+    border-bottom:1px solid var(--line);
+    padding:14px 16px;
+  }
+  .admin-nav{display:flex;overflow:auto;padding-bottom:4px}
+  .admin-nav button{white-space:nowrap}
+  .property-card{display:none}
+  .admin-main{padding:18px 16px 44px}
+  .admin-topbar{align-items:flex-start;flex-direction:column}
+}
+@media(max-width:640px){
+  .brand-sub{white-space:normal}
+  .segmented button{padding:9px 10px;font-size:12px}
+  .hero-copy h1{font-size:34px}
+  .hero-photo{min-height:280px;border-radius:18px}
+  .photo-card{grid-template-columns:1fr;left:14px;right:14px;bottom:14px}
+  .search-grid{grid-template-columns:1fr}
+  .addon-list{grid-template-columns:1fr}
+  .section-head{flex-direction:column}
+  .room-side{flex-direction:column;align-items:flex-start}
+  .price{text-align:left}
+  .confirm-grid,.success-head{grid-template-columns:1fr}
+  .confirmation{padding:20px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .donut-wrap{grid-template-columns:1fr;justify-items:center}
+  .admin-cluster{flex-wrap:wrap}
+}
 </style>
 </head>
 <body>
-<div class="appbar">
-  <div class="brand">やど直予約 <small>DIRECT BOOKING — 宿泊施設向けプラットフォーム</small></div>
-  <div class="right">
-    <div class="lang" id="lang">
-      <button data-l="ja" class="on">日本語</button>
-      <button data-l="en">EN</button>
-      <button data-l="zh">中文</button>
-    </div>
-    <span class="demo-pill">DEMO</span>
-  </div>
-</div>
-<div class="tabs" id="tabs">
-  <button data-v="guest" class="on">宿泊者：予約</button>
-  <button data-v="admin">管理画面：在庫・予約</button>
-</div>
-
-<!-- ============ GUEST ============ -->
-<div class="wrap" id="view-guest">
-  <div class="hero">
-    <span class="tag" id="h-tag">DIRECT BOOKING · 脱OTA · 多言語</span>
-    <h1 id="h-title">公式サイトから、そのまま直予約。</h1>
-    <p id="h-lead">OTA手数料をかけずに、多言語・多通貨で「そのまま予約完了」まで。在庫はチャネルマネージャーで各OTAと自動同期します。</p>
-  </div>
-
-  <div class="grid book-grid" id="book-area">
-    <div class="card">
-      <h2 id="c-stay">ご宿泊内容</h2>
-      <p class="sub" id="c-staysub">日程・人数を選ぶと、空室と料金がリアルタイムで反映されます。</p>
-      <div class="row2">
-        <div class="field"><label id="l-in">チェックイン</label><input type="date" id="din"></div>
-        <div class="field"><label id="l-out">チェックアウト</label><input type="date" id="dout"></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label id="l-guests">人数</label>
-          <select id="guests"><option value="1">1名</option><option value="2" selected>2名</option><option value="3">3名</option><option value="4">4名</option></select>
+<div class="page">
+  <header class="global-header">
+    <div class="header-inner">
+      <div class="brand" aria-label="やど直予約 Platform">
+        <div class="brand-mark" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
         </div>
-        <div class="field"><label id="l-nights">泊数</label><input id="nights" value="1泊" readonly></div>
+        <div>
+          <div class="brand-title">やど直予約 Platform</div>
+          <span class="brand-sub">MK1 TECHNOLOGY VIETNAM × retra.jp 参考デモ</span>
+        </div>
       </div>
-      <div class="field"><label id="l-room">お部屋タイプ</label>
-        <div class="rooms" id="rooms"></div>
+      <nav class="segmented" aria-label="デモモード">
+        <button class="mode-btn active" data-mode="guest">宿泊者向け予約サイト</button>
+        <button class="mode-btn" data-mode="admin">施設管理ダッシュボード</button>
+      </nav>
+      <div class="header-actions">
+        <span class="demo-pill">DEMO</span>
+        <button class="icon-btn" id="headerNotify" title="通知">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
       </div>
     </div>
+  </header>
 
-    <div class="card summary">
-      <h2 id="c-sum">ご予約サマリ</h2>
-      <p class="sub" id="c-sumsub">税込・日本円表示</p>
-      <div id="sumbody"></div>
-      <button class="btn" id="bookbtn">予約へ進む</button>
-      <div class="chan">
-        <span>楽天トラベル 同期</span><span>じゃらん 同期</span><span>Booking.com</span><span>Airbnb</span>
-      </div>
-      <p class="note" id="note">※ デモ用のサンプル料金・在庫です。実決済は行いません。チャネル在庫はチャネルマネージャー連携を想定。</p>
-    </div>
-  </div>
+  <main>
+    <section id="guestMode" class="mode-panel active">
+      <div class="container">
+        <div id="guestFlow">
+          <section class="guest-hero">
+            <div class="hero-copy">
+              <span class="eyebrow"><span class="dot"></span><span data-i18n="heroEyebrow">公式直予約サイト拡張デモ</span></span>
+              <h1 data-i18n="heroTitle">OTAに依存しない、多言語の宿泊予約体験。</h1>
+              <p data-i18n="heroText">宿泊施設のブランドを活かした公式予約導線、リアルタイム在庫、追加プラン販売、確認QRまでをひとつに。海外ゲストにもそのまま案内できる軽快な予約サイトです。</p>
+              <div class="hero-actions">
+                <div class="lang-switch" aria-label="言語切替">
+                  <button class="lang-btn active" data-lang="ja">日本語</button>
+                  <button class="lang-btn" data-lang="en">EN</button>
+                  <button class="lang-btn" data-lang="zh">繁體中文</button>
+                </div>
+                <span class="hero-metric"><span data-i18n="heroMetric">直予約比率</span> <b>68%</b></span>
+                <span class="hero-metric"><span data-i18n="heroMetric2">OTA手数料削減</span> <b>¥1.8M/月</b></span>
+              </div>
+            </div>
+            <div class="hero-photo" aria-label="宿泊施設の写真風ビジュアル">
+              <div class="photo-card">
+                <div>
+                  <strong data-i18n="photoTitle">山間の温泉宿「青葉庵」</strong>
+                  <span data-i18n="photoText">本日の公式サイト在庫、全チャネルへ同期済み</span>
+                </div>
+                <div class="sync-mini"><span class="pulse-dot"></span><span data-i18n="syncNow">同期中</span></div>
+              </div>
+            </div>
+          </section>
 
-  <div class="card hidden" id="confcard">
-    <div class="conf">
-      <div class="chk">✓</div>
-      <h2 id="cf-title">ご予約が確定しました</h2>
-      <p class="sub" id="cf-sub">確認メールを送信しました（デモ）。当日はこの予約番号をご提示ください。</p>
-      <div class="code" id="cf-code">YD-000000</div>
-      <table id="cf-table"></table>
-      <button class="btn gold" id="againbtn">別の日程で試す</button>
-    </div>
-  </div>
+          <div class="trust-row" aria-label="チャネル同期ステータス">
+            <span class="trust-label" data-i18n="trustLabel">チャネル同期</span>
+            <span class="sync-badge"><span class="pulse-dot"></span><span data-i18n="official">公式サイト</span></span>
+            <span class="sync-badge"><span class="pulse-dot"></span><span>じゃらん</span></span>
+            <span class="sync-badge"><span class="pulse-dot"></span><span>Booking.com</span></span>
+            <span class="sync-badge"><span class="pulse-dot"></span><span>Airbnb</span></span>
+            <span class="sync-badge"><span class="pulse-dot"></span><span>楽天トラベル</span></span>
+          </div>
+
+          <section class="search-card" aria-label="宿泊検索">
+            <div class="search-grid">
+              <div class="field">
+                <label for="checkin" data-i18n="checkin">チェックイン</label>
+                <input id="checkin" type="date" value="2026-08-16">
+              </div>
+              <div class="field">
+                <label for="checkout" data-i18n="checkout">チェックアウト</label>
+                <input id="checkout" type="date" value="2026-08-18">
+              </div>
+              <div class="field">
+                <label data-i18n="adults">大人</label>
+                <div class="stepper" data-stepper="adults">
+                  <button type="button" data-delta="-1">−</button>
+                  <span id="adultsValue">2</span>
+                  <button type="button" data-delta="1">＋</button>
+                </div>
+              </div>
+              <div class="field">
+                <label data-i18n="children">子ども</label>
+                <div class="stepper" data-stepper="children">
+                  <button type="button" data-delta="-1">−</button>
+                  <span id="childrenValue">0</span>
+                  <button type="button" data-delta="1">＋</button>
+                </div>
+              </div>
+              <div class="field">
+                <label data-i18n="rooms">部屋数</label>
+                <div class="stepper" data-stepper="rooms">
+                  <button type="button" data-delta="-1">−</button>
+                  <span id="roomsValue">1</span>
+                  <button type="button" data-delta="1">＋</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="guest-grid">
+            <div>
+              <section class="panel-card">
+                <div class="section-head">
+                  <div>
+                    <h2 data-i18n="roomHeading">客室を選択</h2>
+                    <p data-i18n="roomSub">人数と日程に合わせて、予約可能な客室を表示します。</p>
+                  </div>
+                  <span class="result-count" id="resultCount">5件表示</span>
+                </div>
+                <div class="room-list" id="roomList"></div>
+              </section>
+
+              <section class="panel-card">
+                <div class="section-head">
+                  <div>
+                    <h2 data-i18n="addonHeading">プラン・追加オプション</h2>
+                    <p data-i18n="addonSub">滞在単価を上げる施設独自プランも、予約導線内で自然に販売できます。</p>
+                  </div>
+                </div>
+                <div class="addon-list" id="addonList"></div>
+              </section>
+            </div>
+
+            <aside class="summary-card" aria-label="予約サマリー">
+              <h2 data-i18n="summaryHeading">予約内容</h2>
+              <p class="summary-note" data-i18n="summaryNote">選択内容に応じて合計金額を自動計算します。</p>
+              <div id="summaryLines"></div>
+              <div class="capacity-warning" id="capacityWarning"></div>
+              <button class="primary-btn" id="reserveBtn" style="width:100%;margin-top:16px" data-i18n="reserveCta">この内容で予約する</button>
+            </aside>
+          </div>
+        </div>
+
+        <section class="confirmation" id="confirmation" aria-live="polite">
+          <div class="success-head">
+            <div class="success-icon">✓</div>
+            <div>
+              <h2 data-i18n="confirmTitle">ご予約が完了しました</h2>
+              <p data-i18n="confirmText">確認メールを送信しました。チェックイン時は予約コードまたはQRをご提示ください。</p>
+            </div>
+          </div>
+          <div class="confirm-grid">
+            <div class="code-box">
+              <div class="code-label" data-i18n="bookingCode">予約コード</div>
+              <div class="booking-code" id="bookingCode">YD-000000</div>
+              <div class="qr" id="qrBox"></div>
+            </div>
+            <div>
+              <table class="details-table" id="confirmTable"></table>
+              <div class="confirm-actions">
+                <button class="primary-btn" id="calendarBtn" data-i18n="calendarBtn">カレンダーに追加</button>
+                <button class="secondary-btn" id="bookAgainBtn" data-i18n="bookAgain">もう一度予約する</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="adminMode" class="mode-panel">
+      <div class="admin-shell">
+        <aside class="sidebar">
+          <div class="property-card">
+            <strong>青葉庵リゾート箱根</strong>
+            <span>公式直予約・PMS・チャネル一元管理</span>
+          </div>
+          <nav class="admin-nav" aria-label="管理メニュー">
+            <button class="admin-nav-btn active" data-section="dashboard"><span class="nav-icon">⌁</span>経営ダッシュボード</button>
+            <button class="admin-nav-btn" data-section="inventory"><span class="nav-icon">▦</span>在庫・客室管理</button>
+            <button class="admin-nav-btn" data-section="reservations"><span class="nav-icon">◆</span>予約管理</button>
+            <button class="admin-nav-btn" data-section="pricing"><span class="nav-icon">¥</span>料金カレンダー</button>
+            <button class="admin-nav-btn" data-section="guests"><span class="nav-icon">★</span>顧客・口コミ</button>
+          </nav>
+        </aside>
+        <div class="admin-main">
+          <div class="admin-topbar">
+            <div>
+              <h1 id="adminTitle">経営ダッシュボード</h1>
+              <p id="adminSubtitle">直予約、OTA、在庫、料金、顧客体験をひとつの画面で把握します。</p>
+            </div>
+            <div class="admin-cluster">
+              <span class="demo-pill">DEMO</span>
+              <button class="small-btn" id="adminLang">日本語</button>
+              <button class="icon-btn" id="adminBell" title="通知">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M13.7 21a2 2 0 0 1-3.4 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="avatar" title="管理者">R</div>
+            </div>
+          </div>
+
+          <section class="admin-section active" id="section-dashboard">
+            <div class="kpi-grid" id="kpiGrid"></div>
+            <div class="dash-grid">
+              <div class="admin-card">
+                <h2>稼働率トレンド</h2>
+                <p class="sub">直近14日間の客室稼働率。週末と連休前はAI料金提案が自動で強めに出ます。</p>
+                <div class="chart-box" id="lineChart"></div>
+                <div class="line-labels"><span>14日前</span><span>本日</span></div>
+              </div>
+              <div class="admin-card">
+                <h2>チャネル構成</h2>
+                <p class="sub">売上ベース。公式直予約への移行余地を可視化します。</p>
+                <div class="donut-wrap">
+                  <div class="chart-box" id="donutChart"></div>
+                  <div class="legend" id="donutLegend"></div>
+                </div>
+              </div>
+            </div>
+            <div class="admin-card">
+              <div class="section-head">
+                <div>
+                  <h2>本日のアクション</h2>
+                  <p>現場がすぐ処理すべき未対応項目と販売機会を表示します。</p>
+                </div>
+              </div>
+              <div class="action-list" id="actionList"></div>
+            </div>
+          </section>
+
+          <section class="admin-section" id="section-inventory">
+            <div class="sync-strip">
+              <span><span class="pulse-dot"></span>公式サイト 2分前同期</span>
+              <span><span class="pulse-dot"></span>じゃらん 3分前同期</span>
+              <span><span class="pulse-dot"></span>Booking.com 1分前同期</span>
+              <span><span class="pulse-dot"></span>Airbnb 4分前同期</span>
+              <span><span class="pulse-dot"></span>楽天トラベル 2分前同期</span>
+            </div>
+            <div class="admin-card">
+              <div class="section-head">
+                <div>
+                  <h2>客室別 在庫グリッド</h2>
+                  <p>次の12日間の残室をチャネル横断で確認できます。セルをクリックすると内訳を表示します。</p>
+                </div>
+              </div>
+              <div class="inventory-wrap" id="inventoryGrid"></div>
+            </div>
+          </section>
+
+          <section class="admin-section" id="section-reservations">
+            <div class="admin-card">
+              <div class="toolbar">
+                <div>
+                  <h2>予約一覧</h2>
+                  <p class="sub">氏名検索、チャネル、ステータスで絞り込みできます。</p>
+                </div>
+                <div class="filters">
+                  <input id="reservationSearch" type="search" placeholder="ゲスト名で検索">
+                  <select id="channelFilter">
+                    <option value="all">全チャネル</option>
+                    <option value="公式直予約">公式直予約</option>
+                    <option value="じゃらん">じゃらん</option>
+                    <option value="Booking.com">Booking.com</option>
+                    <option value="Airbnb">Airbnb</option>
+                    <option value="楽天トラベル">楽天トラベル</option>
+                  </select>
+                  <select id="statusFilter">
+                    <option value="all">全ステータス</option>
+                    <option value="確定">確定</option>
+                    <option value="決済待ち">決済待ち</option>
+                    <option value="キャンセル">キャンセル</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>ゲスト</th><th>客室</th><th>日程</th><th>人数</th><th>チャネル</th><th>金額</th><th>ステータス</th>
+                    </tr>
+                  </thead>
+                  <tbody id="reservationRows"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="admin-section" id="section-pricing">
+            <div class="admin-card">
+              <div class="rate-toolbar">
+                <div>
+                  <h2>料金カレンダー</h2>
+                  <p class="sub">客室ごとの販売料金を確認・編集。需要、曜日、残室に応じたAI料金提案を表示します。</p>
+                </div>
+                <button class="ai-toggle" id="aiToggle" aria-pressed="false">
+                  <span class="switch"><i></i></span>
+                  AI料金提案を反映
+                </button>
+              </div>
+              <div class="rate-wrap" id="pricingGrid"></div>
+            </div>
+          </section>
+
+          <section class="admin-section" id="section-guests">
+            <div class="guest-crm-grid">
+              <div class="admin-card">
+                <div class="section-head">
+                  <div>
+                    <h2>最近のゲスト</h2>
+                    <p>リピート、記念日、好みを予約情報と合わせて表示します。</p>
+                  </div>
+                </div>
+                <div class="guest-list" id="guestList"></div>
+              </div>
+              <div class="admin-card">
+                <div class="section-head">
+                  <div>
+                    <h2>口コミ・レビュー</h2>
+                    <p>公式サイト経由の口コミは次回予約への導線に活用できます。</p>
+                  </div>
+                </div>
+                <div class="review-list" id="reviewList"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">MK1 TECHNOLOGY VIETNAM — 宿泊施設向け公式直予約サイト拡張プラットフォーム デモ — For 株式会社リトラ様（retra.jp） — 参考提案</footer>
 </div>
 
-<!-- ============ ADMIN ============ -->
-<div class="wrap hidden" id="view-admin">
-  <div class="hero">
-    <span class="tag">MANAGEMENT · 稼働率最大化</span>
-    <h1>予約・在庫を、一画面で。</h1>
-    <p>直予約とOTA経由の予約を統合。空室カレンダー、稼働率、直予約比率をリアルタイムで把握し、料金を機動的に調整できます。</p>
-  </div>
-  <div class="kpis" id="kpis"></div>
-  <div class="card">
-    <h2>空室カレンダー（今後7日）</h2>
-    <p class="sub">数字＝残室数。チャネル横断の在庫を単一マスターで管理（ダブルブッキング防止）。</p>
-    <div class="cal"><table id="caltable"></table></div>
-    <div class="legend">■ <span style="color:var(--ok);font-weight:700">緑=空室あり</span>　■ <span style="color:#c07a1a;font-weight:700">橙=残りわずか</span>　■ <span style="color:#c0392b;font-weight:700">赤=満室</span></div>
-  </div>
-</div>
-
-<div class="footer">MK1 TECHNOLOGY VIETNAM ／ 宿泊施設向け 直予約プラットフォーム 実機デモ ／ For 株式会社リトラ 御中 — 参考構成</div>
+<div class="inventory-popover" id="inventoryPopover"></div>
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="drawer" id="reservationDrawer" aria-label="予約詳細"></aside>
+<div class="toast" id="toast"></div>
 
 <script>
-// ---------- i18n ----------
-const T = {
-  ja:{htag:"DIRECT BOOKING · 脱OTA · 多言語",htitle:"公式サイトから、そのまま直予約。",
-    hlead:"OTA手数料をかけずに、多言語・多通貨で「そのまま予約完了」まで。在庫はチャネルマネージャーで各OTAと自動同期します。",
-    cstay:"ご宿泊内容",cstaysub:"日程・人数を選ぶと、空室と料金がリアルタイムで反映されます。",
-    lin:"チェックイン",lout:"チェックアウト",lguests:"人数",lnights:"泊数",lroom:"お部屋タイプ",
-    csum:"ご予約サマリ",csumsub:"税込・日本円表示",book:"予約へ進む",
-    cftitle:"ご予約が確定しました",cfsub:"確認メールを送信しました（デモ）。当日はこの予約番号をご提示ください。",again:"別の日程で試す",
-    unit:"名",night:"泊",room:"室料",guestfee:"人数追加",subtotal:"小計",tax:"（税込）",total:"合計",
-    perNight:"／泊〜",pick:"お部屋を選択してください"},
-  en:{htag:"DIRECT BOOKING · Commission-free · Multilingual",htitle:"Book direct, right from the official site.",
-    hlead:"Complete the booking on-site in multiple languages and currencies — no OTA commission. Inventory auto-syncs to every OTA via a channel manager.",
-    cstay:"Your stay",cstaysub:"Pick dates & guests — availability and price update live.",
-    lin:"Check-in",lout:"Check-out",lguests:"Guests",lnights:"Nights",lroom:"Room type",
-    csum:"Booking summary",csumsub:"Tax included · JPY",book:"Continue to book",
-    cftitle:"Your booking is confirmed",cfsub:"A confirmation email has been sent (demo). Please show this booking code on arrival.",again:"Try other dates",
-    unit:"guests",night:"night(s)",room:"Room",guestfee:"Extra guests",subtotal:"Subtotal",tax:"(tax incl.)",total:"Total",
-    perNight:"/night~",pick:"Please select a room"},
-  zh:{htag:"官网直订 · 免OTA佣金 · 多语言",htitle:"从官网，直接完成预订。",
-    hlead:"无需OTA佣金，多语言多币种一站式完成预订。库存通过渠道管理器与各OTA自动同步。",
-    cstay:"入住信息",cstaysub:"选择日期与人数，空房与价格实时更新。",
-    lin:"入住",lout:"退房",lguests:"人数",lnights:"晚数",lroom:"房型",
-    csum:"预订摘要",csumsub:"含税 · 日元",book:"继续预订",
-    cftitle:"预订已确认",cfsub:"确认邮件已发送（演示）。入住当天请出示此预订号。",again:"换个日期再试",
-    unit:"人",night:"晚",room:"房费",guestfee:"加人",subtotal:"小计",tax:"（含税）",total:"合计",
-    perNight:"/晚起",pick:"请选择房型"}
-};
-let L = "ja";
+(() => {
+  "use strict";
 
-const ROOMS = [
-  {id:"std", ja:"和室スタンダード", en:"Japanese-style Standard", zh:"日式标准间", d_ja:"8畳・定員3名・Wi-Fi・温泉利用", d_en:"8-tatami · up to 3 · Wi-Fi · onsen", d_zh:"8榻榻米·限3人·Wi-Fi·温泉", base:14800},
-  {id:"twin", ja:"モダンツイン", en:"Modern Twin", zh:"现代双床间", d_ja:"22㎡・定員2名・シモンズベッド", d_en:"22㎡ · 2 guests · Simmons beds", d_zh:"22㎡·限2人·席梦思床", base:18600},
-  {id:"suite", ja:"露天風呂付スイート", en:"Suite w/ Open-air Bath", zh:"带露天风吕套房", d_ja:"48㎡・定員4名・専用露天風呂", d_en:"48㎡ · up to 4 · private open-air bath", d_zh:"48㎡·限4人·专用露天风吕", base:38000},
-];
-let sel = "twin";
+  const yen = new Intl.NumberFormat("ja-JP", { style: "currency", currency: "JPY", maximumFractionDigits: 0 });
+  const jpDate = new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric", weekday: "short" });
+  const fullDate = new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "long", day: "numeric", weekday: "short" });
 
-function fmt(n){return "¥"+n.toLocaleString();}
-function todayPlus(d){const t=new Date();t.setDate(t.getDate()+d);return t.toISOString().slice(0,10);}
-function nights(){const a=new Date(document.getElementById("din").value),b=new Date(document.getElementById("dout").value);
-  const n=Math.round((b-a)/86400000);return isNaN(n)||n<1?1:n;}
+  const i18n = {
+    ja: {
+      heroEyebrow:"公式直予約サイト拡張デモ",
+      heroTitle:"OTAに依存しない、多言語の宿泊予約体験。",
+      heroText:"宿泊施設のブランドを活かした公式予約導線、リアルタイム在庫、追加プラン販売、確認QRまでをひとつに。海外ゲストにもそのまま案内できる軽快な予約サイトです。",
+      heroMetric:"直予約比率",
+      heroMetric2:"OTA手数料削減",
+      photoTitle:"山間の温泉宿「青葉庵」",
+      photoText:"本日の公式サイト在庫、全チャネルへ同期済み",
+      syncNow:"同期中",
+      trustLabel:"チャネル同期",
+      official:"公式サイト",
+      checkin:"チェックイン",
+      checkout:"チェックアウト",
+      adults:"大人",
+      children:"子ども",
+      rooms:"部屋数",
+      roomHeading:"客室を選択",
+      roomSub:"人数と日程に合わせて、予約可能な客室を表示します。",
+      addonHeading:"プラン・追加オプション",
+      addonSub:"滞在単価を上げる施設独自プランも、予約導線内で自然に販売できます。",
+      result:"件表示",
+      perNight:"1泊 / 税込",
+      capacity:"定員",
+      people:"名",
+      remaining:"残り",
+      select:"選択する",
+      selected:"選択中",
+      unavailable:"人数超過",
+      summaryHeading:"予約内容",
+      summaryNote:"選択内容に応じて合計金額を自動計算します。",
+      nights:"泊数",
+      room:"客室",
+      roomCharge:"客室料金",
+      addons:"追加オプション",
+      lodgingTax:"宿泊税（概算）",
+      subtotal:"小計",
+      total:"税込合計",
+      taxIncluded:"消費税相当額を含みます",
+      reserveCta:"この内容で予約する",
+      capacityWarning:"選択中の人数ではこの客室の定員を超えています。部屋数または客室を変更してください。",
+      confirmTitle:"ご予約が完了しました",
+      confirmText:"確認メールを送信しました。チェックイン時は予約コードまたはQRをご提示ください。",
+      bookingCode:"予約コード",
+      calendarBtn:"カレンダーに追加",
+      bookAgain:"もう一度予約する",
+      confirmRoom:"客室",
+      confirmDates:"宿泊日",
+      confirmGuests:"人数",
+      confirmAddons:"追加オプション",
+      confirmAmount:"お支払い予定額",
+      calendarToast:"カレンダー追加用の予定を作成しました（デモ表示）",
+      none:"なし",
+      nightUnit:"泊",
+      roomUnit:"室"
+    },
+    en: {
+      heroEyebrow:"Official direct-booking demo",
+      heroTitle:"A multilingual booking journey beyond OTA dependency.",
+      heroText:"A polished official booking site with real-time inventory, plan upsells, clear pricing, confirmation code and QR handoff. Built for properties that want a stronger brand-owned channel.",
+      heroMetric:"Direct ratio",
+      heroMetric2:"OTA fees saved",
+      photoTitle:"Aoba-an Onsen Retreat",
+      photoText:"Official-site inventory synced to every channel",
+      syncNow:"Syncing",
+      trustLabel:"Channel sync",
+      official:"Official site",
+      checkin:"Check-in",
+      checkout:"Check-out",
+      adults:"Adults",
+      children:"Children",
+      rooms:"Rooms",
+      roomHeading:"Choose a room",
+      roomSub:"Available rooms update instantly based on dates and party size.",
+      addonHeading:"Plans and add-ons",
+      addonSub:"Property-owned packages can be sold naturally inside the booking flow.",
+      result:"available",
+      perNight:"per night / tax included",
+      capacity:"Capacity",
+      people:"guests",
+      remaining:"Only",
+      select:"Select",
+      selected:"Selected",
+      unavailable:"Over capacity",
+      summaryHeading:"Booking summary",
+      summaryNote:"Totals update automatically as you change the booking.",
+      nights:"Nights",
+      room:"Room",
+      roomCharge:"Room charge",
+      addons:"Add-ons",
+      lodgingTax:"Accommodation tax est.",
+      subtotal:"Subtotal",
+      total:"Total incl. tax",
+      taxIncluded:"Includes consumption-tax equivalent",
+      reserveCta:"Reserve now",
+      capacityWarning:"The selected party exceeds this room capacity. Please change the room type or number of rooms.",
+      confirmTitle:"Your booking is confirmed",
+      confirmText:"A confirmation email has been sent. Show the booking code or QR at check-in.",
+      bookingCode:"Booking code",
+      calendarBtn:"Add to calendar",
+      bookAgain:"Book again",
+      confirmRoom:"Room",
+      confirmDates:"Stay dates",
+      confirmGuests:"Guests",
+      confirmAddons:"Add-ons",
+      confirmAmount:"Amount due",
+      calendarToast:"Calendar event prepared for this demo",
+      none:"None",
+      nightUnit:"nights",
+      roomUnit:"rooms"
+    },
+    zh: {
+      heroEyebrow:"官方直訂網站延伸展示",
+      heroTitle:"不依賴OTA的多語系住宿預訂體驗。",
+      heroText:"整合品牌官網預訂動線、即時庫存、加購方案、價格計算與確認QR。海外旅客也能順暢完成預訂。",
+      heroMetric:"直訂占比",
+      heroMetric2:"OTA費用節省",
+      photoTitle:"山間溫泉旅宿「青葉庵」",
+      photoText:"今日官網庫存已同步至所有通路",
+      syncNow:"同步中",
+      trustLabel:"通路同步",
+      official:"官方網站",
+      checkin:"入住",
+      checkout:"退房",
+      adults:"成人",
+      children:"兒童",
+      rooms:"房數",
+      roomHeading:"選擇房型",
+      roomSub:"依人數與日期即時顯示可預訂房型。",
+      addonHeading:"方案與加購",
+      addonSub:"旅宿自有方案可自然嵌入預訂流程，提高客單價。",
+      result:"間可選",
+      perNight:"每晚 / 含稅",
+      capacity:"可住",
+      people:"人",
+      remaining:"剩餘",
+      select:"選擇",
+      selected:"已選擇",
+      unavailable:"超過人數",
+      summaryHeading:"預訂內容",
+      summaryNote:"系統會依選擇自動計算總額。",
+      nights:"晚數",
+      room:"房型",
+      roomCharge:"房費",
+      addons:"加購",
+      lodgingTax:"住宿稅（估算）",
+      subtotal:"小計",
+      total:"含稅總額",
+      taxIncluded:"包含消費稅相當額",
+      reserveCta:"確認預訂",
+      capacityWarning:"目前人數超過此房型可住人數，請調整房數或房型。",
+      confirmTitle:"預訂已完成",
+      confirmText:"確認信已寄出。入住時請出示預訂代碼或QR。",
+      bookingCode:"預訂代碼",
+      calendarBtn:"加入行事曆",
+      bookAgain:"再次預訂",
+      confirmRoom:"房型",
+      confirmDates:"住宿日期",
+      confirmGuests:"人數",
+      confirmAddons:"加購",
+      confirmAmount:"應付金額",
+      calendarToast:"已產生行事曆資料（展示）",
+      none:"無",
+      nightUnit:"晚",
+      roomUnit:"間"
+    }
+  };
 
-function renderRooms(){
-  const t=T[L];const box=document.getElementById("rooms");box.innerHTML="";
-  ROOMS.forEach(r=>{
-    const el=document.createElement("div");el.className="room"+(r.id===sel?" on":"");
-    el.innerHTML=`<div><div class="rn">${r[L]}</div><div class="rd">${r["d_"+L]}</div></div>
-      <div class="rp"><b>${fmt(r.base)}</b><span>${t.perNight}</span></div>`;
-    el.onclick=()=>{sel=r.id;renderRooms();renderSum();};
-    box.appendChild(el);
-  });
-}
-function renderSum(){
-  const t=T[L];const r=ROOMS.find(x=>x.id===sel);const n=nights();
-  const g=parseInt(document.getElementById("guests").value);
-  document.getElementById("nights").value=n+ (L==="ja"?"泊":L==="en"?" night(s)":"晚");
-  const roomFee=r.base*n;
-  const extra=Math.max(0,g-2)*3500*n;
-  const subtotal=roomFee+extra;
-  document.getElementById("sumbody").innerHTML=
-    `<div class="sumline"><span>${r[L]} × ${n}${t.night}</span><span>${fmt(roomFee)}</span></div>`+
-    (extra>0?`<div class="sumline"><span>${t.guestfee}</span><span>${fmt(extra)}</span></div>`:"")+
-    `<div class="sumline"><span>${t.subtotal}</span><span>${fmt(subtotal)}</span></div>`+
-    `<div class="sumline total"><span>${t.total} <span class="tax">${t.tax}</span></span><span>${fmt(subtotal)}</span></div>`;
-}
-function book(){
-  const t=T[L];const r=ROOMS.find(x=>x.id===sel);const n=nights();
-  const g=document.getElementById("guests").value;
-  const code="YD-"+Math.floor(100000+Math.random()*899999);
-  document.getElementById("book-area").classList.add("hidden");
-  document.getElementById("confcard").classList.remove("hidden");
-  document.getElementById("cf-title").textContent=t.cftitle;
-  document.getElementById("cf-sub").textContent=t.cfsub;
-  document.getElementById("cf-code").textContent=code;
-  document.getElementById("againbtn").textContent=t.again;
-  const roomFee=r.base*n,extra=Math.max(0,parseInt(g)-2)*3500*n,tot=roomFee+extra;
-  document.getElementById("cf-table").innerHTML=
-    `<tr><td>${t.lroom}</td><td>${r[L]}</td></tr>
-     <tr><td>${t.lin} / ${t.lout}</td><td>${document.getElementById("din").value} 〜 ${document.getElementById("dout").value}</td></tr>
-     <tr><td>${t.lguests} / ${t.lnights}</td><td>${g}${t.unit} / ${n}${t.night}</td></tr>
-     <tr><td>${t.total}</td><td><b>${fmt(tot)}</b> ${t.tax}</td></tr>`;
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-function again(){
-  document.getElementById("confcard").classList.add("hidden");
-  document.getElementById("book-area").classList.remove("hidden");
-}
-function applyLang(){
-  const t=T[L];
-  document.getElementById("h-tag").textContent=t.htag;
-  document.getElementById("h-title").textContent=t.htitle;
-  document.getElementById("h-lead").textContent=t.hlead;
-  document.getElementById("c-stay").textContent=t.cstay;
-  document.getElementById("c-staysub").textContent=t.cstaysub;
-  document.getElementById("l-in").textContent=t.lin;
-  document.getElementById("l-out").textContent=t.lout;
-  document.getElementById("l-guests").textContent=t.lguests;
-  document.getElementById("l-nights").textContent=t.lnights;
-  document.getElementById("l-room").textContent=t.lroom;
-  document.getElementById("c-sum").textContent=t.csum;
-  document.getElementById("c-sumsub").textContent=t.csumsub;
-  document.getElementById("bookbtn").textContent=t.book;
-  renderRooms();renderSum();
-}
+  const roomTypes = [
+    {
+      id:"superior",
+      capacity:2,
+      baseInventory:4,
+      price:18000,
+      names:{ja:"杜のスーペリアツイン",en:"Forest Superior Twin",zh:"森林高級雙床房"},
+      desc:{ja:"大きな窓から緑を望む、最も予約されるスタンダード客室。",en:"A popular standard room with wide windows and forest views.",zh:"可從大窗欣賞綠意的人氣標準房。"},
+      amenities:{ja:["Wi-Fi","禁煙","シャワー","ワークデスク"],en:["Wi-Fi","Non-smoking","Shower","Desk"],zh:["Wi-Fi","禁菸","淋浴","書桌"]}
+    },
+    {
+      id:"wa-modern",
+      capacity:3,
+      baseInventory:3,
+      price:26000,
+      names:{ja:"和モダン デラックス",en:"Wa-Modern Deluxe",zh:"和風現代豪華房"},
+      desc:{ja:"畳スペースとローベッドを備えた、海外ゲストにも人気の客室。",en:"Tatami lounge and low beds, popular with international guests.",zh:"配有榻榻米休憩區與低床，深受海外旅客喜愛。"},
+      amenities:{ja:["Wi-Fi","畳","バスタブ","空気清浄機"],en:["Wi-Fi","Tatami","Bathtub","Air purifier"],zh:["Wi-Fi","榻榻米","浴缸","空氣清淨機"]}
+    },
+    {
+      id:"suite",
+      capacity:4,
+      baseInventory:2,
+      price:42000,
+      names:{ja:"露天風呂付きスイート",en:"Open-Air Bath Suite",zh:"露天風呂套房"},
+      desc:{ja:"専用露天風呂とリビングを備えた、記念日向け高単価ルーム。",en:"A premium suite with private open-air bath and living area.",zh:"附私人露天風呂與客廳，適合紀念日入住。"},
+      amenities:{ja:["露天風呂","夕朝食可","ラウンジ","ミニバー"],en:["Open-air bath","Meal plans","Lounge","Minibar"],zh:["露天風呂","可加晚早餐","客廳","迷你吧"]}
+    },
+    {
+      id:"family",
+      capacity:5,
+      baseInventory:5,
+      price:32000,
+      names:{ja:"ファミリーデラックス",en:"Family Deluxe",zh:"家庭豪華房"},
+      desc:{ja:"小さなお子様連れでも使いやすい、広めの洗面と可動ベッド構成。",en:"A family-friendly layout with flexible beds and spacious vanity.",zh:"適合親子入住，床型彈性且盥洗空間寬敞。"},
+      amenities:{ja:["Wi-Fi","ベビーベッド","独立洗面","キッズ備品"],en:["Wi-Fi","Baby bed","Vanity","Kids items"],zh:["Wi-Fi","嬰兒床","獨立洗面","兒童用品"]}
+    },
+    {
+      id:"workation",
+      capacity:2,
+      baseInventory:4,
+      price:22000,
+      names:{ja:"ワーケーション和洋室",en:"Workation Studio",zh:"旅居辦公和洋房"},
+      desc:{ja:"高速回線、デスク、長期滞在向け収納を備えた平日稼働改善ルーム。",en:"Fast network, desk and storage for weekday workation demand.",zh:"高速網路、書桌與長住收納，適合平日旅居辦公。"},
+      amenities:{ja:["高速Wi-Fi","デスク","連泊割","ランドリー"],en:["Fast Wi-Fi","Desk","Long-stay","Laundry"],zh:["高速Wi-Fi","書桌","連住優惠","洗衣"]}
+    }
+  ];
 
-// admin
-function renderAdmin(){
-  const kp=[["直予約比率","48%","+11pt 目標"],["本日の稼働率","82%",""],["今月 直予約","126件",""],["OTA手数料 削減","¥312k",""]];
-  document.getElementById("kpis").innerHTML=kp.map(k=>
-    `<div class="kpi"><div class="k">${k[0]}</div><div class="v">${k[1]}${k[2]?`<small>${k[2]}</small>`:""}</div></div>`).join("");
-  const days=[];for(let i=0;i<7;i++){const d=new Date();d.setDate(d.getDate()+i);days.push((d.getMonth()+1)+"/"+d.getDate());}
-  let head="<tr><th>お部屋</th>"+days.map(d=>`<th>${d}</th>`).join("")+"</tr>";
-  const seed=[[3,2,1,0,2,3,1],[2,1,1,2,0,1,2],[1,1,0,1,1,0,1]];
-  let body=ROOMS.map((r,ri)=>{
-    return `<tr><td class="rmname">${r.ja}</td>`+seed[ri].map(v=>{
-      const cls=v===0?"full":v<=1?"few":"free";const lab=v===0?"満室":v;
-      return `<td class="cell ${cls}">${lab}</td>`;}).join("")+"</tr>";
-  }).join("");
-  document.getElementById("caltable").innerHTML=head+body;
-}
+  const addons = [
+    {
+      id:"breakfast",
+      priceType:"perGuestNight",
+      unitPriceAdult:2500,
+      unitPriceChild:1200,
+      names:{ja:"季節の朝食",en:"Seasonal breakfast",zh:"季節早餐"},
+      desc:{ja:"地元野菜と炊き立てご飯の朝食セット。",en:"Local vegetables and freshly cooked rice breakfast.",zh:"使用在地蔬菜與現煮米飯的早餐。"}
+    },
+    {
+      id:"onsen",
+      priceType:"perStay",
+      price:4500,
+      names:{ja:"貸切温泉 45分",en:"Private onsen 45 min",zh:"私人溫泉45分鐘"},
+      desc:{ja:"チェックイン後に空き枠から時間を選択できます。",en:"Choose an available time after check-in.",zh:"入住後可從空檔選擇時間。"}
+    },
+    {
+      id:"shuttle",
+      priceType:"perStay",
+      price:3000,
+      names:{ja:"駅送迎",en:"Station shuttle",zh:"車站接送"},
+      desc:{ja:"最寄り駅から施設まで往復送迎。",en:"Round-trip shuttle from the nearest station.",zh:"從最近車站到旅宿的來回接送。"}
+    },
+    {
+      id:"anniversary",
+      priceType:"perStay",
+      price:5200,
+      names:{ja:"記念日ケーキ",en:"Anniversary cake",zh:"紀念日蛋糕"},
+      desc:{ja:"メッセージプレート付き。サプライズ演出にも対応。",en:"Includes a message plate for a small celebration.",zh:"附祝福牌，可協助驚喜安排。"}
+    }
+  ];
 
-// wiring
-document.getElementById("din").value=todayPlus(7);
-document.getElementById("dout").value=todayPlus(8);
-["din","dout","guests"].forEach(id=>document.getElementById(id).addEventListener("change",renderSum));
-document.getElementById("bookbtn").onclick=book;
-document.getElementById("againbtn").onclick=again;
-document.querySelectorAll("#lang button").forEach(b=>b.onclick=()=>{
-  L=b.dataset.l;document.querySelectorAll("#lang button").forEach(x=>x.classList.remove("on"));b.classList.add("on");applyLang();});
-document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
-  document.querySelectorAll("#tabs button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
-  const v=b.dataset.v;
-  document.getElementById("view-guest").classList.toggle("hidden",v!=="guest");
-  document.getElementById("view-admin").classList.toggle("hidden",v!=="admin");
-  if(v==="admin")renderAdmin();
-});
-applyLang();
+  const state = {
+    lang:"ja",
+    mode:"guest",
+    adults:2,
+    children:0,
+    rooms:1,
+    selectedRoomId:"wa-modern",
+    selectedAddons:new Set(["breakfast"]),
+    aiApplied:false
+  };
+
+  const $ = (selector, root=document) => root.querySelector(selector);
+  const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+
+  function t(key){ return i18n[state.lang][key] || i18n.ja[key] || key; }
+  function getDate(id){ return new Date($(id).value + "T00:00:00"); }
+  function nights(){
+    const diff = (getDate("#checkout") - getDate("#checkin")) / 86400000;
+    return Math.max(1, Math.round(diff || 1));
+  }
+  function guestTotal(){ return state.adults + state.children; }
+  function selectedRoom(){ return roomTypes.find(room => room.id === state.selectedRoomId) || roomTypes[0]; }
+  function roomAvailability(room, index){
+    const n = nights();
+    const demand = ((index + 2) * 3 + n + state.adults + state.rooms) % 4;
+    return Math.max(0, room.baseInventory - demand);
+  }
+  function canFit(room){ return room.capacity * state.rooms >= guestTotal(); }
+  function addonPrice(addon){
+    if(addon.priceType === "perGuestNight"){
+      return (state.adults * addon.unitPriceAdult + state.children * addon.unitPriceChild) * nights();
+    }
+    return addon.price;
+  }
+  function totals(){
+    const room = selectedRoom();
+    const roomCharge = room.price * nights() * state.rooms;
+    const addonCharge = addons.reduce((sum, addon) => state.selectedAddons.has(addon.id) ? sum + addonPrice(addon) : sum, 0);
+    const lodgingTax = guestTotal() * nights() * 200;
+    const subtotal = roomCharge + addonCharge;
+    const total = subtotal + lodgingTax;
+    return { roomCharge, addonCharge, lodgingTax, subtotal, total };
+  }
+
+  function updateI18n(){
+    $$("[data-i18n]").forEach(el => {
+      const key = el.getAttribute("data-i18n");
+      if(i18n[state.lang][key]) el.textContent = t(key);
+    });
+    $$(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === state.lang));
+    renderGuest();
+  }
+
+  function renderGuest(){
+    $("#adultsValue").textContent = state.adults;
+    $("#childrenValue").textContent = state.children;
+    $("#roomsValue").textContent = state.rooms;
+    renderRooms();
+    renderAddons();
+    renderSummary();
+  }
+
+  function renderRooms(){
+    const list = $("#roomList");
+    const available = roomTypes.filter(canFit);
+    if(!canFit(selectedRoom()) && available.length){
+      state.selectedRoomId = available[0].id;
+    }
+    $("#resultCount").textContent = `${available.length}${state.lang === "en" ? " " : ""}${t("result")}`;
+    list.innerHTML = roomTypes.map((room, index) => {
+      const fit = canFit(room);
+      const selected = room.id === state.selectedRoomId;
+      const inventory = roomAvailability(room, index);
+      const amenities = room.amenities[state.lang].map(label => `<span class="pill">${label}</span>`).join("");
+      return `
+        <article class="room-card ${selected ? "selected" : ""} ${fit ? "" : "unavailable"}" data-room="${room.id}">
+          <div class="room-photo r${index}"><span class="photo-label">${room.names[state.lang]}</span></div>
+          <div class="room-body">
+            <h3>${room.names[state.lang]}</h3>
+            <div class="room-meta">
+              <span>${t("capacity")} ${room.capacity}${t("people")}</span>
+              <span>${t("remaining")} ${inventory}${state.lang === "en" ? " rooms" : "室"}</span>
+            </div>
+            <div class="amenities">${amenities}</div>
+            <p class="room-desc">${room.desc[state.lang]}</p>
+          </div>
+          <div class="room-side">
+            <div class="price">
+              <small>${t("perNight")}</small>
+              <strong>${yen.format(room.price)}</strong>
+            </div>
+            <button class="${selected ? "secondary-btn" : "primary-btn"}" data-select-room="${room.id}" ${fit ? "" : "disabled"}>
+              ${fit ? (selected ? t("selected") : t("select")) : t("unavailable")}
+            </button>
+          </div>
+        </article>
+      `;
+    }).join("");
+    $$("[data-select-room]").forEach(btn => {
+      btn.addEventListener("click", event => {
+        state.selectedRoomId = event.currentTarget.dataset.selectRoom;
+        renderGuest();
+      });
+    });
+  }
+
+  function renderAddons(){
+    $("#addonList").innerHTML = addons.map(addon => {
+      const active = state.selectedAddons.has(addon.id);
+      return `
+        <button type="button" class="addon-card ${active ? "active" : ""}" data-addon="${addon.id}" aria-pressed="${active}">
+          <span class="checkmark">${active ? "✓" : ""}</span>
+          <span>
+            <h3>${addon.names[state.lang]}</h3>
+            <p>${addon.desc[state.lang]}</p>
+          </span>
+          <span class="addon-price">${yen.format(addonPrice(addon))}</span>
+        </button>
+      `;
+    }).join("");
+    $$("[data-addon]").forEach(card => {
+      card.addEventListener("click", event => {
+        const id = event.currentTarget.dataset.addon;
+        if(state.selectedAddons.has(id)) state.selectedAddons.delete(id);
+        else state.selectedAddons.add(id);
+        renderGuest();
+      });
+    });
+  }
+
+  function renderSummary(){
+    const room = selectedRoom();
+    const totalData = totals();
+    const selectedAddonNames = addons
+      .filter(addon => state.selectedAddons.has(addon.id))
+      .map(addon => addon.names[state.lang]);
+    const warning = $("#capacityWarning");
+    const isCapacityOk = canFit(room);
+    warning.textContent = t("capacityWarning");
+    warning.classList.toggle("show", !isCapacityOk);
+    $("#reserveBtn").disabled = !isCapacityOk;
+    $("#summaryLines").innerHTML = `
+      <div class="summary-line"><span>${t("nights")}</span><strong>${nights()}${t("nightUnit")} / ${state.rooms}${t("roomUnit")}</strong></div>
+      <div class="summary-line"><span>${t("room")}</span><strong>${room.names[state.lang]}</strong></div>
+      <div class="summary-line"><span>${t("roomCharge")}</span><strong>${yen.format(totalData.roomCharge)}</strong></div>
+      <div class="summary-line"><span>${t("addons")}</span><strong>${selectedAddonNames.length ? selectedAddonNames.join("、") : t("none")}</strong></div>
+      <div class="summary-line"><span>${t("subtotal")}</span><strong>${yen.format(totalData.subtotal)}</strong></div>
+      <div class="summary-line"><span>${t("lodgingTax")}</span><strong>${yen.format(totalData.lodgingTax)}</strong></div>
+      <div class="summary-total">
+        <div class="summary-line"><span>${t("total")}</span><strong>${yen.format(totalData.total)}</strong></div>
+        <span class="tax-note">${t("taxIncluded")}（${yen.format(Math.round(totalData.total / 11))}）</span>
+      </div>
+    `;
+  }
+
+  function makeBookingCode(){
+    const source = `${selectedRoom().id}|${$("#checkin").value}|${$("#checkout").value}|${state.adults}|${state.children}|${state.rooms}|${Array.from(state.selectedAddons).join(",")}`;
+    let hash = 2166136261;
+    for(let i=0;i<source.length;i++){
+      hash ^= source.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return "YD-" + String(Math.abs(hash) % 1000000).padStart(6, "0");
+  }
+
+  function qrSvg(code){
+    const size = 25;
+    let seed = 0;
+    for(const ch of code) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+    const rand = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 4294967296;
+    };
+    const finder = (x,y) => {
+      let rects = "";
+      for(let yy=0;yy<7;yy++){
+        for(let xx=0;xx<7;xx++){
+          const edge = xx===0 || yy===0 || xx===6 || yy===6;
+          const core = xx>=2 && xx<=4 && yy>=2 && yy<=4;
+          if(edge || core) rects += `<rect x="${x+xx}" y="${y+yy}" width="1" height="1" fill="#122033"/>`;
+        }
+      }
+      return rects;
+    };
+    let cells = finder(1,1) + finder(17,1) + finder(1,17);
+    for(let y=0;y<size;y++){
+      for(let x=0;x<size;x++){
+        const inFinder = (x>=1 && x<8 && y>=1 && y<8) || (x>=17 && x<24 && y>=1 && y<8) || (x>=1 && x<8 && y>=17 && y<24);
+        if(inFinder) continue;
+        if(rand() > .62 || (x + y + code.length) % 11 === 0){
+          cells += `<rect x="${x}" y="${y}" width="1" height="1" fill="#122033"/>`;
+        }
+      }
+    }
+    return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="予約QRコード"><rect width="${size}" height="${size}" fill="#fff"/>${cells}</svg>`;
+  }
+
+  function showConfirmation(){
+    const room = selectedRoom();
+    const code = makeBookingCode();
+    const totalData = totals();
+    const addonsText = addons.filter(addon => state.selectedAddons.has(addon.id)).map(addon => addon.names[state.lang]).join("、") || t("none");
+    $("#bookingCode").textContent = code;
+    $("#qrBox").innerHTML = qrSvg(code);
+    $("#confirmTable").innerHTML = `
+      <tr><th>${t("confirmRoom")}</th><td>${room.names[state.lang]}</td></tr>
+      <tr><th>${t("confirmDates")}</th><td>${fullDate.format(getDate("#checkin"))} - ${fullDate.format(getDate("#checkout"))} / ${nights()}${t("nightUnit")}</td></tr>
+      <tr><th>${t("confirmGuests")}</th><td>${state.adults}${i18n.ja.adults}・${state.children}${i18n.ja.children} / ${state.rooms}${t("roomUnit")}</td></tr>
+      <tr><th>${t("confirmAddons")}</th><td>${addonsText}</td></tr>
+      <tr><th>${t("confirmAmount")}</th><td><strong>${yen.format(totalData.total)}</strong></td></tr>
+    `;
+    $("#guestFlow").style.display = "none";
+    $("#confirmation").classList.add("show");
+    $("#confirmation").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
+  function normalizeDates(){
+    const ci = getDate("#checkin");
+    const co = getDate("#checkout");
+    if(co <= ci){
+      const next = new Date(ci);
+      next.setDate(ci.getDate() + 1);
+      $("#checkout").value = next.toISOString().slice(0,10);
+    }
+  }
+
+  // Admin data and rendering
+  const adminTitles = {
+    dashboard:["経営ダッシュボード","直予約、OTA、在庫、料金、顧客体験をひとつの画面で把握します。"],
+    inventory:["在庫・客室管理","客室ごとの残室、販売停止、チャネル同期状態を確認します。"],
+    reservations:["予約管理","予約検索、ステータス確認、ゲスト詳細を素早く処理します。"],
+    pricing:["料金カレンダー","需要予測を見ながら、日別料金を編集できます。"],
+    guests:["顧客・口コミ","リピーター育成とレビュー返信を管理します。"]
+  };
+
+  const reservations = [
+    {id:"R-24081",guest:"佐藤 美咲",room:"和モダン デラックス",dates:"7/12 - 7/14",guests:"2名",channel:"公式直予約",amount:57200,status:"確定",memo:"記念日ケーキ希望。チェックイン17:00予定。"},
+    {id:"R-24082",guest:"Tan Wei",room:"露天風呂付きスイート",dates:"7/13 - 7/15",guests:"3名",channel:"Booking.com",amount:96800,status:"決済待ち",memo:"英語案内。温泉利用方法を事前送付。"},
+    {id:"R-24083",guest:"山本 大輔",room:"ファミリーデラックス",dates:"7/14 - 7/16",guests:"4名",channel:"じゃらん",amount:75600,status:"確定",memo:"子ども用浴衣2点。"},
+    {id:"R-24084",guest:"Emily Carter",room:"ワーケーション和洋室",dates:"7/15 - 7/18",guests:"1名",channel:"Airbnb",amount:64800,status:"確定",memo:"領収書は会社名義。"},
+    {id:"R-24085",guest:"鈴木 花",room:"杜のスーペリアツイン",dates:"7/16 - 7/17",guests:"2名",channel:"楽天トラベル",amount:19800,status:"キャンセル",memo:"キャンセル料なし期間内。"},
+    {id:"R-24086",guest:"李 佳恩",room:"露天風呂付きスイート",dates:"7/17 - 7/19",guests:"2名",channel:"公式直予約",amount:104400,status:"確定",memo:"空港からの送迎相談あり。"},
+    {id:"R-24087",guest:"高橋 健太",room:"ファミリーデラックス",dates:"7/18 - 7/20",guests:"5名",channel:"公式直予約",amount:88400,status:"決済待ち",memo:"朝食アレルギー確認中。"},
+    {id:"R-24088",guest:"Nguyen An",room:"和モダン デラックス",dates:"7/19 - 7/21",guests:"2名",channel:"Booking.com",amount:62400,status:"確定",memo:"ベトナム語パンフレット希望。"}
+  ];
+
+  const guests = [
+    {name:"佐藤 美咲",flag:"3回目",text:"温泉付き客室と記念日プランを好む。次回は秋の紅葉シーズンを提案。"},
+    {name:"高橋 健太",flag:"家族利用",text:"小学生2名。朝食ブッフェと駅送迎の利用率が高い。"},
+    {name:"李 佳恩",flag:"VIP",text:"露天風呂付き客室をリピート。英語・韓国語での事前案内を希望。"},
+    {name:"Emily Carter",flag:"長期滞在",text:"平日ワーケーション需要。請求書払いと高速Wi-Fiを重視。"}
+  ];
+  const reviews = [
+    {name:"佐藤 美咲",stars:5,text:"公式サイトからの予約がわかりやすく、記念日ケーキもスムーズに追加できました。"},
+    {name:"Tan Wei",stars:4,text:"Room details were clear and the QR check-in felt very modern."},
+    {name:"山本 大輔",stars:5,text:"子ども用品の希望を事前に伝えられて、到着後がとても楽でした。"}
+  ];
+
+  function renderDashboard(){
+    const kpis = [
+      ["直予約売上","¥4.82M","+18.4%"],
+      ["予約件数","326件","+12.1%"],
+      ["客室稼働率","87.6%","+6.3pt"],
+      ["OTA手数料削減","¥1.18M","+24.7%"],
+      ["リピート率","31.2%","+4.8pt"],
+      ["口コミ平均","4.7 / 5","+0.2"]
+    ];
+    $("#kpiGrid").innerHTML = kpis.map(item => `
+      <div class="kpi-card">
+        <div class="kpi-label">${item[0]}</div>
+        <div class="kpi-value">${item[1]}</div>
+        <span class="kpi-delta">${item[2]}</span>
+      </div>
+    `).join("");
+    renderLineChart();
+    renderDonutChart();
+    const actions = [
+      ["amber","決済待ち 2件","本日18:00までに自動リマインド送信"],
+      ["green","直予約アップセル機会","露天風呂付き客室に朝食プラン未追加が4件"],
+      ["","残室アラート","7/18の和モダンが残り1室。OTA配分を見直し"]
+    ];
+    $("#actionList").innerHTML = actions.map(action => `
+      <div class="action-item">
+        <span class="status-dot ${action[0]}"></span>
+        <span><strong>${action[1]}</strong><span>${action[2]}</span></span>
+        <button class="small-btn" data-toast="処理画面を開きました（デモ）">確認</button>
+      </div>
+    `).join("");
+    bindToastButtons();
+  }
+
+  function renderLineChart(){
+    const values = [62,68,71,73,75,79,88,91,82,76,80,86,89,94];
+    const w = 720, h = 260, pad = 34;
+    const max = 100, min = 50;
+    const points = values.map((value, index) => {
+      const x = pad + index * ((w - pad * 2) / (values.length - 1));
+      const y = h - pad - ((value - min) / (max - min)) * (h - pad * 2);
+      return [x,y,value];
+    });
+    const area = `${points.map((p,i) => `${i===0 ? "M" : "L"}${p[0]},${p[1]}`).join(" ")} L${w-pad},${h-pad} L${pad},${h-pad} Z`;
+    $("#lineChart").innerHTML = `
+      <svg viewBox="0 0 ${w} ${h}" role="img" aria-label="稼働率トレンド">
+        <defs>
+          <linearGradient id="lineFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stop-color="#24567f" stop-opacity=".18"/>
+            <stop offset="1" stop-color="#24567f" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${[50,60,70,80,90,100].map(v => {
+          const y = h - pad - ((v - min) / (max - min)) * (h - pad * 2);
+          return `<line x1="${pad}" y1="${y}" x2="${w-pad}" y2="${y}" stroke="#e7edf4"/><text x="8" y="${y+4}" fill="#7a8797" font-size="11">${v}%</text>`;
+        }).join("")}
+        <path d="${area}" fill="url(#lineFill)"/>
+        <polyline points="${points.map(p => `${p[0]},${p[1]}`).join(" ")}" fill="none" stroke="#24567f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        ${points.map((p,i) => `<circle cx="${p[0]}" cy="${p[1]}" r="${i===points.length-1 ? 6 : 4}" fill="${i===points.length-1 ? "#b8863b" : "#fff"}" stroke="#24567f" stroke-width="3"><title>${p[2]}%</title></circle>`).join("")}
+      </svg>
+    `;
+  }
+
+  function renderDonutChart(){
+    const segments = [
+      ["公式直予約",38,"#24567f"],
+      ["じゃらん",18,"#b8863b"],
+      ["楽天トラベル",14,"#8b5fbf"],
+      ["Booking",20,"#3f7fb5"],
+      ["Airbnb",10,"#df6b76"]
+    ];
+    const r = 58;
+    const c = 2 * Math.PI * r;
+    let offset = 0;
+    const circles = segments.map(segment => {
+      const dash = c * segment[1] / 100;
+      const circle = `<circle cx="80" cy="80" r="${r}" fill="none" stroke="${segment[2]}" stroke-width="22" stroke-dasharray="${dash} ${c-dash}" stroke-dashoffset="${-offset}" transform="rotate(-90 80 80)" stroke-linecap="round"/>`;
+      offset += dash;
+      return circle;
+    }).join("");
+    $("#donutChart").innerHTML = `
+      <svg viewBox="0 0 160 160" role="img" aria-label="チャネル構成ドーナツチャート">
+        <circle cx="80" cy="80" r="${r}" fill="none" stroke="#edf2f7" stroke-width="22"/>
+        ${circles}
+        <text x="80" y="76" text-anchor="middle" fill="#162231" font-size="25" font-weight="900">38%</text>
+        <text x="80" y="96" text-anchor="middle" fill="#647386" font-size="11" font-weight="800">直予約</text>
+      </svg>
+    `;
+    $("#donutLegend").innerHTML = segments.map(segment => `
+      <div class="legend-item"><span><i style="background:${segment[2]}"></i>${segment[0]}</span><strong>${segment[1]}%</strong></div>
+    `).join("");
+  }
+
+  function dateSeries(days){
+    const start = new Date("2026-07-08T00:00:00");
+    return Array.from({length:days}, (_, i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      return d;
+    });
+  }
+
+  function renderInventory(){
+    const dates = dateSeries(12);
+    let html = `<table class="grid-table"><thead><tr><th>客室</th>${dates.map(d => `<th>${jpDate.format(d)}</th>`).join("")}</tr></thead><tbody>`;
+    roomTypes.forEach((room, rIndex) => {
+      html += `<tr><td>${room.names.ja}<br><span style="color:#7a8797;font-size:11px">定員${room.capacity}名 / 基本${room.baseInventory}室</span></td>`;
+      dates.forEach((date, dIndex) => {
+        const count = Math.max(0, room.baseInventory - ((rIndex * 2 + dIndex + (dIndex % 5)) % (room.baseInventory + 1)));
+        const cls = count === 0 ? "sold" : count <= 2 ? "warn" : "good";
+        html += `<td><button class="inv-cell ${cls}" data-room="${room.names.ja}" data-date="${fullDate.format(date)}" data-count="${count}" data-channel="${Math.max(0, count-1)}">${count}</button></td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    $("#inventoryGrid").innerHTML = html;
+    $$(".inv-cell").forEach(cell => {
+      cell.addEventListener("click", event => {
+        const btn = event.currentTarget;
+        const pop = $("#inventoryPopover");
+        pop.innerHTML = `
+          <strong>${btn.dataset.room}</strong>
+          <p>${btn.dataset.date}</p>
+          <p>公式在庫: ${btn.dataset.count}室 / OTA配分可能: ${btn.dataset.channel}室</p>
+          <p>最終同期: 2分前。クリックセルの販売停止・配分変更をここから行えます。</p>
+        `;
+        const x = Math.min(event.clientX + 12, window.innerWidth - 270);
+        const y = Math.min(event.clientY + 12, window.innerHeight - 170);
+        pop.style.left = `${x}px`;
+        pop.style.top = `${y}px`;
+        pop.classList.add("show");
+      });
+    });
+  }
+
+  function channelClass(channel){
+    if(channel === "公式直予約") return "direct";
+    if(channel === "じゃらん") return "jalan";
+    if(channel === "Booking.com") return "booking";
+    if(channel === "Airbnb") return "airbnb";
+    return "rakuten";
+  }
+  function statusClass(status){
+    if(status === "確定") return "ok";
+    if(status === "決済待ち") return "pending";
+    return "cancel";
+  }
+
+  function renderReservations(){
+    const query = $("#reservationSearch").value.trim().toLowerCase();
+    const channel = $("#channelFilter").value;
+    const status = $("#statusFilter").value;
+    const filtered = reservations.filter(item => {
+      const matchQuery = !query || item.guest.toLowerCase().includes(query);
+      const matchChannel = channel === "all" || item.channel === channel;
+      const matchStatus = status === "all" || item.status === status;
+      return matchQuery && matchChannel && matchStatus;
+    });
+    $("#reservationRows").innerHTML = filtered.map(item => `
+      <tr data-reservation="${item.id}" tabindex="0">
+        <td><strong>${item.guest}</strong><br><span style="color:#7a8797;font-size:12px">${item.id}</span><br><button class="small-btn" style="margin-top:8px" data-open-reservation="${item.id}">詳細</button></td>
+        <td>${item.room}</td>
+        <td>${item.dates}</td>
+        <td>${item.guests}</td>
+        <td><span class="channel-badge ${channelClass(item.channel)}">${item.channel}</span></td>
+        <td><strong>${yen.format(item.amount)}</strong></td>
+        <td><span class="status-cell"><span class="status-badge ${statusClass(item.status)}">${item.status}</span></span></td>
+      </tr>
+    `).join("") || `<tr><td colspan="7" style="text-align:center;color:#7a8797;padding:28px">条件に一致する予約はありません。</td></tr>`;
+    $$("[data-open-reservation]").forEach(btn => {
+      btn.addEventListener("click", event => {
+        event.stopPropagation();
+        openReservation(btn.dataset.openReservation);
+      });
+    });
+    $$("[data-reservation]").forEach(row => {
+      row.addEventListener("click", () => openReservation(row.dataset.reservation));
+      row.addEventListener("keydown", event => {
+        if(event.key === "Enter") openReservation(row.dataset.reservation);
+      });
+    });
+  }
+
+  function openReservation(id){
+    const item = reservations.find(r => r.id === id);
+    if(!item) return;
+    $("#drawerBackdrop").classList.add("show");
+    const drawer = $("#reservationDrawer");
+    drawer.innerHTML = `
+      <div class="drawer-head">
+        <div>
+          <h2>${item.guest}</h2>
+          <p>${item.id} / <span class="channel-badge ${channelClass(item.channel)}">${item.channel}</span></p>
+        </div>
+        <button class="icon-btn" id="closeDrawer" title="閉じる">×</button>
+      </div>
+      <div class="detail-list">
+        <div class="detail-row"><span>客室</span><strong>${item.room}</strong></div>
+        <div class="detail-row"><span>宿泊日</span><strong>${item.dates}</strong></div>
+        <div class="detail-row"><span>人数</span><strong>${item.guests}</strong></div>
+        <div class="detail-row"><span>金額</span><strong>${yen.format(item.amount)}</strong></div>
+        <div class="detail-row"><span>ステータス</span><strong>${item.status}</strong></div>
+      </div>
+      <p>${item.memo}</p>
+      <button class="primary-btn" style="width:100%" data-toast="ゲストへのメッセージ作成画面を開きました（デモ）">ゲストへ連絡</button>
+    `;
+    drawer.classList.add("show");
+    $("#closeDrawer").addEventListener("click", closeDrawer);
+    bindToastButtons();
+  }
+  function closeDrawer(){
+    $("#drawerBackdrop").classList.remove("show");
+    $("#reservationDrawer").classList.remove("show");
+  }
+
+  function renderPricing(){
+    const dates = dateSeries(10);
+    let html = `<table class="grid-table"><thead><tr><th>客室</th>${dates.map(d => `<th>${jpDate.format(d)}</th>`).join("")}</tr></thead><tbody>`;
+    roomTypes.forEach((room, rIndex) => {
+      html += `<tr><td>${room.names.ja}<br><span style="color:#7a8797;font-size:11px">基準 ${yen.format(room.price)}</span></td>`;
+      dates.forEach((date, dIndex) => {
+        const weekend = date.getDay() === 0 || date.getDay() === 6;
+        const lowStock = ((rIndex + dIndex) % 4 === 0);
+        const multiplier = weekend ? 1.16 : lowStock ? 1.08 : dIndex % 5 === 1 ? .96 : 1;
+        const suggested = Math.round(room.price * multiplier / 100) * 100;
+        const value = state.aiApplied ? suggested : room.price;
+        const hint = weekend ? "週末 +16%" : lowStock ? "残室少 +8%" : dIndex % 5 === 1 ? "平日 -4%" : "基準";
+        html += `<td class="rate-cell"><input type="number" min="8000" step="100" value="${value}" aria-label="${room.names.ja} ${jpDate.format(date)} 料金"><span class="ai-hint">${hint}</span></td>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    $("#pricingGrid").innerHTML = html;
+  }
+
+  function renderGuests(){
+    $("#guestList").innerHTML = guests.map(item => `
+      <div class="guest-card">
+        <div>
+          <h3>${item.name}</h3>
+          <p>${item.text}</p>
+        </div>
+        <div style="display:grid;gap:8px;justify-items:end">
+          <span class="repeat-flag">${item.flag}</span>
+          <button class="small-btn" data-toast="${item.name} のCRMメモを開きました（デモ）">メモ</button>
+        </div>
+      </div>
+    `).join("");
+    $("#reviewList").innerHTML = reviews.map(item => `
+      <div class="review-card">
+        <div class="stars">${"★".repeat(item.stars)}${"☆".repeat(5 - item.stars)}</div>
+        <h3>${item.name}</h3>
+        <p>${item.text}</p>
+        <button class="small-btn" style="margin-top:10px" data-toast="${item.name} への返信テンプレートを作成しました（デモ）">返信案を作成</button>
+      </div>
+    `).join("");
+    bindToastButtons();
+  }
+
+  function bindToastButtons(){
+    $$("[data-toast]").forEach(btn => {
+      btn.onclick = () => showToast(btn.dataset.toast);
+    });
+  }
+  let toastTimer;
+  function showToast(message){
+    const toast = $("#toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 2300);
+  }
+
+  function switchAdminSection(section){
+    $$(".admin-nav-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.section === section));
+    $$(".admin-section").forEach(panel => panel.classList.toggle("active", panel.id === `section-${section}`));
+    $("#adminTitle").textContent = adminTitles[section][0];
+    $("#adminSubtitle").textContent = adminTitles[section][1];
+    $("#inventoryPopover").classList.remove("show");
+  }
+
+  function initEvents(){
+    $$(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.mode = btn.dataset.mode;
+        $$(".mode-btn").forEach(b => b.classList.toggle("active", b === btn));
+        $("#guestMode").classList.toggle("active", state.mode === "guest");
+        $("#adminMode").classList.toggle("active", state.mode === "admin");
+      });
+    });
+    $$(".lang-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.lang = btn.dataset.lang;
+        document.documentElement.lang = state.lang === "ja" ? "ja" : state.lang === "zh" ? "zh-Hant" : "en";
+        updateI18n();
+      });
+    });
+    $$(".stepper").forEach(stepper => {
+      stepper.addEventListener("click", event => {
+        const btn = event.target.closest("button");
+        if(!btn) return;
+        const key = stepper.dataset.stepper;
+        const delta = Number(btn.dataset.delta);
+        const min = key === "children" ? 0 : 1;
+        const max = key === "rooms" ? 4 : 8;
+        state[key] = Math.min(max, Math.max(min, state[key] + delta));
+        renderGuest();
+      });
+    });
+    ["#checkin","#checkout"].forEach(id => {
+      $(id).addEventListener("change", () => {
+        normalizeDates();
+        renderGuest();
+      });
+    });
+    $("#reserveBtn").addEventListener("click", showConfirmation);
+    $("#calendarBtn").addEventListener("click", () => showToast(t("calendarToast")));
+    $("#bookAgainBtn").addEventListener("click", () => {
+      $("#confirmation").classList.remove("show");
+      $("#guestFlow").style.display = "";
+      window.scrollTo({ top:0, behavior:"smooth" });
+    });
+    $$(".admin-nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => switchAdminSection(btn.dataset.section));
+    });
+    ["#reservationSearch","#channelFilter","#statusFilter"].forEach(id => {
+      $(id).addEventListener("input", renderReservations);
+      $(id).addEventListener("change", renderReservations);
+    });
+    $("#reservationRows").addEventListener("click", event => {
+      const detailButton = event.target.closest("[data-open-reservation]");
+      const row = event.target.closest("[data-reservation]");
+      const id = detailButton ? detailButton.dataset.openReservation : row && row.dataset.reservation;
+      if(id) openReservation(id);
+    });
+    $("#drawerBackdrop").addEventListener("click", closeDrawer);
+    $("#aiToggle").addEventListener("click", () => {
+      state.aiApplied = !state.aiApplied;
+      $("#aiToggle").classList.toggle("on", state.aiApplied);
+      $("#aiToggle").setAttribute("aria-pressed", String(state.aiApplied));
+      renderPricing();
+      showToast(state.aiApplied ? "AI料金提案を反映しました" : "基準料金に戻しました");
+    });
+    $("#headerNotify").addEventListener("click", () => showToast("デモ環境の通知です"));
+    $("#adminBell").addEventListener("click", () => showToast("未対応アクションが3件あります"));
+    $("#adminLang").addEventListener("click", () => showToast("管理画面の多言語化も拡張可能です（デモ）"));
+    document.addEventListener("click", event => {
+      if(!event.target.closest(".inventory-popover") && !event.target.closest(".inv-cell")){
+        $("#inventoryPopover").classList.remove("show");
+      }
+    });
+  }
+
+  function init(){
+    initEvents();
+    updateI18n();
+    renderDashboard();
+    renderInventory();
+    renderReservations();
+    renderPricing();
+    renderGuests();
+  }
+
+  init();
+})();
 </script>
 </body>
 </html>
