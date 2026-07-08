@@ -1,0 +1,2671 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>bacchante Subscription Media Demo | MK1 TECHNOLOGY VIETNAM</title>
+  <style>
+    :root {
+      --canvas: #faf7f2;
+      --paper: #fffdf9;
+      --paper-strong: #ffffff;
+      --ink: #24191c;
+      --muted: #786b66;
+      --soft: #e9dfd2;
+      --line: #e3d6c7;
+      --wine: #5b1a2b;
+      --wine-2: #7a2435;
+      --gold: #c8a25b;
+      --gold-soft: #f1dfb9;
+      --sage: #687b62;
+      --blue: #61758d;
+      --rose: #b96f72;
+      --shadow: 0 20px 50px rgba(70, 44, 36, .10);
+      --shadow-soft: 0 10px 26px rgba(70, 44, 36, .08);
+      --radius-lg: 22px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      --serif: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+      --sans: "Hiragino Sans", "Yu Gothic", "Noto Sans JP", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--canvas);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.65;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(200, 162, 91, .16), transparent 32rem),
+        linear-gradient(180deg, #fffaf3 0%, var(--canvas) 36%, #f7f0e7 100%);
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .global-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px clamp(18px, 4vw, 54px);
+      border-bottom: 1px solid rgba(227, 214, 199, .78);
+      background: rgba(250, 247, 242, .88);
+      backdrop-filter: blur(20px);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .crest {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      flex: 0 0 42px;
+      border: 1px solid rgba(200, 162, 91, .65);
+      border-radius: 50%;
+      color: var(--wine);
+      background: linear-gradient(145deg, #fff8e9, #f3dfb8);
+      box-shadow: inset 0 0 0 5px rgba(255, 255, 255, .58), 0 8px 20px rgba(91, 26, 43, .10);
+    }
+
+    .brand-text {
+      min-width: 0;
+    }
+
+    .brand-name {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(1.22rem, 2vw, 1.65rem);
+      letter-spacing: .03em;
+      line-height: 1.05;
+      color: var(--wine);
+    }
+
+    .brand-sub {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: .78rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .demo-pill {
+      display: inline-flex;
+      align-items: center;
+      height: 25px;
+      padding: 0 10px;
+      border: 1px solid rgba(122, 36, 53, .22);
+      border-radius: 999px;
+      color: var(--wine);
+      background: rgba(255, 255, 255, .72);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .10em;
+    }
+
+    .mode-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      width: min(540px, 48vw);
+      margin-left: auto;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .64);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8);
+    }
+
+    .seg-button {
+      min-height: 40px;
+      border: 0;
+      border-radius: 999px;
+      color: var(--muted);
+      background: transparent;
+      font-size: .92rem;
+      font-weight: 700;
+      transition: background .18s ease, color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    .seg-button:hover {
+      color: var(--wine);
+    }
+
+    .seg-button.active {
+      color: #fff;
+      background: linear-gradient(135deg, var(--wine), var(--wine-2));
+      box-shadow: 0 10px 22px rgba(91, 26, 43, .18);
+    }
+
+    .mode {
+      display: none;
+    }
+
+    .mode.active {
+      display: block;
+    }
+
+    .reader-wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 30px clamp(18px, 4vw, 44px) 70px;
+    }
+
+    .notice-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      border: 1px solid rgba(200, 162, 91, .34);
+      border-radius: var(--radius-md);
+      color: #5b4a34;
+      background: rgba(255, 250, 240, .84);
+      box-shadow: 0 8px 18px rgba(80, 58, 42, .04);
+      font-size: .9rem;
+    }
+
+    .notice-strip button {
+      border: 0;
+      color: var(--wine);
+      background: transparent;
+      font-weight: 700;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.06fr) minmax(320px, .94fr);
+      gap: clamp(22px, 3vw, 42px);
+      align-items: stretch;
+      min-height: 486px;
+      margin-bottom: 34px;
+    }
+
+    .hero-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(30px, 5vw, 58px);
+      border: 1px solid rgba(227, 214, 199, .8);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(255, 250, 242, .92)),
+        radial-gradient(circle at 100% 0%, rgba(200, 162, 91, .18), transparent 32%);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      margin-bottom: 18px;
+      color: var(--wine);
+      font-size: .78rem;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow:before {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(2.35rem, 5vw, 5.2rem);
+      line-height: 1.04;
+      letter-spacing: 0;
+      color: #2d171c;
+    }
+
+    .hero-lead {
+      max-width: 680px;
+      margin: 24px 0 0;
+      color: #594b47;
+      font-size: clamp(1rem, 1.35vw, 1.12rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .button-primary,
+    .button-secondary,
+    .icon-button,
+    .chip,
+    .sidebar-button {
+      border: 0;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease, border-color .18s ease;
+    }
+
+    .button-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--wine), var(--wine-2));
+      box-shadow: 0 12px 24px rgba(91, 26, 43, .18);
+      font-weight: 800;
+    }
+
+    .button-primary:hover,
+    .button-secondary:hover,
+    .icon-button:hover,
+    .chip:hover,
+    .sidebar-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--wine);
+      background: #fff;
+      font-weight: 800;
+    }
+
+    .hero-cover {
+      position: relative;
+      overflow: hidden;
+      min-height: 430px;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(155deg, rgba(91, 26, 43, .86), rgba(122, 36, 53, .78) 38%, rgba(200, 162, 91, .60)),
+        linear-gradient(45deg, #f8ead3, #c8a25b);
+      box-shadow: var(--shadow);
+      isolation: isolate;
+    }
+
+    .hero-cover:before {
+      content: "";
+      position: absolute;
+      inset: 22px;
+      border: 1px solid rgba(255, 255, 255, .44);
+      border-radius: 18px;
+      z-index: 1;
+    }
+
+    .hero-cover:after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 74% 24%, rgba(255, 251, 236, .60) 0 8%, transparent 8.3%),
+        radial-gradient(circle at 30% 70%, rgba(255, 255, 255, .18) 0 13%, transparent 13.5%),
+        linear-gradient(100deg, transparent 0 49%, rgba(255, 255, 255, .20) 49% 50.5%, transparent 50.8%);
+      mix-blend-mode: screen;
+    }
+
+    .cover-label {
+      position: absolute;
+      inset: auto 28px 28px 28px;
+      z-index: 2;
+      padding: 24px;
+      border-radius: 18px;
+      color: #fffaf4;
+      background: rgba(45, 23, 28, .38);
+      backdrop-filter: blur(12px);
+    }
+
+    .cover-label p {
+      margin: 0 0 8px;
+      font-size: .82rem;
+      letter-spacing: .10em;
+      opacity: .78;
+    }
+
+    .cover-label h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 2.5vw, 2.35rem);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 18px;
+      margin: 46px 0 18px;
+    }
+
+    .section-head h3,
+    .admin-section h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: clamp(1.55rem, 2.3vw, 2.35rem);
+      line-height: 1.2;
+      letter-spacing: 0;
+      color: #2d171c;
+    }
+
+    .section-head p {
+      max-width: 650px;
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .filter-row,
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .chip {
+      min-height: 36px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #5e4f4b;
+      background: rgba(255, 255, 255, .74);
+      font-weight: 700;
+      font-size: .88rem;
+    }
+
+    .chip.active {
+      color: #fff;
+      border-color: var(--wine);
+      background: var(--wine);
+      box-shadow: 0 10px 20px rgba(91, 26, 43, .16);
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .article-card,
+    .plan-card,
+    .panel,
+    .brand-card,
+    .kpi-card,
+    .chart-card,
+    .admin-card,
+    .recommend-card {
+      border: 1px solid rgba(227, 214, 199, .86);
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, .82);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .article-card {
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 390px;
+    }
+
+    .article-visual {
+      position: relative;
+      min-height: 150px;
+      background:
+        linear-gradient(135deg, var(--card-a), var(--card-b)),
+        linear-gradient(45deg, #f5e5ce, #ffffff);
+    }
+
+    .article-visual:after {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(255, 255, 255, .54);
+      border-radius: 12px;
+    }
+
+    .article-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 18px;
+    }
+
+    .meta-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      color: var(--wine);
+      background: #f7ead8;
+      font-weight: 800;
+    }
+
+    .lock-tag {
+      color: #fff;
+      background: var(--wine);
+    }
+
+    .article-card h4 {
+      margin: 14px 0 10px;
+      font-family: var(--serif);
+      font-size: 1.28rem;
+      line-height: 1.34;
+      letter-spacing: 0;
+    }
+
+    .article-card p {
+      margin: 0;
+      color: #675b57;
+      font-size: .92rem;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 18px;
+    }
+
+    .text-link {
+      border: 0;
+      padding: 0;
+      color: var(--wine);
+      background: transparent;
+      font-weight: 800;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .plan-card {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+    }
+
+    .plan-card.featured {
+      border-color: rgba(122, 36, 53, .36);
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(255, 246, 231, .96)),
+        radial-gradient(circle at 100% 0%, rgba(200, 162, 91, .24), transparent 40%);
+    }
+
+    .plan-name {
+      margin: 0 0 10px;
+      color: var(--wine);
+      font-weight: 900;
+    }
+
+    .price {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 2.25rem;
+      line-height: 1;
+      color: #2d171c;
+    }
+
+    .price span {
+      font-family: var(--sans);
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .benefits {
+      display: grid;
+      gap: 8px;
+      margin: 18px 0 20px;
+      padding: 0;
+      list-style: none;
+      color: #5f524d;
+      font-size: .92rem;
+    }
+
+    .benefits li {
+      display: flex;
+      gap: 8px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: minmax(0, .93fr) minmax(0, 1.07fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .panel h4,
+    .chart-card h4,
+    .admin-card h3 {
+      margin: 0 0 14px;
+      color: #321b20;
+      font-size: 1.05rem;
+      letter-spacing: 0;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: #6a5a55;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      color: var(--ink);
+      background: rgba(255, 255, 255, .88);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    input,
+    select {
+      height: 42px;
+      padding: 0 12px;
+    }
+
+    textarea {
+      min-height: 94px;
+      padding: 10px 12px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(122, 36, 53, .45);
+      box-shadow: 0 0 0 4px rgba(122, 36, 53, .08);
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .timeline li {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid rgba(227, 214, 199, .72);
+      border-radius: 12px;
+      background: rgba(255, 253, 249, .86);
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      margin-top: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(200, 162, 91, .18);
+    }
+
+    .timeline strong {
+      color: #321b20;
+    }
+
+    .timeline span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    .chart-box {
+      min-height: 196px;
+    }
+
+    .catalog-tools {
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .brand-card {
+      padding: 16px;
+      text-align: left;
+    }
+
+    .brand-card:hover {
+      border-color: rgba(122, 36, 53, .35);
+      box-shadow: 0 16px 30px rgba(91, 26, 43, .12);
+      transform: translateY(-2px);
+    }
+
+    .brand-card h4 {
+      margin: 10px 0 8px;
+      font-family: var(--serif);
+      font-size: 1.18rem;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .brand-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .86rem;
+    }
+
+    .mini-label {
+      color: var(--wine);
+      font-size: .76rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .taste-meter {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin: 12px 0;
+    }
+
+    .taste-meter span {
+      height: 6px;
+      border-radius: 999px;
+      background: #eadfce;
+    }
+
+    .taste-meter span.filled {
+      background: var(--gold);
+    }
+
+    .recommender {
+      display: grid;
+      grid-template-columns: minmax(260px, .5fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .recommend-results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .recommend-card {
+      padding: 18px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(255, 249, 239, .92));
+    }
+
+    .recommend-card h4 {
+      margin: 8px 0 8px;
+      font-family: var(--serif);
+      font-size: 1.16rem;
+      letter-spacing: 0;
+    }
+
+    .ai-note {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      color: #67501b;
+      background: rgba(241, 223, 185, .44);
+      font-size: .84rem;
+    }
+
+    .admin-shell {
+      display: grid;
+      grid-template-columns: 266px minmax(0, 1fr);
+      min-height: calc(100vh - 75px);
+    }
+
+    .admin-sidebar {
+      position: sticky;
+      top: 75px;
+      align-self: start;
+      height: calc(100vh - 75px);
+      padding: 22px 18px;
+      border-right: 1px solid rgba(227, 214, 199, .78);
+      background: rgba(255, 252, 247, .74);
+      backdrop-filter: blur(16px);
+    }
+
+    .sidebar-title {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: .76rem;
+      font-weight: 900;
+      letter-spacing: .12em;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .sidebar-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      min-height: 44px;
+      padding: 0 12px;
+      border-radius: 12px;
+      color: #5f524d;
+      background: transparent;
+      text-align: left;
+      font-weight: 800;
+    }
+
+    .sidebar-button svg {
+      width: 18px;
+      height: 18px;
+      color: var(--wine);
+    }
+
+    .sidebar-button.active {
+      color: var(--wine);
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .admin-main {
+      min-width: 0;
+      padding: 22px clamp(18px, 3.5vw, 42px) 62px;
+    }
+
+    .admin-topbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px auto auto auto;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .admin-title p,
+    .admin-title h1 {
+      margin: 0;
+    }
+
+    .admin-title p {
+      color: var(--muted);
+      font-size: .82rem;
+      font-weight: 800;
+    }
+
+    .admin-title h1 {
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 2.4vw, 2.35rem);
+      line-height: 1.12;
+      letter-spacing: 0;
+      color: #2d171c;
+    }
+
+    .searchbox {
+      position: relative;
+    }
+
+    .searchbox svg {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+
+    .searchbox input {
+      padding-left: 36px;
+    }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      color: var(--wine);
+      background: #fff;
+    }
+
+    .icon-button svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(135deg, var(--wine), var(--gold));
+      font-weight: 900;
+    }
+
+    .admin-section {
+      display: none;
+    }
+
+    .admin-section.active {
+      display: block;
+    }
+
+    .admin-section > p {
+      margin: 8px 0 20px;
+      color: var(--muted);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-card {
+      padding: 16px;
+    }
+
+    .kpi-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: .74rem;
+      font-weight: 900;
+    }
+
+    .kpi-value {
+      margin: 8px 0 4px;
+      color: #2d171c;
+      font-size: 1.5rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .kpi-delta {
+      color: var(--sage);
+      font-size: .78rem;
+      font-weight: 800;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, .8fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .chart-card,
+    .admin-card {
+      padding: 20px;
+    }
+
+    .chart-card svg,
+    .admin-card svg,
+    .chart-box svg {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .activity-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .activity-list li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 12px;
+      background: #fffaf4;
+      color: #554843;
+      font-size: .88rem;
+    }
+
+    .activity-icon {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: var(--wine);
+      background: #f1dfb9;
+      font-weight: 900;
+    }
+
+    .table-tools {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 170px 160px;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      box-shadow: var(--shadow-soft);
+    }
+
+    table {
+      width: 100%;
+      min-width: 760px;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 13px 14px;
+      border-bottom: 1px solid #eee3d6;
+      text-align: left;
+      vertical-align: middle;
+      font-size: .9rem;
+    }
+
+    th {
+      color: #6c5c55;
+      background: #fff9ef;
+      font-size: .76rem;
+      font-weight: 900;
+      letter-spacing: .04em;
+      white-space: nowrap;
+    }
+
+    td {
+      color: #38272b;
+    }
+
+    tbody tr:hover {
+      background: #fffaf4;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      font-size: .76rem;
+      font-weight: 900;
+    }
+
+    .status.published,
+    .status.active {
+      color: #335838;
+      background: #e5f0de;
+    }
+
+    .status.scheduled,
+    .status.trial {
+      color: #73551a;
+      background: #f5e9c7;
+    }
+
+    .status.draft,
+    .status.cancel {
+      color: #7a2435;
+      background: #f3dde1;
+    }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 70;
+      display: flex;
+      flex-direction: column;
+      width: min(480px, 94vw);
+      height: 100vh;
+      padding: 22px;
+      border-left: 1px solid var(--line);
+      background: #fffdf9;
+      box-shadow: -24px 0 50px rgba(45, 23, 28, .16);
+      transform: translateX(105%);
+      transition: transform .22s ease;
+    }
+
+    .drawer.open {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .drawer-head h3 {
+      margin: 0;
+      font-family: var(--serif);
+      font-size: 1.45rem;
+      letter-spacing: 0;
+    }
+
+    .drawer form {
+      display: grid;
+      gap: 14px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .toggle-line {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffaf4;
+    }
+
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      flex: 0 0 50px;
+    }
+
+    .switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
+      background: #d8c9b8;
+      transition: .18s ease;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      top: 3px;
+      left: 3px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,.16);
+      transition: .18s ease;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--wine);
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+      gap: 16px;
+    }
+
+    .rank-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .rank-list li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid rgba(227, 214, 199, .74);
+      border-radius: 12px;
+      background: #fffaf4;
+    }
+
+    .rank-no {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--wine);
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(36, 25, 28, .34);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal {
+      width: min(560px, 100%);
+      border: 1px solid rgba(227, 214, 199, .88);
+      border-radius: 22px;
+      background: #fffdf9;
+      box-shadow: 0 30px 90px rgba(45, 23, 28, .24);
+      overflow: hidden;
+    }
+
+    .modal-cover {
+      height: 120px;
+      background:
+        radial-gradient(circle at 24% 30%, rgba(255,255,255,.70), transparent 16%),
+        linear-gradient(135deg, var(--wine), var(--gold));
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-body h3 {
+      margin: 0 0 10px;
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      letter-spacing: 0;
+    }
+
+    .modal-body p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 90;
+      max-width: min(380px, calc(100vw - 40px));
+      padding: 14px 16px;
+      border: 1px solid rgba(227, 214, 199, .92);
+      border-radius: 14px;
+      color: #321b20;
+      background: #fffdf9;
+      box-shadow: var(--shadow);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      font-weight: 800;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .footer {
+      padding: 30px clamp(18px, 4vw, 54px) 42px;
+      color: #6c5c55;
+      border-top: 1px solid rgba(227, 214, 199, .78);
+      background: rgba(255, 252, 247, .60);
+      font-size: .88rem;
+      text-align: center;
+    }
+
+    .empty-state {
+      padding: 28px;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius-md);
+      color: var(--muted);
+      background: rgba(255,255,255,.50);
+      text-align: center;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 1120px) {
+      .articles-grid,
+      .plans-grid,
+      .recommend-results {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .brand-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .dashboard-grid,
+      .analytics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .global-header {
+        position: static;
+        flex-wrap: wrap;
+      }
+
+      .mode-switch {
+        order: 3;
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .hero,
+      .two-col,
+      .recommender {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-cover {
+        min-height: 340px;
+      }
+
+      .admin-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-sidebar {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .admin-topbar {
+        grid-template-columns: 1fr auto auto;
+      }
+
+      .admin-topbar .searchbox {
+        grid-column: 1 / -1;
+        order: 2;
+      }
+
+      .table-tools {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .reader-wrap,
+      .admin-main {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .brand-sub {
+        white-space: normal;
+      }
+
+      .seg-button {
+        min-height: 44px;
+        font-size: .82rem;
+      }
+
+      .hero-copy {
+        padding: 26px 20px;
+      }
+
+      .articles-grid,
+      .plans-grid,
+      .recommend-results,
+      .brand-grid,
+      .form-grid,
+      .catalog-tools,
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .notice-strip {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .sidebar-nav {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="global-header">
+      <div class="brand-mark" aria-label="bacchante">
+        <div class="crest" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="28" height="28" role="img">
+            <path d="M12 10h16c-1 8-4 13-8 15-4-2-7-7-8-15Z" fill="none" stroke="currentColor" stroke-width="2"/>
+            <path d="M20 25v6m-6 0h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M14 14c4 2 8 2 12 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-name">bacchante</h1>
+          <p class="brand-sub">good, mindful drinking を届ける会員制メディア構想</p>
+        </div>
+      </div>
+      <span class="demo-pill">DEMO</span>
+      <nav class="mode-switch" aria-label="デモ表示切替">
+        <button class="seg-button active" type="button" data-mode="reader">読者向けメディア</button>
+        <button class="seg-button" type="button" data-mode="admin">編集部・管理画面</button>
+      </nav>
+    </header>
+
+    <main id="readerMode" class="mode active">
+      <div class="reader-wrap">
+        <div class="notice-strip" id="inlineCompliance">
+          <span>20歳未満の飲酒は法律で禁止されています。bacchanteは適正飲酒と文化的な楽しみ方を大切にします。</span>
+          <button type="button" id="hideInlineNotice">閉じる</button>
+        </div>
+
+        <section class="hero" aria-labelledby="readerHeroTitle">
+          <div class="hero-copy">
+            <span class="eyebrow">Editorial Subscription Platform</span>
+            <h2 id="readerHeroTitle">飲む時間を、読みたくなる文化へ。</h2>
+            <p class="hero-lead">蔵元、造り手、料理人、読者の記録が重なり、会員だけの深い記事とパーソナルな飲酒体験が育つ bacchante の新しいメディア体験です。</p>
+            <div class="hero-actions">
+              <button class="button-primary" type="button" data-scroll="#subscriptionPlans">会員プランを見る</button>
+              <button class="button-secondary" type="button" data-scroll="#drinkJournal">飲酒ログを試す</button>
+            </div>
+          </div>
+          <div class="hero-cover" role="img" aria-label="日本酒グラスと読み物の抽象カバー">
+            <div class="cover-label">
+              <p>今月の特集</p>
+              <h3>夏の酒器と、香りをひらく温度。</h3>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="articlesTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="articlesTitle">最新記事</h3>
+              <p>日本酒、ワイン、ビール、ペアリング、飲酒文化を横断する編集記事。会員限定記事は購読導線につながります。</p>
+            </div>
+            <div class="filter-row" id="articleFilters" aria-label="記事カテゴリ">
+              <button class="chip active" type="button" data-category="all">すべて</button>
+              <button class="chip" type="button" data-category="日本酒">日本酒</button>
+              <button class="chip" type="button" data-category="ワイン">ワイン</button>
+              <button class="chip" type="button" data-category="ビール">ビール</button>
+              <button class="chip" type="button" data-category="食文化">食文化</button>
+            </div>
+          </div>
+          <div class="articles-grid" id="articlesGrid"></div>
+        </section>
+
+        <section id="subscriptionPlans" aria-labelledby="plansTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="plansTitle">会員制ペイウォール</h3>
+              <p>無料読者からライト購読、プレミアム会員へ。記事、イベント、保存機能を段階的に開放する設計です。</p>
+            </div>
+          </div>
+          <div class="plans-grid">
+            <article class="plan-card">
+              <p class="plan-name">Free</p>
+              <p class="price">¥0 <span>/ 月</span></p>
+              <ul class="benefits">
+                <li>✓ 月5本の無料記事</li>
+                <li>✓ 銘柄ライブラリ閲覧</li>
+                <li>✓ 飲酒ログ3件まで</li>
+              </ul>
+              <button class="button-secondary" type="button" data-plan="Free">登録する</button>
+            </article>
+            <article class="plan-card featured">
+              <p class="plan-name">Standard</p>
+              <p class="price">¥680 <span>/ 月</span></p>
+              <ul class="benefits">
+                <li>✓ 会員限定記事の読み放題</li>
+                <li>✓ AI風ペアリング提案</li>
+                <li>✓ 飲酒ログ無制限</li>
+              </ul>
+              <button class="button-primary" type="button" data-plan="Standard">購読する</button>
+            </article>
+            <article class="plan-card">
+              <p class="plan-name">Premium</p>
+              <p class="price">¥1,480 <span>/ 月</span></p>
+              <ul class="benefits">
+                <li>✓ 蔵元インタビュー先行公開</li>
+                <li>✓ オンライン試飲会の優先枠</li>
+                <li>✓ 編集部おすすめ便の抽選</li>
+              </ul>
+              <button class="button-secondary" type="button" data-plan="Premium">申し込む</button>
+            </article>
+          </div>
+        </section>
+
+        <section id="drinkJournal" aria-labelledby="journalTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="journalTitle">読者UGC「私の一杯」</h3>
+              <p>読者が飲んだ銘柄、星評価、食事メモを残し、記事とコミュニティの種になる個人ログです。</p>
+            </div>
+          </div>
+          <div class="two-col">
+            <div class="panel">
+              <h4>一杯を記録</h4>
+              <form id="journalForm" class="form-grid">
+                <div class="field">
+                  <label for="drinkType">種別</label>
+                  <select id="drinkType" required>
+                    <option>日本酒</option>
+                    <option>ワイン</option>
+                    <option>クラフトビール</option>
+                    <option>焼酎</option>
+                    <option>ノンアル</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="drinkRating">星評価</label>
+                  <select id="drinkRating" required>
+                    <option value="5">★★★★★</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="1">★☆☆☆☆</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label for="drinkName">銘柄</label>
+                  <input id="drinkName" type="text" value="新政 No.6 S-type" required>
+                </div>
+                <div class="field full">
+                  <label for="drinkMemo">食事・メモ</label>
+                  <textarea id="drinkMemo" required>白身魚の昆布締め。酸の輪郭がきれいで、余韻が軽い。</textarea>
+                </div>
+                <div class="field full">
+                  <button class="button-primary" type="submit">ログに追加</button>
+                </div>
+              </form>
+            </div>
+            <div class="panel">
+              <h4>月別ログ数</h4>
+              <div class="chart-box" id="journalChart"></div>
+              <ul class="timeline" id="journalTimeline"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="catalogTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="catalogTitle">酒・ブランドライブラリ</h3>
+              <p>編集部レビュー、地域、味わいを整理した検索可能な銘柄データベースです。</p>
+            </div>
+          </div>
+          <div class="catalog-tools">
+            <div class="searchbox">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.7-4.7M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <input id="brandSearch" type="search" placeholder="銘柄・地域・香味で検索">
+            </div>
+            <select id="brandType">
+              <option value="all">すべて</option>
+              <option>日本酒</option>
+              <option>ワイン</option>
+              <option>ビール</option>
+            </select>
+          </div>
+          <div class="brand-grid" id="brandGrid"></div>
+        </section>
+
+        <section aria-labelledby="pairingTitle">
+          <div class="section-head">
+            <div>
+              <h3 id="pairingTitle">ペアリング提案</h3>
+              <p>料理を選ぶと、編集部のルールベースにAI風の説明を添えておすすめの一杯を返します。</p>
+            </div>
+          </div>
+          <div class="recommender">
+            <div class="panel">
+              <h4>料理を選択</h4>
+              <div class="field">
+                <label for="foodSelect">本日の料理</label>
+                <select id="foodSelect">
+                  <option>寿司</option>
+                  <option>焼き鳥</option>
+                  <option>チーズ</option>
+                  <option>天ぷら</option>
+                  <option>スパイスカレー</option>
+                  <option>和菓子</option>
+                </select>
+              </div>
+              <div class="ai-note">AI/編集部アシスト想定: 料理の脂・塩味・香り・温度から相性の高いカテゴリを提示します。</div>
+            </div>
+            <div class="recommend-results" id="pairingResults"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <main id="adminMode" class="mode">
+      <div class="admin-shell">
+        <aside class="admin-sidebar">
+          <p class="sidebar-title">EDITORIAL OPS</p>
+          <nav class="sidebar-nav" aria-label="管理画面セクション">
+            <button class="sidebar-button active" type="button" data-section="dashboard">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+              ダッシュボード
+            </button>
+            <button class="sidebar-button" type="button" data-section="cms">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a2 2 0 0 1 2 2v14l-4-2-4 2-4-2-4 2V6a2 2 0 0 1 2-2Zm3 5h6M9 13h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              記事CMS
+            </button>
+            <button class="sidebar-button" type="button" data-section="subscribers">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm-12 9a8 8 0 0 1 16 0M19 7v4m2-2h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              会員管理
+            </button>
+            <button class="sidebar-button" type="button" data-section="analytics">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7M3 19h18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              分析・収益
+            </button>
+          </nav>
+        </aside>
+
+        <div class="admin-main">
+          <div class="admin-topbar">
+            <div class="admin-title">
+              <p>bacchante 管理コンソール</p>
+              <h1 id="adminTopTitle">ダッシュボード</h1>
+            </div>
+            <div class="searchbox">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.7-4.7M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <input id="adminSearch" type="search" placeholder="記事・会員を横断検索">
+            </div>
+            <button class="icon-button" type="button" aria-label="通知">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9Zm-4 12a2 2 0 0 1-4 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <span class="demo-pill">DEMO</span>
+            <div class="avatar" aria-label="編集長">編</div>
+          </div>
+
+          <section id="dashboardSection" class="admin-section active" aria-labelledby="dashboardTitle">
+            <h2 id="dashboardTitle">事業KPI</h2>
+            <p>購読、記事消費、UGC投稿、継続率を同じ画面で追える編集部向けの運用ビューです。</p>
+            <div class="kpi-grid" id="kpiGrid"></div>
+            <div class="dashboard-grid">
+              <div class="chart-card">
+                <h4>MRR推移</h4>
+                <div id="mrrChart"></div>
+              </div>
+              <div class="chart-card">
+                <h4>会員プラン構成</h4>
+                <div id="planDonut"></div>
+              </div>
+              <div class="admin-card">
+                <h3>直近の編集・購読アクティビティ</h3>
+                <ul class="activity-list" id="activityList"></ul>
+              </div>
+              <div class="admin-card">
+                <h3>本日の注目シグナル</h3>
+                <ul class="rank-list">
+                  <li><span class="rank-no">1</span><strong>日本酒記事の会員転換率</strong><span>8.4%</span></li>
+                  <li><span class="rank-no">2</span><strong>ペアリング検索「天ぷら」</strong><span>+31%</span></li>
+                  <li><span class="rank-no">3</span><strong>解約理由「記事頻度」</strong><span>12件</span></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section id="cmsSection" class="admin-section" aria-labelledby="cmsTitle">
+            <h2 id="cmsTitle">記事CMS</h2>
+            <p>記事の検索、ステータス確認、公開予約、会員限定設定を編集できます。</p>
+            <div class="table-tools">
+              <div class="searchbox">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.7-4.7M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input id="cmsSearch" type="search" placeholder="記事タイトル・著者で検索">
+              </div>
+              <select id="cmsStatus">
+                <option value="all">すべての状態</option>
+                <option value="公開">公開</option>
+                <option value="予約">予約</option>
+                <option value="下書き">下書き</option>
+              </select>
+              <select id="cmsCategory">
+                <option value="all">全カテゴリ</option>
+                <option>日本酒</option>
+                <option>ワイン</option>
+                <option>ビール</option>
+                <option>食文化</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>タイトル</th>
+                    <th>カテゴリ</th>
+                    <th>状態</th>
+                    <th>会員限定</th>
+                    <th>PV</th>
+                    <th>公開日</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="cmsTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="subscribersSection" class="admin-section" aria-labelledby="subscribersTitle">
+            <h2 id="subscribersTitle">会員管理</h2>
+            <p>プラン、継続月数、LTV、ステータスを横断して購読者を確認します。</p>
+            <div class="table-tools">
+              <div class="searchbox">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.7-4.7M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <input id="subscriberSearch" type="search" placeholder="氏名・地域で検索">
+              </div>
+              <select id="subscriberPlan">
+                <option value="all">全プラン</option>
+                <option>Free</option>
+                <option>Standard</option>
+                <option>Premium</option>
+              </select>
+              <select id="subscriberStatus">
+                <option value="all">全ステータス</option>
+                <option value="active">継続中</option>
+                <option value="trial">トライアル</option>
+                <option value="cancel">解約予定</option>
+              </select>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>会員名</th>
+                    <th>プラン</th>
+                    <th>地域</th>
+                    <th>継続月数</th>
+                    <th>LTV</th>
+                    <th>状態</th>
+                  </tr>
+                </thead>
+                <tbody id="subscriberTable"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="analyticsSection" class="admin-section" aria-labelledby="analyticsTitle">
+            <h2 id="analyticsTitle">分析・収益</h2>
+            <p>カテゴリ別読了率、会員転換、売上貢献を把握し、編集企画に戻します。</p>
+            <div class="analytics-grid">
+              <div class="chart-card">
+                <h4>カテゴリ別ファネル</h4>
+                <div id="funnelChart"></div>
+              </div>
+              <div class="admin-card">
+                <h3>有料転換に効いた記事</h3>
+                <ul class="rank-list" id="topArticleList"></ul>
+              </div>
+              <div class="admin-card">
+                <h3>売上内訳</h3>
+                <div id="revenueDonut"></div>
+              </div>
+              <div class="admin-card">
+                <h3>次月の施策候補</h3>
+                <ul class="activity-list">
+                  <li><span class="activity-icon">A</span><span>Premium向け蔵元ライブ配信を第3金曜に固定</span><strong>高</strong></li>
+                  <li><span class="activity-icon">B</span><span>無料記事末尾に関連銘柄の保存導線を追加</span><strong>中</strong></li>
+                  <li><span class="activity-icon">C</span><span>解約前アンケートに「飲酒頻度」項目を追加</span><strong>中</strong></li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      MK1 TECHNOLOGY VIETNAM 提案 | 飲酒文化メディアの会員制プラットフォーム開発デモ | For 株式会社〇〇 / bacchante編集部 様 | 2026年7月
+    </footer>
+  </div>
+
+  <aside class="drawer" id="editDrawer" aria-label="記事編集ドロワー" aria-hidden="true">
+    <div class="drawer-head">
+      <h3>記事を編集</h3>
+      <button class="icon-button" type="button" id="closeDrawer" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <form id="editForm">
+      <input id="editId" type="hidden">
+      <div class="field">
+        <label for="editTitle">タイトル</label>
+        <input id="editTitle" type="text" required>
+      </div>
+      <div class="field">
+        <label for="editExcerpt">本文抜粋</label>
+        <textarea id="editExcerpt" required></textarea>
+      </div>
+      <div class="field">
+        <label for="editStatus">ステータス</label>
+        <select id="editStatus">
+          <option>公開</option>
+          <option>予約</option>
+          <option>下書き</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="editSchedule">公開予定日</label>
+        <input id="editSchedule" type="date">
+      </div>
+      <div class="toggle-line">
+        <div>
+          <strong>会員限定</strong>
+          <div style="color: var(--muted); font-size: .82rem;">Standard以上に公開</div>
+        </div>
+        <label class="switch" aria-label="会員限定切替">
+          <input id="editLocked" type="checkbox">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <button class="button-primary" type="submit">保存する</button>
+    </form>
+  </aside>
+
+  <div class="modal-backdrop" id="detailModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-cover"></div>
+      <div class="modal-body" id="detailModalBody"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="subscribeModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal">
+      <div class="modal-cover"></div>
+      <div class="modal-body">
+        <span class="tag">決済デモ</span>
+        <h3>購読が完了しました</h3>
+        <p id="subscribeMessage">会員限定記事、ペアリング提案、飲酒ログの保存が利用可能になりました。</p>
+        <div class="modal-actions">
+          <button class="button-primary" type="button" id="closeSubscribeModal">記事を読む</button>
+          <button class="button-secondary" type="button" data-mode-jump="admin">管理画面で確認</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop open" id="ageModal" role="dialog" aria-modal="true" aria-labelledby="ageTitle">
+    <div class="modal">
+      <div class="modal-cover"></div>
+      <div class="modal-body">
+        <span class="tag">適正飲酒</span>
+        <h3 id="ageTitle">20歳以上の方向けのデモです</h3>
+        <p>bacchanteは酒類文化の情報を扱うメディアです。20歳未満の飲酒防止、飲み過ぎ防止、地域と造り手への敬意を前提にした体験としてご覧ください。</p>
+        <div class="modal-actions">
+          <button class="button-primary" type="button" id="confirmAge">20歳以上です</button>
+          <button class="button-secondary" type="button" id="leaveAge">内容を閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var articles = [
+        {
+          id: 1,
+          title: "山田錦を磨かない選択、蔵元が語る次世代の純米酒",
+          category: "日本酒",
+          author: "高橋 由香",
+          date: "2026-07-02",
+          excerpt: "精米歩合だけでは語れない香味設計と、土地の米を生かす造りの思想を訪ねる。",
+          locked: false,
+          status: "公開",
+          pv: 18420,
+          schedule: "2026-07-02",
+          colors: ["#7a2435", "#c8a25b"]
+        },
+        {
+          id: 2,
+          title: "冷酒だけではもったいない、夏の燗酒ペアリング入門",
+          category: "食文化",
+          author: "森下 航",
+          date: "2026-07-04",
+          excerpt: "軽い燗で立ち上がる旨味。天ぷら、焼き魚、夏野菜と合わせる温度の考え方。",
+          locked: true,
+          status: "公開",
+          pv: 12780,
+          schedule: "2026-07-04",
+          colors: ["#5b1a2b", "#e7c47d"]
+        },
+        {
+          id: 3,
+          title: "オレンジワインの苦味は、なぜ和食に寄り添うのか",
+          category: "ワイン",
+          author: "佐伯 まどか",
+          date: "2026-07-06",
+          excerpt: "茶葉、出汁、柑橘のニュアンスから読み解く、皮ごと醸すワインの食卓力。",
+          locked: false,
+          status: "予約",
+          pv: 9650,
+          schedule: "2026-07-10",
+          colors: ["#b96f72", "#f1dfb9"]
+        },
+        {
+          id: 4,
+          title: "クラフトビールと銭湯帰り、低アルコールIPAの現在地",
+          category: "ビール",
+          author: "飯田 智也",
+          date: "2026-07-08",
+          excerpt: "香りの満足度を保ちながら、翌日に残さない。都市生活に合う一杯の条件。",
+          locked: true,
+          status: "公開",
+          pv: 15290,
+          schedule: "2026-07-08",
+          colors: ["#61758d", "#c8a25b"]
+        },
+        {
+          id: 5,
+          title: "酒器作家の工房から、薄い口縁が味を変える理由",
+          category: "食文化",
+          author: "宮本 藍",
+          date: "2026-06-29",
+          excerpt: "口当たり、温度変化、香りの抜け方。器と飲み心地の関係を実験する。",
+          locked: false,
+          status: "公開",
+          pv: 22310,
+          schedule: "2026-06-29",
+          colors: ["#687b62", "#d9b76e"]
+        },
+        {
+          id: 6,
+          title: "杜氏の一週間、発酵タンク前で起きている静かな判断",
+          category: "日本酒",
+          author: "編集部",
+          date: "2026-06-25",
+          excerpt: "泡、香り、温度、音。数字と身体感覚が交差する現場の意思決定を追う。",
+          locked: true,
+          status: "下書き",
+          pv: 7800,
+          schedule: "2026-07-18",
+          colors: ["#5b1a2b", "#687b62"]
+        }
+      ];
+
+      var brands = [
+        { id: 1, name: "新政 No.6 S-type", type: "日本酒", region: "秋田", taste: 5, aroma: "白桃、乳酸、透明感", note: "軽い酸と艶のある甘味。刺身や発酵料理と好相性。", story: "自然な酸を生かした現代的な日本酒。bacchante読者の保存率が高い銘柄です。" },
+        { id: 2, name: "醸し人九平次 human", type: "日本酒", region: "愛知", taste: 4, aroma: "梨、米の旨味、ミネラル", note: "ワイングラスで香りが開く。白身魚や鶏の塩焼きに。", story: "海外レストランでも評価される、食中酒としての洗練が強い一本。" },
+        { id: 3, name: "Ch. Lumiere Koshu Orange", type: "ワイン", region: "山梨", taste: 3, aroma: "柑橘皮、紅茶、ほのかな渋み", note: "出汁、薬味、胡麻の香りに寄り添う。", story: "和食に合わせる国産オレンジワインとして編集部が注目。" },
+        { id: 4, name: "Domaine Tetta Chardonnay", type: "ワイン", region: "岡山", taste: 4, aroma: "黄桃、樽、石灰", note: "塩味のあるチーズや鶏のクリーム煮に。", story: "土地の石灰質を思わせる骨格があり、料理の余韻を伸ばします。" },
+        { id: 5, name: "京都醸造 毬子", type: "ビール", region: "京都", taste: 4, aroma: "柑橘、ホップ、麦芽", note: "焼き鳥、唐揚げ、スパイス料理に。", story: "香りは華やかで飲み口は軽い。外食導線との相性が良い銘柄。" },
+        { id: 6, name: "忽布古丹 夜更けの白", type: "ビール", region: "北海道", taste: 3, aroma: "小麦、ハーブ、やわらかな酸", note: "魚介のフリットやハーブ料理と合わせたい。", story: "北海道らしい澄んだ印象と穏やかな酸が特徴。" },
+        { id: 7, name: "仙禽 かぶとむし", type: "日本酒", region: "栃木", taste: 5, aroma: "レモン、青リンゴ、軽快な酸", note: "夏野菜、天ぷら、塩味の強い料理に。", story: "夏季特集でPVが伸びる季節銘柄。ライト層の入口にもなります。" },
+        { id: 8, name: "BookRoad Merlot", type: "ワイン", region: "東京", taste: 2, aroma: "赤い果実、スパイス、柔らかなタンニン", note: "味噌だれの肉料理や煮込みに。", story: "都市型ワイナリーの読者関心を喚起するストーリー性があります。" }
+      ];
+
+      var journalEntries = [
+        { type: "日本酒", name: "仙禽 かぶとむし", rating: 4, memo: "天ぷらの塩味と酸が合う。軽い余韻。", date: "2026-07-06" },
+        { type: "ワイン", name: "甲州オレンジ", rating: 5, memo: "出汁巻き卵と。皮のほろ苦さが締める。", date: "2026-06-22" },
+        { type: "ビール", name: "京都醸造 毬子", rating: 4, memo: "焼き鳥の脂をホップが流してくれる。", date: "2026-06-12" },
+        { type: "日本酒", name: "醸し人九平次 human", rating: 5, memo: "鯛の昆布締めと。ミネラルが伸びる。", date: "2026-05-28" },
+        { type: "焼酎", name: "蔵の師魂 The Green", rating: 3, memo: "ソーダ割り。大葉の香りと合わせたい。", date: "2026-04-18" },
+        { type: "ワイン", name: "BookRoad Merlot", rating: 4, memo: "味噌煮込みと意外にまとまる。", date: "2026-03-30" }
+      ];
+
+      var pairingRules = {
+        "寿司": [
+          { name: "醸し人九平次 human", type: "日本酒", reason: "酢飯の酸と白身魚のミネラルに、透明感のある旨味が重なります。" },
+          { name: "甲州シュールリー", type: "ワイン", reason: "柑橘と塩味の余韻で、貝類や白身を軽くまとめます。" },
+          { name: "低アルコール セゾン", type: "ビール", reason: "酵母由来のスパイス感が薬味と合い、後味を軽くします。" }
+        ],
+        "焼き鳥": [
+          { name: "京都醸造 毬子", type: "ビール", reason: "ホップの香りが脂を切り、タレにも塩にも寄り添います。" },
+          { name: "山廃純米のぬる燗", type: "日本酒", reason: "炭火の香ばしさに、乳酸系の旨味が立体感を出します。" },
+          { name: "BookRoad Merlot", type: "ワイン", reason: "柔らかなタンニンが鶏の旨味と味噌だれに合います。" }
+        ],
+        "チーズ": [
+          { name: "Domaine Tetta Chardonnay", type: "ワイン", reason: "樽香と乳脂肪の相性がよく、塩味の余韻を伸ばします。" },
+          { name: "熟成古酒", type: "日本酒", reason: "ナッツやカラメルの香りがハードチーズと響き合います。" },
+          { name: "ベルジャンダークエール", type: "ビール", reason: "モルトの甘香ばしさが青カビの強さを受け止めます。" }
+        ],
+        "天ぷら": [
+          { name: "仙禽 かぶとむし", type: "日本酒", reason: "レモンのような酸が衣の油を軽くし、野菜の甘味を出します。" },
+          { name: "辛口スパークリング", type: "ワイン", reason: "泡と酸で口中をリセットし、塩で食べる天ぷらに向きます。" },
+          { name: "忽布古丹 夜更けの白", type: "ビール", reason: "小麦の柔らかさとハーブ感で、魚介のフリット感を支えます。" }
+        ],
+        "スパイスカレー": [
+          { name: "京都醸造 毬子", type: "ビール", reason: "柑橘系ホップがスパイスの香りを広げ、苦味で後口を整えます。" },
+          { name: "微発泡ロゼ", type: "ワイン", reason: "果実味と泡が辛味を包み、トマトや玉ねぎの甘味に合います。" },
+          { name: "芋焼酎ソーダ割り", type: "焼酎", reason: "青い香りと軽い甘味がクミンやコリアンダーに寄り添います。" }
+        ],
+        "和菓子": [
+          { name: "貴醸酒", type: "日本酒", reason: "餡の甘さに同調しつつ、酸で重たさを残しません。" },
+          { name: "甘口リースリング", type: "ワイン", reason: "柑橘の酸と蜜感が羊羹や練り切りに合います。" },
+          { name: "焙煎麦芽スタウト", type: "ビール", reason: "黒糖やきな粉の香りと、ロースト感がつながります。" }
+        ]
+      };
+
+      var kpis = [
+        { label: "有料会員数", value: "8,420", delta: "+12.4% MoM" },
+        { label: "月次MRR", value: "¥7.82M", delta: "+9.1% MoM" },
+        { label: "無料会員", value: "42,600", delta: "+4,880" },
+        { label: "記事読了率", value: "68.2%", delta: "+3.5pt" },
+        { label: "UGC投稿数", value: "12,940", delta: "+18.7%" },
+        { label: "月次解約率", value: "2.8%", delta: "-0.4pt" }
+      ];
+
+      var subscribers = [
+        { name: "田中 綾乃", plan: "Premium", region: "東京", months: 16, ltv: 23680, status: "active" },
+        { name: "鈴木 亮", plan: "Standard", region: "大阪", months: 9, ltv: 6120, status: "active" },
+        { name: "Chen Mei", plan: "Standard", region: "福岡", months: 4, ltv: 2720, status: "trial" },
+        { name: "山本 一樹", plan: "Free", region: "北海道", months: 2, ltv: 0, status: "trial" },
+        { name: "森 佳奈", plan: "Premium", region: "京都", months: 21, ltv: 31080, status: "active" },
+        { name: "井上 拓海", plan: "Standard", region: "宮城", months: 7, ltv: 4760, status: "cancel" },
+        { name: "中村 玲奈", plan: "Premium", region: "神奈川", months: 13, ltv: 19240, status: "active" },
+        { name: "佐藤 美咲", plan: "Free", region: "愛知", months: 5, ltv: 0, status: "active" }
+      ];
+
+      var activities = [
+        { icon: "購", text: "Premium会員が今週 142名増加", time: "10分前" },
+        { icon: "稿", text: "蔵元インタビュー記事を予約公開", time: "32分前" },
+        { icon: "読", text: "「夏の燗酒」読了率が74%に到達", time: "1時間前" },
+        { icon: "UGC", text: "読者ログに新規投稿 386件", time: "2時間前" }
+      ];
+
+      var topArticles = [
+        { title: "夏の燗酒ペアリング入門", value: "転換 312件" },
+        { title: "杜氏の一週間", value: "転換 228件" },
+        { title: "酒器作家の工房から", value: "転換 176件" },
+        { title: "低アルコールIPAの現在地", value: "転換 149件" }
+      ];
+
+      var currentCategory = "all";
+      var toastTimer = null;
+
+      function yen(value) {
+        return "¥" + Number(value).toLocaleString("ja-JP");
+      }
+
+      function formatDate(value) {
+        return new Date(value + "T00:00:00").toLocaleDateString("ja-JP", { year: "numeric", month: "short", day: "numeric" });
+      }
+
+      function showToast(message) {
+        var toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(function () {
+          toast.classList.remove("show");
+        }, 2600);
+      }
+
+      function svgIconLock() {
+        return '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2m-11 0h12v10H6V10Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>';
+      }
+
+      function renderArticles() {
+        var grid = document.getElementById("articlesGrid");
+        var filtered = articles.filter(function (article) {
+          return currentCategory === "all" || article.category === currentCategory;
+        });
+
+        grid.innerHTML = filtered.map(function (article) {
+          var action = article.locked ? "購読して読む" : "読む";
+          return '<article class="article-card" style="--card-a:' + article.colors[0] + ';--card-b:' + article.colors[1] + '">' +
+            '<div class="article-visual"></div>' +
+            '<div class="article-body">' +
+              '<div class="meta-line"><span class="tag">' + article.category + '</span>' +
+              (article.locked ? '<span class="tag lock-tag">' + svgIconLock() + ' 会員限定</span>' : '') +
+              '<span>' + formatDate(article.date) + '</span></div>' +
+              '<h4>' + article.title + '</h4>' +
+              '<p>' + article.excerpt + '</p>' +
+              '<div class="card-footer"><span class="meta-line">著者: ' + article.author + '</span>' +
+              '<button class="text-link" type="button" data-article-action="' + article.id + '">' + action + '</button></div>' +
+            '</div>' +
+          '</article>';
+        }).join("");
+      }
+
+      function renderJournal() {
+        var timeline = document.getElementById("journalTimeline");
+        timeline.innerHTML = journalEntries.slice(0, 5).map(function (entry) {
+          return '<li><span class="dot"></span><div><strong>' + entry.name + '</strong>' +
+            '<span>' + entry.type + ' | ' + "★".repeat(entry.rating) + "☆".repeat(5 - entry.rating) + ' | ' + formatDate(entry.date) + '</span>' +
+            '<span>' + entry.memo + '</span></div></li>';
+        }).join("");
+        renderJournalChart();
+      }
+
+      function renderJournalChart() {
+        var chart = document.getElementById("journalChart");
+        var months = [
+          { key: "2026-02", label: "2月" },
+          { key: "2026-03", label: "3月" },
+          { key: "2026-04", label: "4月" },
+          { key: "2026-05", label: "5月" },
+          { key: "2026-06", label: "6月" },
+          { key: "2026-07", label: "7月" }
+        ];
+        var counts = months.map(function (month) {
+          return journalEntries.filter(function (entry) {
+            return entry.date.slice(0, 7) === month.key;
+          }).length;
+        });
+        var max = Math.max.apply(null, counts.concat([1]));
+        var bars = counts.map(function (count, index) {
+          var x = 42 + index * 48;
+          var height = Math.max(8, count / max * 112);
+          var y = 142 - height;
+          return '<rect x="' + x + '" y="' + y + '" width="28" height="' + height + '" rx="6" fill="' + (index === 5 ? '#5b1a2b' : '#c8a25b') + '"></rect>' +
+            '<text x="' + (x + 14) + '" y="164" text-anchor="middle" fill="#786b66" font-size="11">' + months[index].label + '</text>' +
+            '<text x="' + (x + 14) + '" y="' + (y - 8) + '" text-anchor="middle" fill="#321b20" font-size="12" font-weight="700">' + count + '</text>';
+        }).join("");
+        chart.innerHTML = '<svg viewBox="0 0 340 184" role="img" aria-label="月別ログ数チャート">' +
+          '<rect x="0" y="0" width="340" height="184" rx="16" fill="#fffaf4"></rect>' +
+          '<path d="M34 142H318" stroke="#e3d6c7" stroke-width="1"></path>' +
+          '<path d="M34 86H318" stroke="#efe4d7" stroke-width="1" stroke-dasharray="4 6"></path>' +
+          bars +
+          '</svg>';
+      }
+
+      function renderBrands() {
+        var grid = document.getElementById("brandGrid");
+        var term = document.getElementById("brandSearch").value.trim().toLowerCase();
+        var type = document.getElementById("brandType").value;
+        var filtered = brands.filter(function (brand) {
+          var haystack = [brand.name, brand.type, brand.region, brand.aroma, brand.note].join(" ").toLowerCase();
+          return (type === "all" || brand.type === type) && (!term || haystack.indexOf(term) !== -1);
+        });
+
+        if (!filtered.length) {
+          grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;">該当する銘柄がありません。</div>';
+          return;
+        }
+
+        grid.innerHTML = filtered.map(function (brand) {
+          var meter = Array.from({ length: 5 }, function (_, index) {
+            return '<span class="' + (index < brand.taste ? 'filled' : '') + '"></span>';
+          }).join("");
+          return '<button class="brand-card" type="button" data-brand-id="' + brand.id + '">' +
+            '<span class="mini-label">' + brand.type + ' / ' + brand.region + '</span>' +
+            '<h4>' + brand.name + '</h4>' +
+            '<p>' + brand.aroma + '</p>' +
+            '<div class="taste-meter" aria-label="味わい強度">' + meter + '</div>' +
+            '<p>' + brand.note + '</p>' +
+          '</button>';
+        }).join("");
+      }
+
+      function renderPairing() {
+        var food = document.getElementById("foodSelect").value;
+        var results = pairingRules[food] || [];
+        document.getElementById("pairingResults").innerHTML = results.map(function (item, index) {
+          return '<article class="recommend-card">' +
+            '<span class="tag">' + item.type + '</span>' +
+            '<h4>' + (index + 1) + '. ' + item.name + '</h4>' +
+            '<p>' + item.reason + '</p>' +
+          '</article>';
+        }).join("");
+      }
+
+      function renderKpis() {
+        document.getElementById("kpiGrid").innerHTML = kpis.map(function (kpi) {
+          return '<article class="kpi-card"><p class="kpi-label">' + kpi.label + '</p><p class="kpi-value">' + kpi.value + '</p><span class="kpi-delta">' + kpi.delta + '</span></article>';
+        }).join("");
+      }
+
+      function renderMrrChart() {
+        var data = [4.8, 5.15, 5.42, 6.02, 6.44, 7.18, 7.82];
+        var labels = ["1月", "2月", "3月", "4月", "5月", "6月", "7月"];
+        var max = 8.2;
+        var min = 4.3;
+        var points = data.map(function (value, index) {
+          var x = 44 + index * 76;
+          var y = 200 - ((value - min) / (max - min) * 144);
+          return { x: x, y: y, value: value, label: labels[index] };
+        });
+        var line = points.map(function (point) { return point.x + "," + point.y; }).join(" ");
+        var dots = points.map(function (point) {
+          return '<circle cx="' + point.x + '" cy="' + point.y + '" r="5" fill="#5b1a2b"></circle>' +
+            '<text x="' + point.x + '" y="232" text-anchor="middle" fill="#786b66" font-size="12">' + point.label + '</text>' +
+            '<text x="' + point.x + '" y="' + (point.y - 12) + '" text-anchor="middle" fill="#321b20" font-size="12" font-weight="700">¥' + point.value.toFixed(1) + 'M</text>';
+        }).join("");
+        document.getElementById("mrrChart").innerHTML = '<svg viewBox="0 0 560 252" role="img" aria-label="MRR推移">' +
+          '<rect x="0" y="0" width="560" height="252" rx="18" fill="#fffaf4"></rect>' +
+          '<path d="M38 200H526M38 152H526M38 104H526M38 56H526" stroke="#eadfce" stroke-width="1"></path>' +
+          '<polyline points="' + line + '" fill="none" stroke="#5b1a2b" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></polyline>' +
+          '<polygon points="' + line + ' 500,200 44,200" fill="rgba(122,36,53,.08)"></polygon>' +
+          dots +
+          '</svg>';
+      }
+
+      function donutSegment(cx, cy, r, startAngle, endAngle) {
+        var start = polarToCartesian(cx, cy, r, endAngle);
+        var end = polarToCartesian(cx, cy, r, startAngle);
+        var largeArc = endAngle - startAngle <= 180 ? "0" : "1";
+        return "M " + start.x + " " + start.y + " A " + r + " " + r + " 0 " + largeArc + " 0 " + end.x + " " + end.y;
+      }
+
+      function polarToCartesian(cx, cy, r, angle) {
+        var radians = (angle - 90) * Math.PI / 180;
+        return { x: cx + (r * Math.cos(radians)), y: cy + (r * Math.sin(radians)) };
+      }
+
+      function renderDonut(targetId, segments, title) {
+        var total = segments.reduce(function (sum, item) { return sum + item.value; }, 0);
+        var angle = 0;
+        var paths = segments.map(function (item) {
+          var next = angle + item.value / total * 360;
+          var path = '<path d="' + donutSegment(110, 110, 72, angle, next) + '" fill="none" stroke="' + item.color + '" stroke-width="30" stroke-linecap="round"></path>';
+          angle = next;
+          return path;
+        }).join("");
+        var legend = segments.map(function (item, index) {
+          var y = 46 + index * 30;
+          return '<rect x="220" y="' + (y - 11) + '" width="12" height="12" rx="3" fill="' + item.color + '"></rect>' +
+            '<text x="240" y="' + y + '" fill="#321b20" font-size="13" font-weight="700">' + item.label + '</text>' +
+            '<text x="330" y="' + y + '" fill="#786b66" font-size="13" text-anchor="end">' + item.value + '%</text>';
+        }).join("");
+        document.getElementById(targetId).innerHTML = '<svg viewBox="0 0 360 220" role="img" aria-label="' + title + '">' +
+          '<rect x="0" y="0" width="360" height="220" rx="18" fill="#fffaf4"></rect>' +
+          paths +
+          '<text x="110" y="105" text-anchor="middle" fill="#321b20" font-size="20" font-weight="900">' + segments[0].value + '%</text>' +
+          '<text x="110" y="126" text-anchor="middle" fill="#786b66" font-size="12">最大構成</text>' +
+          legend +
+          '</svg>';
+      }
+
+      function renderActivities() {
+        document.getElementById("activityList").innerHTML = activities.map(function (item) {
+          return '<li><span class="activity-icon">' + item.icon + '</span><span>' + item.text + '</span><strong>' + item.time + '</strong></li>';
+        }).join("");
+      }
+
+      function statusClass(status) {
+        if (status === "公開" || status === "active") return "published active";
+        if (status === "予約" || status === "trial") return "scheduled trial";
+        return "draft cancel";
+      }
+
+      function renderCmsTable() {
+        var table = document.getElementById("cmsTable");
+        var term = document.getElementById("cmsSearch").value.trim().toLowerCase();
+        var status = document.getElementById("cmsStatus").value;
+        var category = document.getElementById("cmsCategory").value;
+        var rows = articles.filter(function (article) {
+          var matchesTerm = !term || (article.title + article.author).toLowerCase().indexOf(term) !== -1;
+          var matchesStatus = status === "all" || article.status === status;
+          var matchesCategory = category === "all" || article.category === category;
+          return matchesTerm && matchesStatus && matchesCategory;
+        });
+
+        table.innerHTML = rows.map(function (article) {
+          return '<tr>' +
+            '<td><strong>' + article.title + '</strong><br><span style="color: var(--muted); font-size: .78rem;">' + article.author + '</span></td>' +
+            '<td>' + article.category + '</td>' +
+            '<td><span class="status ' + statusClass(article.status) + '">' + article.status + '</span></td>' +
+            '<td>' + (article.locked ? "会員限定" : "無料公開") + '</td>' +
+            '<td>' + article.pv.toLocaleString("ja-JP") + '</td>' +
+            '<td>' + formatDate(article.schedule) + '</td>' +
+            '<td><button class="text-link" type="button" data-edit-id="' + article.id + '">編集</button></td>' +
+          '</tr>';
+        }).join("");
+      }
+
+      function renderSubscribers() {
+        var table = document.getElementById("subscriberTable");
+        var term = document.getElementById("subscriberSearch").value.trim().toLowerCase();
+        var plan = document.getElementById("subscriberPlan").value;
+        var status = document.getElementById("subscriberStatus").value;
+        var labels = { active: "継続中", trial: "トライアル", cancel: "解約予定" };
+        var rows = subscribers.filter(function (subscriber) {
+          var matchesTerm = !term || (subscriber.name + subscriber.region).toLowerCase().indexOf(term) !== -1;
+          var matchesPlan = plan === "all" || subscriber.plan === plan;
+          var matchesStatus = status === "all" || subscriber.status === status;
+          return matchesTerm && matchesPlan && matchesStatus;
+        });
+
+        table.innerHTML = rows.map(function (subscriber) {
+          return '<tr>' +
+            '<td><strong>' + subscriber.name + '</strong></td>' +
+            '<td>' + subscriber.plan + '</td>' +
+            '<td>' + subscriber.region + '</td>' +
+            '<td>' + subscriber.months + 'か月</td>' +
+            '<td>' + yen(subscriber.ltv) + '</td>' +
+            '<td><span class="status ' + statusClass(subscriber.status) + '">' + labels[subscriber.status] + '</span></td>' +
+          '</tr>';
+        }).join("");
+      }
+
+      function renderFunnelChart() {
+        var categories = [
+          { label: "日本酒", free: 72, paid: 28, color: "#5b1a2b" },
+          { label: "ワイン", free: 66, paid: 34, color: "#b96f72" },
+          { label: "ビール", free: 78, paid: 22, color: "#61758d" },
+          { label: "食文化", free: 61, paid: 39, color: "#687b62" }
+        ];
+        var bars = categories.map(function (item, index) {
+          var y = 48 + index * 48;
+          var freeWidth = item.free * 4.2;
+          var paidWidth = item.paid * 4.2;
+          return '<text x="30" y="' + (y + 17) + '" fill="#321b20" font-size="13" font-weight="700">' + item.label + '</text>' +
+            '<rect x="110" y="' + y + '" width="' + freeWidth + '" height="24" rx="7" fill="#eadfce"></rect>' +
+            '<rect x="' + (110 + freeWidth) + '" y="' + y + '" width="' + paidWidth + '" height="24" rx="7" fill="' + item.color + '"></rect>' +
+            '<text x="540" y="' + (y + 17) + '" text-anchor="end" fill="#786b66" font-size="12">有料転換 ' + item.paid + '%</text>';
+        }).join("");
+        document.getElementById("funnelChart").innerHTML = '<svg viewBox="0 0 570 250" role="img" aria-label="カテゴリ別ファネル">' +
+          '<rect x="0" y="0" width="570" height="250" rx="18" fill="#fffaf4"></rect>' +
+          '<text x="110" y="26" fill="#786b66" font-size="12">無料読者</text><text x="430" y="26" fill="#786b66" font-size="12">有料転換</text>' +
+          bars +
+          '</svg>';
+      }
+
+      function renderTopArticles() {
+        document.getElementById("topArticleList").innerHTML = topArticles.map(function (item, index) {
+          return '<li><span class="rank-no">' + (index + 1) + '</span><strong>' + item.title + '</strong><span>' + item.value + '</span></li>';
+        }).join("");
+      }
+
+      function openBrandModal(id) {
+        var brand = brands.find(function (item) { return item.id === id; });
+        if (!brand) return;
+        var body = document.getElementById("detailModalBody");
+        body.innerHTML = '<span class="tag">' + brand.type + ' / ' + brand.region + '</span>' +
+          '<h3>' + brand.name + '</h3>' +
+          '<p>' + brand.story + '</p>' +
+          '<p><strong>香味:</strong> ' + brand.aroma + '</p>' +
+          '<p><strong>おすすめ:</strong> ' + brand.note + '</p>' +
+          '<div class="modal-actions"><button class="button-primary" type="button" id="saveBrand">飲みたいリストに追加</button><button class="button-secondary" type="button" data-close-modal="detailModal">閉じる</button></div>';
+        openModal("detailModal");
+        document.getElementById("saveBrand").addEventListener("click", function () {
+          closeModal("detailModal");
+          showToast(brand.name + " を飲みたいリストに追加しました");
+        });
+      }
+
+      function openModal(id) {
+        var modal = document.getElementById(id);
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeModal(id) {
+        var modal = document.getElementById(id);
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+      }
+
+      function openSubscribe(plan) {
+        document.getElementById("subscribeMessage").textContent = plan + "プランのモック決済が完了しました。会員限定記事、ペアリング提案、飲酒ログの保存が利用可能になりました。";
+        openModal("subscribeModal");
+      }
+
+      function switchMode(mode) {
+        document.querySelectorAll(".seg-button").forEach(function (button) {
+          button.classList.toggle("active", button.dataset.mode === mode);
+        });
+        document.getElementById("readerMode").classList.toggle("active", mode === "reader");
+        document.getElementById("adminMode").classList.toggle("active", mode === "admin");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function switchAdminSection(section) {
+        var titles = {
+          dashboard: "ダッシュボード",
+          cms: "記事CMS",
+          subscribers: "会員管理",
+          analytics: "分析・収益"
+        };
+        document.querySelectorAll(".sidebar-button").forEach(function (button) {
+          button.classList.toggle("active", button.dataset.section === section);
+        });
+        document.querySelectorAll(".admin-section").forEach(function (panel) {
+          panel.classList.remove("active");
+        });
+        document.getElementById(section + "Section").classList.add("active");
+        document.getElementById("adminTopTitle").textContent = titles[section];
+      }
+
+      function openDrawer(articleId) {
+        var article = articles.find(function (item) { return item.id === articleId; });
+        if (!article) return;
+        document.getElementById("editId").value = article.id;
+        document.getElementById("editTitle").value = article.title;
+        document.getElementById("editExcerpt").value = article.excerpt;
+        document.getElementById("editStatus").value = article.status;
+        document.getElementById("editSchedule").value = article.schedule;
+        document.getElementById("editLocked").checked = article.locked;
+        var drawer = document.getElementById("editDrawer");
+        drawer.classList.add("open");
+        drawer.setAttribute("aria-hidden", "false");
+      }
+
+      function closeDrawer() {
+        var drawer = document.getElementById("editDrawer");
+        drawer.classList.remove("open");
+        drawer.setAttribute("aria-hidden", "true");
+      }
+
+      function bindEvents() {
+        document.querySelectorAll(".seg-button").forEach(function (button) {
+          button.addEventListener("click", function () {
+            switchMode(button.dataset.mode);
+          });
+        });
+
+        document.querySelectorAll("[data-scroll]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            var target = document.querySelector(button.dataset.scroll);
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+        });
+
+        document.getElementById("articleFilters").addEventListener("click", function (event) {
+          var button = event.target.closest("[data-category]");
+          if (!button) return;
+          currentCategory = button.dataset.category;
+          document.querySelectorAll("#articleFilters .chip").forEach(function (chip) {
+            chip.classList.toggle("active", chip === button);
+          });
+          renderArticles();
+        });
+
+        document.getElementById("articlesGrid").addEventListener("click", function (event) {
+          var button = event.target.closest("[data-article-action]");
+          if (!button) return;
+          var article = articles.find(function (item) { return item.id === Number(button.dataset.articleAction); });
+          if (!article) return;
+          if (article.locked) {
+            openSubscribe("Standard");
+          } else {
+            showToast("記事「" + article.title + "」を開きました");
+          }
+        });
+
+        document.querySelectorAll("[data-plan]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            openSubscribe(button.dataset.plan);
+          });
+        });
+
+        document.getElementById("journalForm").addEventListener("submit", function (event) {
+          event.preventDefault();
+          journalEntries.unshift({
+            type: document.getElementById("drinkType").value,
+            name: document.getElementById("drinkName").value.trim(),
+            rating: Number(document.getElementById("drinkRating").value),
+            memo: document.getElementById("drinkMemo").value.trim(),
+            date: "2026-07-08"
+          });
+          renderJournal();
+          showToast("飲酒ログを追加しました");
+        });
+
+        document.getElementById("brandSearch").addEventListener("input", renderBrands);
+        document.getElementById("brandType").addEventListener("change", renderBrands);
+        document.getElementById("brandGrid").addEventListener("click", function (event) {
+          var card = event.target.closest("[data-brand-id]");
+          if (!card) return;
+          openBrandModal(Number(card.dataset.brandId));
+        });
+
+        document.getElementById("foodSelect").addEventListener("change", renderPairing);
+
+        document.querySelectorAll(".sidebar-button").forEach(function (button) {
+          button.addEventListener("click", function () {
+            switchAdminSection(button.dataset.section);
+          });
+        });
+
+        ["cmsSearch", "cmsStatus", "cmsCategory"].forEach(function (id) {
+          document.getElementById(id).addEventListener(id === "cmsSearch" ? "input" : "change", renderCmsTable);
+        });
+
+        document.getElementById("cmsTable").addEventListener("click", function (event) {
+          var button = event.target.closest("[data-edit-id]");
+          if (!button) return;
+          openDrawer(Number(button.dataset.editId));
+        });
+
+        document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+        document.getElementById("editForm").addEventListener("submit", function (event) {
+          event.preventDefault();
+          var id = Number(document.getElementById("editId").value);
+          var article = articles.find(function (item) { return item.id === id; });
+          if (!article) return;
+          article.title = document.getElementById("editTitle").value.trim();
+          article.excerpt = document.getElementById("editExcerpt").value.trim();
+          article.status = document.getElementById("editStatus").value;
+          article.schedule = document.getElementById("editSchedule").value || article.schedule;
+          article.locked = document.getElementById("editLocked").checked;
+          renderArticles();
+          renderCmsTable();
+          closeDrawer();
+          showToast("記事設定を保存しました");
+        });
+
+        ["subscriberSearch", "subscriberPlan", "subscriberStatus"].forEach(function (id) {
+          document.getElementById(id).addEventListener(id === "subscriberSearch" ? "input" : "change", renderSubscribers);
+        });
+
+        document.getElementById("adminSearch").addEventListener("input", function (event) {
+          var value = event.target.value;
+          document.getElementById("cmsSearch").value = value;
+          document.getElementById("subscriberSearch").value = value;
+          renderCmsTable();
+          renderSubscribers();
+        });
+
+        document.getElementById("detailModal").addEventListener("click", function (event) {
+          var closeButton = event.target.closest("[data-close-modal]");
+          if (closeButton) {
+            closeModal(closeButton.dataset.closeModal);
+            return;
+          }
+          if (event.target.id === "detailModal") closeModal("detailModal");
+        });
+        document.getElementById("subscribeModal").addEventListener("click", function (event) {
+          if (event.target.id === "subscribeModal") closeModal("subscribeModal");
+        });
+        document.getElementById("closeSubscribeModal").addEventListener("click", function () {
+          closeModal("subscribeModal");
+        });
+        document.querySelector("[data-mode-jump]").addEventListener("click", function () {
+          closeModal("subscribeModal");
+          switchMode("admin");
+          showToast("購読増加が管理画面KPIに反映される想定です");
+        });
+
+        document.getElementById("confirmAge").addEventListener("click", function () {
+          try {
+            localStorage.setItem("bacchanteAgeConfirmed", "true");
+          } catch (error) {
+            /* localStorage can be blocked in some embedded previews. */
+          }
+          closeModal("ageModal");
+        });
+        document.getElementById("leaveAge").addEventListener("click", function () {
+          closeModal("ageModal");
+          showToast("適正飲酒メッセージを閉じました");
+        });
+        document.getElementById("hideInlineNotice").addEventListener("click", function () {
+          document.getElementById("inlineCompliance").style.display = "none";
+        });
+
+        document.addEventListener("keydown", function (event) {
+          if (event.key === "Escape") {
+            closeDrawer();
+            closeModal("detailModal");
+            closeModal("subscribeModal");
+          }
+        });
+      }
+
+      function initialAgeGate() {
+        var confirmed = false;
+        try {
+          confirmed = localStorage.getItem("bacchanteAgeConfirmed") === "true";
+        } catch (error) {
+          confirmed = false;
+        }
+        if (confirmed) {
+          closeModal("ageModal");
+        }
+      }
+
+      function init() {
+        renderArticles();
+        renderJournal();
+        renderBrands();
+        renderPairing();
+        renderKpis();
+        renderMrrChart();
+        renderDonut("planDonut", [
+          { label: "Free", value: 62, color: "#eadfce" },
+          { label: "Standard", value: 28, color: "#7a2435" },
+          { label: "Premium", value: 10, color: "#c8a25b" }
+        ], "会員プラン構成");
+        renderActivities();
+        renderCmsTable();
+        renderSubscribers();
+        renderFunnelChart();
+        renderTopArticles();
+        renderDonut("revenueDonut", [
+          { label: "購読", value: 74, color: "#5b1a2b" },
+          { label: "イベント", value: 16, color: "#c8a25b" },
+          { label: "提携", value: 10, color: "#61758d" }
+        ], "売上内訳");
+        bindEvents();
+        initialAgeGate();
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
