@@ -3,397 +3,1666 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apex Global — クラウドファンディング × EC 統合運営ダッシュボード（デモ）</title>
+<title>Apex Global - クラウドファンディング × EC 統合運営ダッシュボード（デモ）</title>
 <style>
 :root{
-  --brand:#0e7490; --brand-2:#0891b2; --brand-dark:#0c4a6e; --teal-soft:#e0f2f7;
-  --ink:#0f172a; --slate:#475569; --muted:#94a3b8; --line:#e2e8f0;
-  --bg:#f1f5f9; --panel:#ffffff; --amber:#f59e0b; --green:#16a34a; --red:#dc2626;
-  --shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.06);
+  --brand:#0e7490;
+  --brand-2:#0891b2;
+  --brand-dark:#0c4a6e;
+  --cyan:#22b8cf;
+  --amber:#d98a2b;
+  --green:#16a34a;
+  --red:#dc2626;
+  --purple:#6d5bd0;
+  --ink:#0f172a;
+  --text:#263343;
+  --slate:#64748b;
+  --muted:#8a9bae;
+  --line:#dde6ee;
+  --line-soft:#edf2f6;
+  --bg:#f6f8fb;
+  --surface:#ffffff;
+  --surface-2:#f9fbfd;
+  --surface-3:#eef7fa;
+  --shadow-xs:0 1px 2px rgba(15,23,42,.05);
+  --shadow-sm:0 10px 28px rgba(15,23,42,.07),0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:0 18px 46px rgba(15,23,42,.13),0 2px 8px rgba(15,23,42,.08);
+  --radius:8px;
+  --radius-sm:6px;
+  --side:268px;
 }
-*{box-sizing:border-box}html,body{margin:0;padding:0}
-body{font-family:"Yu Gothic","Hiragino Sans","Noto Sans JP",-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased}
-.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
-
-/* Sidebar */
-.side{background:linear-gradient(180deg,var(--brand-dark),#082f49);color:#cbe6f0;padding:22px 16px;position:sticky;top:0;height:100vh;overflow:auto}
-.logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-.logo .mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand-2),#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;color:#062c3a;font-size:16px}
-.logo .txt b{color:#fff;font-size:15px;letter-spacing:.02em;display:block}
-.logo .txt small{font-size:10px;opacity:.7;letter-spacing:.08em}
-.side .demo-badge{font-size:9.5px;letter-spacing:.14em;color:#7dd3e8;border:1px solid rgba(125,211,232,.35);border-radius:20px;padding:3px 9px;display:inline-block;margin:14px 0 18px}
-.nav{list-style:none;padding:0;margin:0}
-.nav li{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#a9cfdd;margin-bottom:3px;transition:.15s;user-select:none}
-.nav li:hover{background:rgba(255,255,255,.06);color:#fff}
-.nav li.active{background:rgba(34,211,238,.16);color:#fff;font-weight:700}
-.nav li .ic{width:18px;text-align:center;font-size:15px}
-.side .foot{margin-top:26px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;line-height:1.7;opacity:.75}
-.side .foot b{color:#fff;font-weight:600}
-
-/* Main */
-.main{padding:0}
-.topbar{background:var(--panel);border-bottom:1px solid var(--line);padding:16px 30px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
-.topbar h1{font-size:18px;margin:0;font-weight:700}
-.topbar .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
-.topbar .who{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--slate)}
-.topbar .who .av{width:30px;height:30px;border-radius:50%;background:var(--teal-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700}
-.wrap{padding:26px 30px 60px}
-.view{display:none;animation:fade .25s}
-.view.on{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-/* KPI */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.kpi::after{content:"";position:absolute;right:-20px;top:-20px;width:70px;height:70px;border-radius:50%;background:var(--teal-soft);opacity:.6}
-.kpi .lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;position:relative}
-.kpi .val{font-size:26px;font-weight:800;margin:6px 0 2px;letter-spacing:.01em;position:relative}
-.kpi .val small{font-size:13px;font-weight:600;color:var(--slate)}
-.kpi .delta{font-size:11px;font-weight:700;position:relative}
-.kpi .delta.up{color:var(--green)}.kpi .delta.dn{color:var(--red)}
-
-.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:20px}
-.panel .ph{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
-.panel .ph h3{margin:0;font-size:14px;font-weight:700}
-.panel .ph .hint{font-size:11px;color:var(--muted)}
-.panel .pb{padding:16px 20px}
-
-/* platform cards */
-.plat{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px dashed var(--line)}
-.plat:last-child{border-bottom:none}
-.plat .badge{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:13px;flex:0 0 44px}
-.plat .body{flex:1;min-width:0}
-.plat .body .t{font-size:13px;font-weight:700;display:flex;justify-content:space-between}
-.plat .body .t .amt{color:var(--brand)}
-.bar{height:8px;background:#eef2f6;border-radius:20px;overflow:hidden;margin-top:7px}
-.bar > i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--brand-2),#22d3ee)}
-.plat .meta{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;gap:14px}
-
-.feed{list-style:none;margin:0;padding:0}
-.feed li{display:flex;gap:11px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
-.feed li:last-child{border:none}
-.feed .dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:0 0 9px}
-.feed small{color:var(--muted);display:block;font-size:10.5px}
-
-/* table */
-table{width:100%;border-collapse:collapse;font-size:12.5px}
-th{text-align:left;font-size:10.5px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#f8fafc;position:sticky;top:0}
-td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:hover td{background:#f8fbfc}
-.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em}
-.pill.g{background:#dcfce7;color:#15803d}.pill.a{background:#fef3c7;color:#b45309}
-.pill.r{background:#fee2e2;color:#b91c1c}.pill.b{background:var(--teal-soft);color:var(--brand)}
-.pill.n{background:#eef2f6;color:var(--slate)}
-.chip{border:1px solid var(--line);border-radius:7px;padding:5px 11px;font-size:11.5px;cursor:pointer;background:#fff;color:var(--slate);font-weight:600}
-.chip.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-
-/* pipeline kanban */
-.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.col{background:#eef3f6;border-radius:10px;padding:10px;min-height:340px}
-.col h4{margin:2px 4px 10px;font-size:11.5px;font-weight:800;color:var(--slate);display:flex;justify-content:space-between}
-.col h4 span{background:#fff;border-radius:20px;padding:1px 8px;font-size:10px;color:var(--brand)}
-.card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 12px;margin-bottom:9px;box-shadow:0 1px 2px rgba(15,23,42,.05);cursor:pointer;transition:.15s}
-.card:hover{border-color:var(--brand-2);transform:translateY(-2px);box-shadow:var(--shadow)}
-.card .pt{font-size:12.5px;font-weight:700;line-height:1.4}
-.card .pm{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between}
-.card .pf{font-size:10px;margin-top:7px;color:var(--brand);font-weight:700}
-.hintbar{background:var(--teal-soft);border:1px solid #bae0ec;color:var(--brand-dark);border-radius:9px;padding:9px 14px;font-size:11.5px;margin-bottom:16px;display:flex;gap:8px;align-items:center}
-
-.btn{border:none;background:var(--brand);color:#fff;font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer}
-.btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--line)}
-.mini{font-size:11px;color:var(--muted)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.stat-row{display:flex;gap:22px;flex-wrap:wrap}
-.stat-row .s .n{font-size:22px;font-weight:800;color:var(--brand)}
-.stat-row .s .l{font-size:11px;color:var(--muted)}
-.legend{font-size:10.5px;color:var(--muted);margin-top:10px}
-@media (max-width:960px){
-  .app{grid-template-columns:1fr}
-  .side{position:static;height:auto}
-  .kpis{grid-template-columns:repeat(2,1fr)}
-  .grid2,.two{grid-template-columns:1fr}
-  .kanban{grid-template-columns:1fr 1fr}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{background:var(--bg)}
+body{
+  font-family:"Yu Gothic","Hiragino Sans","Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:
+    radial-gradient(circle at 24% -10%, rgba(34,184,207,.14), transparent 32rem),
+    linear-gradient(180deg,#fbfdff 0,#f6f8fb 34rem);
+  color:var(--text);
+  font-size:14px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+button,input{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid rgba(34,184,207,.65);outline-offset:2px}
+svg{display:block;max-width:100%}
+.app-shell{display:grid;grid-template-columns:var(--side) minmax(0,1fr);min-height:100vh}
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+  padding:22px 16px;
+  color:#d8edf4;
+  background:
+    linear-gradient(150deg,rgba(34,184,207,.18),transparent 34%),
+    linear-gradient(180deg,#0c4a6e 0,#08384f 53%,#06283a 100%);
+  border-right:1px solid rgba(255,255,255,.09);
+}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.brand-mark{
+  width:40px;height:40px;border-radius:10px;display:grid;place-items:center;flex:0 0 auto;
+  color:#effcff;background:linear-gradient(135deg,#22b8cf,#0e7490 60%,#0c4a6e);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 10px 24px rgba(0,0,0,.18);
+}
+.brand-copy{min-width:0}
+.brand-copy b{display:block;color:#fff;font-size:15px;letter-spacing:.02em;line-height:1.2}
+.brand-copy span{display:block;color:#9ed7e6;font-size:10px;letter-spacing:.13em;text-transform:uppercase;margin-top:4px}
+.demo-badge{
+  display:inline-flex;align-items:center;gap:7px;margin:16px 0 18px;padding:5px 10px;border:1px solid rgba(125,211,232,.4);
+  border-radius:999px;color:#b9edf8;background:rgba(255,255,255,.06);font-size:10px;font-weight:800;letter-spacing:.12em;
+}
+.demo-badge::before{content:"";width:7px;height:7px;border-radius:99px;background:#22b8cf;box-shadow:0 0 0 4px rgba(34,184,207,.13)}
+.nav{display:grid;gap:4px}
+.nav-item{
+  width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;color:#b9ddea;
+  padding:10px 11px;border-radius:var(--radius);font-size:13px;font-weight:700;text-align:left;
+  transition:background .16s ease,color .16s ease,transform .16s ease;
+}
+.nav-item svg{width:18px;height:18px;flex:0 0 auto;stroke-width:1.9}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:rgba(255,255,255,.13);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+.side-card{
+  margin-top:22px;padding:13px;border-radius:var(--radius);background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+.side-card .metric{display:flex;align-items:baseline;justify-content:space-between;gap:10px;color:#fff;font-weight:800}
+.side-card .metric strong{font-size:20px;letter-spacing:.01em}
+.side-card .metric span{font-size:11px;color:#9ed7e6}
+.side-card p{margin:7px 0 0;color:#b8dce7;font-size:11px;line-height:1.6}
+.sidebar-footer{
+  margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,.12);
+  color:#b8dce7;font-size:11px;line-height:1.75;
+}
+.sidebar-footer b{display:block;color:#fff;font-size:11px;letter-spacing:.08em;margin-bottom:4px}
+.main{min-width:0}
+.topbar{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:15px 28px;background:rgba(255,255,255,.86);backdrop-filter:blur(16px);
+  border-bottom:1px solid rgba(221,230,238,.86);
+}
+.title-block{min-width:0}
+.title-block h1{margin:0;color:var(--ink);font-size:19px;line-height:1.25;letter-spacing:.01em}
+.title-block p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.top-actions{display:flex;align-items:center;gap:10px;min-width:0}
+.search-box{
+  width:min(360px,28vw);height:38px;display:flex;align-items:center;gap:8px;padding:0 11px;border-radius:999px;
+  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-xs);color:var(--muted);
+}
+.search-box svg{width:17px;height:17px;flex:0 0 auto}
+.search-box input{width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:12px;min-width:0}
+.search-box input::placeholder{color:#9babba}
+.icon-button{
+  position:relative;width:38px;height:38px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);
+  color:var(--slate);background:#fff;box-shadow:var(--shadow-xs);transition:border-color .16s ease,color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+.icon-button:hover{border-color:#b6dce6;color:var(--brand);transform:translateY(-1px);box-shadow:0 10px 20px rgba(14,116,144,.1)}
+.icon-button svg{width:18px;height:18px}
+.alert-count{
+  position:absolute;right:-4px;top:-4px;min-width:17px;height:17px;padding:0 4px;display:grid;place-items:center;
+  border-radius:999px;background:var(--red);color:#fff;font-size:10px;font-weight:900;border:2px solid #fff;
+}
+.bell-wrap{position:relative}
+.alerts-menu{
+  position:absolute;right:0;top:46px;width:min(360px,calc(100vw - 24px));z-index:50;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow-md);overflow:hidden;
+}
+.alerts-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--line-soft)}
+.alerts-head b{font-size:13px;color:var(--ink)}
+.alerts-list{max-height:328px;overflow:auto}
+.alert-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line-soft)}
+.alert-item:last-child{border-bottom:0}
+.alert-icon,.feed-icon{
+  width:30px;height:30px;border-radius:var(--radius-sm);display:grid;place-items:center;flex:0 0 auto;
+}
+.alert-icon svg,.feed-icon svg{width:16px;height:16px}
+.alert-copy b{display:block;color:var(--ink);font-size:12.5px;line-height:1.35}
+.alert-copy span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.user-chip{
+  display:flex;align-items:center;gap:9px;padding:6px 10px 6px 6px;border:1px solid var(--line);
+  border-radius:999px;background:#fff;box-shadow:var(--shadow-xs);white-space:nowrap;
+}
+.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#e4f7fb;color:var(--brand);font-weight:900;font-size:12px}
+.user-chip span{font-size:12px;color:var(--slate);font-weight:700}
+.workspace{padding:26px 28px 56px;min-width:0}
+.view{display:none;animation:fadeIn .22s ease both}
+.view.is-active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.section-strip{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;padding:12px 14px;
+  border:1px solid #cceaf1;background:linear-gradient(135deg,#eefbfe,#f7fcfe);border-radius:var(--radius);color:#155e75;
+}
+.section-strip .left{display:flex;align-items:center;gap:10px;min-width:0}
+.section-strip svg{width:18px;height:18px;flex:0 0 auto}
+.section-strip b{font-size:13px;color:#0c4a6e}
+.section-strip span{font-size:12px;color:#3c7485}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.kpi-card,.panel,.campaign-card,.stage-column,.pipeline-card,.mini-stat,.detail-card{
+  background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-xs);
+}
+.kpi-card{
+  position:relative;overflow:hidden;padding:16px;min-height:154px;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+.kpi-card::after{
+  content:"";position:absolute;right:-32px;top:-38px;width:96px;height:96px;border-radius:50%;
+  background:radial-gradient(circle,rgba(34,184,207,.14),rgba(34,184,207,0) 68%);
+}
+.kpi-card:hover,.campaign-card:hover,.pipeline-card:hover,.panel.hoverable:hover{
+  transform:translateY(-2px);border-color:#c4dfe7;box-shadow:var(--shadow-sm);
+}
+.kpi-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kpi-label{color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.06em}
+.kpi-icon{width:30px;height:30px;border-radius:var(--radius-sm);display:grid;place-items:center;background:#e7f7fb;color:var(--brand)}
+.kpi-icon svg{width:16px;height:16px}
+.kpi-value{position:relative;z-index:1;margin-top:9px;color:var(--ink);font-size:25px;font-weight:900;letter-spacing:.01em;line-height:1.16}
+.kpi-value small{font-size:13px;color:var(--slate);font-weight:800;margin-left:3px}
+.kpi-footer{position:relative;z-index:1;display:flex;align-items:end;justify-content:space-between;gap:10px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:900}
+.delta svg{width:13px;height:13px}
+.delta.up{color:var(--green)}
+.delta.down{color:var(--red)}
+.sparkline{width:116px;height:42px;flex:0 0 116px}
+.layout-2{display:grid;grid-template-columns:minmax(0,1.46fr) minmax(340px,.82fr);gap:18px;align-items:start}
+.layout-3{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(310px,.72fr);gap:18px;align-items:start}
+.panel{min-width:0;overflow:hidden}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line-soft);
+  background:linear-gradient(180deg,#fff,#fbfdff);
+}
+.panel-header h2,.panel-header h3{margin:0;color:var(--ink);font-size:14px;line-height:1.25}
+.panel-header span{color:var(--muted);font-size:11px;font-weight:700}
+.panel-body{padding:16px}
+.campaign-stack{display:grid;gap:12px}
+.campaign-card{
+  display:grid;grid-template-columns:84px minmax(0,1fr) 168px;gap:14px;align-items:center;padding:13px;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;background:linear-gradient(180deg,#fff,#fcfeff);
+}
+.campaign-card[role="button"]{cursor:pointer}
+.platform-pill,.status-pill,.chip,.small-pill{
+  display:inline-flex;align-items:center;gap:6px;max-width:100%;border-radius:999px;font-size:11px;font-weight:900;line-height:1;padding:5px 9px;
+}
+.platform-pill{border:1px solid transparent}
+.status-pill.good{color:#15803d;background:#e8f8ee}
+.status-pill.info{color:var(--brand);background:#e5f7fb}
+.status-pill.warn{color:#a16207;background:#fff3d7}
+.status-pill.neutral{color:#64748b;background:#eef2f6}
+.status-pill.danger{color:#b91c1c;background:#fee7e7}
+.campaign-title{margin:8px 0 0;color:var(--ink);font-size:14px;font-weight:900;line-height:1.45}
+.campaign-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;color:var(--muted);font-size:11px;font-weight:700}
+.campaign-meta b{color:var(--text)}
+.campaign-amount{text-align:right}
+.campaign-amount strong{display:block;color:var(--brand-dark);font-size:18px;line-height:1.2}
+.campaign-amount span{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.donut{width:76px;height:76px}
+.feed{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.feed li{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.feed li:first-child{padding-top:0}
+.feed li:last-child{border-bottom:0;padding-bottom:0}
+.feed-copy b{color:var(--ink);font-size:12.5px;line-height:1.45}
+.feed-copy p{margin:2px 0 0;color:var(--muted);font-size:11px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.chip{
+  border:1px solid var(--line);background:#fff;color:var(--slate);padding:8px 11px;border-radius:999px;box-shadow:var(--shadow-xs);
+  transition:background .15s ease,color .15s ease,border-color .15s ease,transform .15s ease;
+}
+.chip:hover{transform:translateY(-1px);border-color:#b6dce6;color:var(--brand)}
+.chip.active{background:var(--brand);border-color:var(--brand);color:#fff}
+.table-shell{width:100%;overflow:auto}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;min-width:760px}
+th{
+  text-align:left;color:var(--muted);font-size:10.5px;letter-spacing:.07em;font-weight:900;text-transform:uppercase;
+  padding:11px 13px;background:#f8fbfd;border-bottom:1px solid var(--line);
+}
+td{padding:13px;border-bottom:1px solid var(--line-soft);vertical-align:middle;color:var(--text)}
+tbody tr{transition:background .15s ease}
+tbody tr:hover td{background:#f8fcfe}
+tr.row-click{cursor:pointer}
+.cell-title{font-weight:900;color:var(--ink);line-height:1.35}
+.cell-sub{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+.money{font-weight:900;color:var(--brand-dark)}
+.rate-good{color:var(--green);font-weight:900}
+.rate-brand{color:var(--brand);font-weight:900}
+.rate-muted{color:var(--muted);font-weight:900}
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;align-items:start}
+.stage-column{background:#f3f8fb;padding:10px;min-height:470px;box-shadow:none}
+.stage-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin:2px 2px 11px}
+.stage-head h3{margin:0;color:var(--ink);font-size:12px}
+.stage-head p{margin:3px 0 0;color:var(--muted);font-size:10.5px;font-weight:800}
+.stage-count{min-width:30px;padding:4px 8px;text-align:center;border-radius:999px;background:#fff;color:var(--brand);font-size:11px;font-weight:900;border:1px solid var(--line)}
+.stage-cards{display:grid;gap:9px}
+.pipeline-card{
+  padding:11px;background:#fff;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease;cursor:pointer;
+}
+.pipeline-title{color:var(--ink);font-weight:900;font-size:12.5px;line-height:1.38}
+.pipeline-meta{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:8px}
+.pipeline-note{color:var(--muted);font-size:11px;margin-top:7px}
+.pipeline-actions{display:flex;gap:6px;margin-top:10px}
+.mini-action,.text-button,.row-action{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  background:#fff;color:var(--brand);font-weight:900;font-size:11px;padding:7px 9px;transition:background .15s ease,border-color .15s ease,transform .15s ease;
+}
+.mini-action svg,.text-button svg,.row-action svg{width:14px;height:14px}
+.mini-action:hover,.text-button:hover,.row-action:hover{transform:translateY(-1px);border-color:#b6dce6;background:#f5fbfd}
+.primary-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--brand);background:linear-gradient(180deg,var(--brand-2),var(--brand));
+  color:#fff;font-size:12px;font-weight:900;padding:9px 12px;border-radius:var(--radius-sm);box-shadow:0 10px 20px rgba(14,116,144,.16);
+}
+.primary-button svg{width:15px;height:15px}
+.primary-button:hover{filter:brightness(1.02);transform:translateY(-1px)}
+.chart-wrap{overflow:hidden}
+.revenue-chart{width:100%;height:auto;min-height:260px}
+.legend-row{display:flex;flex-wrap:wrap;gap:11px;margin-top:10px;color:var(--muted);font-size:11px;font-weight:800}
+.legend-key{display:inline-flex;align-items:center;gap:6px}
+.legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+.stock-list{display:grid;gap:10px}
+.stock-alert{
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:12px;border:1px solid var(--line);
+  border-radius:var(--radius);background:#fff;
+}
+.stock-alert.risk-high{border-color:#f5c7c7;background:#fffafa}
+.stock-alert.risk-mid{border-color:#f1d8aa;background:#fffdf7}
+.stock-title{font-weight:900;color:var(--ink);line-height:1.35}
+.stock-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:5px;color:var(--muted);font-size:11px;font-weight:700}
+.stock-num{font-weight:900;color:var(--red)}
+.stock-ok .stock-num{color:var(--green)}
+.order-filter-block{display:grid;gap:9px;margin-bottom:12px}
+.filter-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.filter-label{color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.06em}
+.crm-grid{display:grid;grid-template-columns:minmax(0,.95fr) minmax(310px,.55fr);gap:18px;align-items:start}
+.mini-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.mini-stat{padding:14px}
+.mini-stat b{display:block;color:var(--brand-dark);font-size:21px;line-height:1.2}
+.mini-stat span{display:block;color:var(--muted);font-size:11px;font-weight:800;margin-top:5px}
+.supporter-panel{display:grid;gap:12px}
+.detail-card{padding:14px}
+.detail-card h3{margin:0 0 8px;color:var(--ink);font-size:14px}
+.detail-row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line-soft);font-size:12px}
+.detail-row:last-child{border-bottom:0}
+.detail-row span:first-child{color:var(--muted);font-weight:800}
+.detail-row span:last-child{text-align:right;color:var(--ink);font-weight:900}
+.history-list{display:grid;gap:8px;margin-top:10px}
+.history-item{padding:10px;border:1px solid var(--line-soft);border-radius:var(--radius-sm);background:#fbfdff}
+.history-item b{display:block;color:var(--ink);font-size:12px}
+.history-item span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.empty-state{padding:24px;text-align:center;color:var(--muted);font-size:12px}
+.drawer[hidden],.mini-modal[hidden],.alerts-menu[hidden]{display:none}
+.drawer{position:fixed;inset:0;z-index:80}
+.drawer-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.32);backdrop-filter:blur(3px);opacity:0;transition:opacity .18s ease}
+.drawer-panel{
+  position:absolute;right:0;top:0;height:100%;width:min(540px,calc(100vw - 20px));background:#fff;box-shadow:var(--shadow-md);
+  border-left:1px solid var(--line);transform:translateX(24px);opacity:0;transition:transform .2s ease,opacity .2s ease;overflow:auto;
+}
+.drawer.open .drawer-backdrop{opacity:1}
+.drawer.open .drawer-panel{transform:translateX(0);opacity:1}
+.drawer-head{
+  position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:12px;padding:18px;border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);
+}
+.drawer-head h2{margin:7px 0 0;color:var(--ink);font-size:18px;line-height:1.35}
+.drawer-close{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--slate);display:grid;place-items:center;flex:0 0 auto}
+.drawer-close svg{width:17px;height:17px}
+.drawer-body{padding:18px;display:grid;gap:16px}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.metric-box{padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:#fbfdff}
+.metric-box b{display:block;color:var(--ink);font-size:16px;line-height:1.2}
+.metric-box span{display:block;color:var(--muted);font-size:10.5px;font-weight:900;margin-top:5px}
+.timeline{display:grid;gap:9px}
+.timeline-step{display:grid;grid-template-columns:24px minmax(0,1fr);gap:9px;align-items:start}
+.timeline-dot{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#eef2f6;color:#94a3b8;border:1px solid var(--line);margin-top:1px}
+.timeline-dot svg{width:13px;height:13px}
+.timeline-step.done .timeline-dot{background:#e8f8ee;color:var(--green);border-color:#bce8c9}
+.timeline-step.current .timeline-dot{background:#e5f7fb;color:var(--brand);border-color:#bae4ee}
+.timeline-copy b{display:block;color:var(--ink);font-size:12.5px}
+.timeline-copy span{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.reward-list{display:grid;gap:10px}
+.reward-row{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:10px;align-items:center}
+.reward-row b{font-size:12px;color:var(--ink)}
+.reward-row span{color:var(--muted);font-size:11px}
+.reward-count{text-align:right;font-weight:900;color:var(--brand-dark)}
+.mini-modal{position:fixed;inset:0;z-index:90;display:grid;place-items:center;padding:18px}
+.mini-modal-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.32);backdrop-filter:blur(3px)}
+.mini-modal-card{
+  position:relative;width:min(460px,100%);max-height:calc(100vh - 36px);overflow:auto;background:#fff;border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow-md);
+}
+.mini-modal-head{display:flex;justify-content:space-between;gap:12px;padding:15px 16px;border-bottom:1px solid var(--line-soft)}
+.mini-modal-head h3{margin:0;color:var(--ink);font-size:15px}
+.mini-modal-body{padding:16px}
+.modal-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.toast-region{position:fixed;right:18px;bottom:18px;z-index:120;display:grid;gap:10px;width:min(360px,calc(100vw - 36px))}
+.toast{
+  display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border-radius:var(--radius);background:#0f172a;color:#fff;
+  box-shadow:var(--shadow-md);opacity:0;transform:translateY(8px);transition:opacity .18s ease,transform .18s ease;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast svg{width:17px;height:17px;flex:0 0 auto;color:#7dd3e8;margin-top:1px}
+.toast b{font-size:12.5px;line-height:1.45}
+@media (max-width:1180px){
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .layout-2,.layout-3,.crm-grid{grid-template-columns:1fr}
+  .kanban{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stage-column{min-height:260px}
+}
+@media (max-width:920px){
+  :root{--side:1fr}
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;padding:16px}
+  .nav{display:flex;gap:7px;overflow-x:auto;padding-bottom:2px}
+  .nav-item{width:auto;white-space:nowrap;flex:0 0 auto}
+  .side-card{display:none}
+  .sidebar-footer{margin-top:16px}
+  .topbar{position:static;align-items:flex-start;flex-direction:column;padding:16px}
+  .top-actions{width:100%;flex-wrap:wrap}
+  .search-box{width:100%;order:1}
+  .workspace{padding:18px 16px 44px}
+  .campaign-card{grid-template-columns:70px minmax(0,1fr);align-items:start}
+  .campaign-amount{grid-column:1 / -1;text-align:left;display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-top:1px solid var(--line-soft);padding-top:10px}
+  .campaign-amount span{margin-top:0}
+}
+@media (max-width:620px){
+  body{font-size:13px}
+  .kpi-grid,.mini-stats,.metric-grid{grid-template-columns:1fr}
+  .section-strip{align-items:flex-start;flex-direction:column}
+  .kanban{grid-template-columns:1fr}
+  .top-actions{gap:8px}
+  .user-chip span{display:none}
+  .campaign-card{grid-template-columns:1fr}
+  .donut{width:82px;height:82px}
+  .stock-alert{grid-template-columns:1fr}
+  .drawer-panel{width:100%}
+  .panel-header{align-items:flex-start;flex-direction:column}
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <aside class="side">
-    <div class="logo">
-      <div class="mark">A</div>
-      <div class="txt"><b>Apex Global</b><small>CF × EC Operations</small></div>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="メインナビゲーション">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M4 17.5 10.8 4.8c.45-.84 1.67-.84 2.12 0L20 17.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7.6 13.2h8.8M9.5 17.5 12 12.8l2.5 4.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="brand-copy">
+        <b>Apex Global</b>
+        <span>CF × EC Operations</span>
+      </div>
     </div>
-    <span class="demo-badge">実機デモ ／ サンプルデータ</span>
-    <ul class="nav" id="nav">
-      <li data-v="dash" class="active"><span class="ic">▤</span>統合ダッシュボード</li>
-      <li data-v="camp"><span class="ic">◎</span>キャンペーン管理</li>
-      <li data-v="pipe"><span class="ic">⇉</span>案件パイプライン</li>
-      <li data-v="ec"><span class="ic">▦</span>EC一元管理</li>
-      <li data-v="crm"><span class="ic">☺</span>サポーターCRM</li>
-    </ul>
-    <div class="foot">
-      <b>MK1 TECHNOLOGY VIETNAM</b><br>
-      御社の運営を支える実装パートナー。<br>
-      このデモは構成イメージです（実データではありません）。
+    <div class="demo-badge">実機デモ ／ サンプルデータ</div>
+    <nav class="nav" id="nav">
+      <button class="nav-item active" type="button" data-view="dash">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 5.5h7v6H4v-6ZM13 5.5h7v4h-7v-4ZM13 11.5h7v7h-7v-7ZM4 13.5h7v5H4v-5Z" stroke="currentColor" stroke-linejoin="round"/></svg>
+        <span>統合ダッシュボード</span>
+      </button>
+      <button class="nav-item" type="button" data-view="camp">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V5h14v14H5Z" stroke="currentColor"/><path d="M8 15.5h8M8 12h8M8 8.5h4" stroke="currentColor" stroke-linecap="round"/></svg>
+        <span>キャンペーン管理</span>
+      </button>
+      <button class="nav-item" type="button" data-view="pipe">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6h4v4H5V6ZM15 6h4v4h-4V6ZM5 14h4v4H5v-4ZM15 14h4v4h-4v-4Z" stroke="currentColor" stroke-linejoin="round"/><path d="M9 8h6M9 16h6" stroke="currentColor" stroke-linecap="round"/></svg>
+        <span>案件パイプライン</span>
+      </button>
+      <button class="nav-item" type="button" data-view="ec">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 8.5h12l-1.1 10H7.1L6 8.5Z" stroke="currentColor" stroke-linejoin="round"/><path d="M9 8.5a3 3 0 0 1 6 0M9 13h6" stroke="currentColor" stroke-linecap="round"/></svg>
+        <span>EC一元管理</span>
+      </button>
+      <button class="nav-item" type="button" data-view="crm">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 19.5c-.45-2.1-2-3.2-4-3.2s-3.55 1.1-4 3.2" stroke="currentColor" stroke-linecap="round"/><path d="M12 13a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM18.5 14.5c1.2.45 2 1.35 2.35 2.8M17 10.5a2.4 2.4 0 0 0 0-4.7" stroke="currentColor" stroke-linecap="round"/></svg>
+        <span>サポーターCRM</span>
+      </button>
+    </nav>
+    <div class="side-card">
+      <div class="metric"><strong>5</strong><span>連携CF / EC領域</span></div>
+      <p>Makuake / CAMPFIRE / GREEN FUNDING / Creema SPRINGS / machi-ya と主要ECの横断運営ビュー。</p>
+    </div>
+    <div class="sidebar-footer">
+      <b>MK1 TECHNOLOGY VIETNAM</b>
+      御社のクラウドファンディング運営とEC販売を支える実装パートナー。<br>
+      このデモは構成イメージです。表示内容はサンプルデータであり、実データではありません。
     </div>
   </aside>
 
   <main class="main">
-    <div class="topbar">
-      <div>
-        <h1 id="ttl">統合ダッシュボード</h1>
-        <div class="sub" id="sub">複数プラットフォームのCF＋EC販売を1画面で</div>
+    <header class="topbar">
+      <div class="title-block">
+        <h1 id="pageTitle">統合ダッシュボード</h1>
+        <p id="pageSub">複数プラットフォームのCF＋EC販売を1画面で可視化</p>
       </div>
-      <div class="who"><span class="av">A</span>ARAYA 様（運営チーム）</div>
-    </div>
+      <div class="top-actions">
+        <label class="search-box" for="globalSearch">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m20 20-4.1-4.1M18 10.8a7.2 7.2 0 1 1-14.4 0 7.2 7.2 0 0 1 14.4 0Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+          <input id="globalSearch" type="search" autocomplete="off" placeholder="案件・SKU・支援者を検索">
+        </label>
+        <div class="bell-wrap" id="bellWrap">
+          <button class="icon-button" type="button" id="bellButton" aria-haspopup="true" aria-expanded="false" aria-label="通知">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 9.6a6 6 0 1 0-12 0c0 7-2 7-2 8.4h16c0-1.4-2-1.4-2-8.4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.7 20a2.5 2.5 0 0 0 4.6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="alert-count" id="alertCount">0</span>
+          </button>
+          <div class="alerts-menu" id="alertsMenu" hidden></div>
+        </div>
+        <div class="user-chip">
+          <span class="avatar">AG</span>
+          <span>ARAYA 様</span>
+        </div>
+      </div>
+    </header>
 
-    <div class="wrap">
-      <!-- DASHBOARD -->
-      <section class="view on" id="dash">
-        <div class="kpis" id="kpis"></div>
-        <div class="grid2">
-          <div class="panel">
-            <div class="ph"><h3>進行中クラウドファンディング（プラットフォーム横断）</h3><span class="hint">達成率＝支援額 / 目標</span></div>
-            <div class="pb" id="platlist"></div>
+    <div class="workspace">
+      <section class="view is-active" id="dash">
+        <div class="kpi-grid" id="dashboardKpis"></div>
+        <div class="layout-2">
+          <div class="panel hoverable">
+            <div class="panel-header">
+              <h2>進行中クラウドファンディング</h2>
+              <span>達成率・支援額・残日数</span>
+            </div>
+            <div class="panel-body">
+              <div class="campaign-stack" id="dashboardCampaigns"></div>
+            </div>
           </div>
           <div class="panel">
-            <div class="ph"><h3>最近の動き</h3><span class="hint">CF・EC・配送を統合</span></div>
-            <div class="pb"><ul class="feed" id="feed"></ul></div>
+            <div class="panel-header">
+              <h2>最近の動き</h2>
+              <span>CF / EC / 配送 / CRM</span>
+            </div>
+            <div class="panel-body">
+              <ul class="feed" id="activityFeed"></ul>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- CAMPAIGNS -->
       <section class="view" id="camp">
-        <div class="hintbar">🔎 プラットフォームで絞り込めます（Makuake / CAMPFIRE / GREEN FUNDING …）。手作業の横断集計を1画面に。</div>
-        <div class="filters" id="campfilters"></div>
-        <div class="panel"><div class="pb" style="padding:0"><table id="camptbl"></table></div></div>
+        <div class="section-strip">
+          <div class="left">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19V5h14v14H5Z" stroke="currentColor" stroke-width="1.8"/><path d="M8 15.5h8M8 12h8M8 8.5h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div><b>プラットフォーム横断の案件管理</b><br><span>支援額、達成率、リワード状況を同じ粒度で比較</span></div>
+          </div>
+        </div>
+        <div class="filters" id="campaignFilters"></div>
+        <div class="panel">
+          <div class="table-shell">
+            <table id="campaignTable"></table>
+          </div>
+        </div>
       </section>
 
-      <!-- PIPELINE -->
       <section class="view" id="pipe">
-        <div class="hintbar">➡️ カードをクリックすると次のステージへ進みます（発掘 → CF準備 → CF実施中 → リワード配送 → EC販売）。案件のライフサイクルを可視化。</div>
+        <div class="section-strip">
+          <div class="left">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 6h4v4H5V6ZM15 6h4v4h-4V6ZM5 14h4v4H5v-4ZM15 14h4v4h-4v-4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8h6M9 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div><b>発掘からEC販売までのライフサイクル</b><br><span>各ステージの件数と見込価値をリアルタイム集計</span></div>
+          </div>
+        </div>
         <div class="kanban" id="kanban"></div>
       </section>
 
-      <!-- EC -->
       <section class="view" id="ec">
-        <div class="hintbar">📦 CF後の一般販売を、楽天／Amazon／Yahoo／自社／各CFストア横断で一元管理。在庫は単一マスターから按分。</div>
-        <div class="kpis" id="eckpis" style="grid-template-columns:repeat(4,1fr)"></div>
-        <div class="two">
+        <div class="section-strip">
+          <div class="left">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 8.5h12l-1.1 10H7.1L6 8.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 8.5a3 3 0 0 1 6 0M9 13h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div><b>CF後の一般販売をEC横断で一元管理</b><br><span>楽天 / Amazon / Yahoo! / 自社EC / CFストアの売上・在庫・受注</span></div>
+          </div>
+        </div>
+        <div class="kpi-grid" id="ecKpis"></div>
+        <div class="layout-3">
           <div class="panel">
-            <div class="ph"><h3>チャネル別 在庫按分</h3><span class="hint">単一マスター在庫を自動配分</span></div>
-            <div class="pb" id="stocklist"></div>
+            <div class="panel-header">
+              <h2>チャネル別売上</h2>
+              <span>月次サンプル</span>
+            </div>
+            <div class="panel-body chart-wrap" id="revenueChart"></div>
           </div>
           <div class="panel">
-            <div class="ph"><h3>受注ステータス</h3><span class="hint">クリックで出荷済に更新</span></div>
-            <div class="pb" style="padding:0;max-height:340px;overflow:auto"><table id="ectbl"></table></div>
+            <div class="panel-header">
+              <h2>欠品リスク</h2>
+              <span>低在庫SKU</span>
+            </div>
+            <div class="panel-body">
+              <div class="stock-list" id="lowStockList"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:18px">
+          <div class="panel-header">
+            <h2>受注ステータス</h2>
+            <span>チャネル・状態フィルタ</span>
+          </div>
+          <div class="panel-body">
+            <div class="order-filter-block" id="orderFilters"></div>
+            <div class="table-shell">
+              <table id="orderTable"></table>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- CRM -->
       <section class="view" id="crm">
-        <div class="hintbar">💠 CF支援者 → EC購入者 → リピーターへ。支援者データを販売に接続し、次のCF告知にも活用。</div>
-        <div class="panel"><div class="pb">
-          <div class="stat-row" id="crmstats"></div>
-          <div class="legend">セグメントは支援回数・購入額から自動分類（デモ）。</div>
-        </div></div>
-        <div class="panel"><div class="pb" style="padding:0"><table id="crmtbl"></table></div></div>
+        <div class="section-strip">
+          <div class="left">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M16 19.5c-.45-2.1-2-3.2-4-3.2s-3.55 1.1-4 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 13a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM18.5 14.5c1.2.45 2 1.35 2.35 2.8M17 10.5a2.4 2.4 0 0 0 0-4.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <div><b>支援者をECリピーターへ接続</b><br><span>セグメント、LTV、購入履歴をひとつの顧客ビューに統合</span></div>
+          </div>
+        </div>
+        <div class="mini-stats" id="crmStats"></div>
+        <div class="crm-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>サポーター一覧</h2>
+              <span>セグメント別</span>
+            </div>
+            <div class="panel-body">
+              <div class="filters" id="crmFilters"></div>
+              <div class="table-shell">
+                <table id="supporterTable"></table>
+              </div>
+            </div>
+          </div>
+          <div class="supporter-panel">
+            <div class="panel">
+              <div class="panel-header">
+                <h2>LTV分布</h2>
+                <span>サンプル母集団</span>
+              </div>
+              <div class="panel-body" id="ltvChart"></div>
+            </div>
+            <div class="detail-card" id="supporterDetail"></div>
+          </div>
+        </div>
       </section>
     </div>
   </main>
 </div>
 
+<div class="drawer" id="campaignDrawer" hidden>
+  <div class="drawer-backdrop" data-close-drawer></div>
+  <aside class="drawer-panel" aria-label="キャンペーン詳細">
+    <div class="drawer-head">
+      <div id="drawerTitle"></div>
+      <button class="drawer-close" type="button" data-close-drawer aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+  </aside>
+</div>
+
+<div class="mini-modal" id="miniModal" hidden>
+  <div class="mini-modal-backdrop" data-close-modal></div>
+  <div class="mini-modal-card" role="dialog" aria-modal="true" aria-label="詳細">
+    <div class="mini-modal-head">
+      <h3 id="modalTitle"></h3>
+      <button class="drawer-close" type="button" data-close-modal aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="mini-modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
 <script>
-const yen = n => '¥' + n.toLocaleString('ja-JP');
-const platColor = {Makuake:'#e4342a', CAMPFIRE:'#00a4a7', 'GREEN FUNDING':'#7cb342', 'Creema SPRINGS':'#e08a1e', 'machi-ya':'#3f51b5'};
+(() => {
+  'use strict';
 
-/* ---------- data ---------- */
-const kpis = [
-  {lbl:'進行中CF', val:'6', unit:'件', d:'+2 今月', up:1},
-  {lbl:'累計支援額（今期）', val:'¥48.2M', d:'+18.4% 前期比', up:1},
-  {lbl:'支援者総数', val:'3,914', unit:'人', d:'+412 今月', up:1},
-  {lbl:'EC月商（CF後販売）', val:'¥9.7M', d:'+6.1% 前月比', up:1},
-];
-const platforms = [
-  {name:'Makuake', title:'超軽量 折りたたみ電動アシスト自転車', raised:12480000, goal:9000000, backers:842, days:11},
-  {name:'CAMPFIRE', title:'北欧デザイン 静音サーキュレーター', raised:6120000, goal:8000000, backers:503, days:19},
-  {name:'GREEN FUNDING', title:'防水アウトドア モバイルバッテリー40000mAh', raised:8940000, goal:5000000, backers:1120, days:6},
-  {name:'Creema SPRINGS', title:'職人手作り 真鍮キャンプギア', raised:2360000, goal:2000000, backers:318, days:22},
-  {name:'machi-ya', title:'スマート姿勢トラッカー（EC移行準備中）', raised:15200000, goal:10000000, backers:1131, days:2},
-];
-const feed = [
-  {c:'#16a34a', t:'GREEN FUNDING「モバイルバッテリー」が目標達成率 <b>178%</b> に到達', s:'12分前 ・ CF'},
-  {c:'#0891b2', t:'楽天市場で「静音サーキュレーター」EC販売の受注 <b>14件</b>', s:'38分前 ・ EC'},
-  {c:'#f59e0b', t:'リワード配送：Makuake案件の発送ラベル <b>120件</b> を生成', s:'1時間前 ・ 配送'},
-  {c:'#3f51b5', t:'machi-ya「姿勢トラッカー」を EC一般販売パイプラインへ移行', s:'2時間前 ・ ライフサイクル'},
-  {c:'#dc2626', t:'在庫アラート：真鍮キャンプギアの自社在庫が残 <b>18</b>', s:'3時間前 ・ 在庫'},
-  {c:'#16a34a', t:'新規サポーター <b>63名</b> をCRMに取込（重複自動マージ）', s:'今日 09:20 ・ CRM'},
-];
-let campaigns = [
-  {name:'Makuake', title:'超軽量 折りたたみ電動アシスト自転車', rate:139, backers:842, amt:12480000, st:'実施中'},
-  {name:'CAMPFIRE', title:'北欧デザイン 静音サーキュレーター', rate:77, backers:503, amt:6120000, st:'実施中'},
-  {name:'GREEN FUNDING', title:'防水モバイルバッテリー40000mAh', rate:178, backers:1120, amt:8940000, st:'達成'},
-  {name:'Creema SPRINGS', title:'職人手作り 真鍮キャンプギア', rate:118, backers:318, amt:2360000, st:'達成'},
-  {name:'machi-ya', title:'スマート姿勢トラッカー', rate:152, backers:1131, amt:15200000, st:'EC移行'},
-  {name:'Makuake', title:'全自動コーヒーメーカー（次期）', rate:0, backers:0, amt:0, st:'準備中'},
-  {name:'CAMPFIRE', title:'折りたたみソーラーパネル', rate:64, backers:210, amt:2560000, st:'実施中'},
-  {name:'GREEN FUNDING', title:'ミニマル レザーウォレット', rate:203, backers:640, amt:4060000, st:'達成'},
-];
-const stages = ['発掘','CF準備','CF実施中','リワード配送','EC販売'];
-let pipeline = [
-  {t:'全自動コーヒーメーカー（海外）', plat:'Makuake', stage:0, note:'サンプル輸入・検品中'},
-  {t:'折りたたみソーラーパネル', plat:'CAMPFIRE', stage:2, note:'達成率 64% ／ 残19日'},
-  {t:'超軽量 電動アシスト自転車', plat:'Makuake', stage:2, note:'達成率 139% ／ 残11日'},
-  {t:'防水モバイルバッテリー', plat:'GREEN FUNDING', stage:3, note:'1,120件 発送準備'},
-  {t:'真鍮キャンプギア', plat:'Creema SPRINGS', stage:3, note:'318件 配送中'},
-  {t:'スマート姿勢トラッカー', plat:'machi-ya', stage:4, note:'楽天・自社ECで販売中'},
-  {t:'ミニマル レザーウォレット', plat:'GREEN FUNDING', stage:4, note:'Amazon・自社で再販中'},
-  {t:'北欧 静音サーキュレーター', plat:'CAMPFIRE', stage:2, note:'達成率 77% ／ 残19日'},
-];
-const ecKpis = [
-  {lbl:'本日受注', val:'86', unit:'件'},
-  {lbl:'未出荷', val:'23', unit:'件'},
-  {lbl:'在庫総数（全SKU）', val:'4,210'},
-  {lbl:'欠品リスクSKU', val:'3'},
-];
-const channels = [
-  {ch:'自社EC（Shopify）', sku:'姿勢トラッカー', stock:1240, color:'#0891b2'},
-  {ch:'楽天市場', sku:'姿勢トラッカー', stock:860, color:'#bf0000'},
-  {ch:'Amazon', sku:'レザーウォレット', stock:1420, color:'#ff9900'},
-  {ch:'Yahoo!ショッピング', sku:'モバイルバッテリー', stock:520, color:'#ff0033'},
-  {ch:'Makuake STORE', sku:'キャンプギア', stock:170, color:'#e4342a'},
-];
-let orders = [
-  {id:'EC-20874', ch:'楽天市場', item:'姿勢トラッカー ×1', amt:8980, st:'新規'},
-  {id:'EC-20873', ch:'自社EC', item:'モバイルバッテリー ×2', amt:15960, st:'新規'},
-  {id:'EC-20871', ch:'Amazon', item:'レザーウォレット ×1', amt:6600, st:'処理中'},
-  {id:'EC-20869', ch:'Yahoo!', item:'サーキュレーター ×1', amt:12800, st:'処理中'},
-  {id:'EC-20866', ch:'Makuake STORE', item:'真鍮キャンプギア ×1', amt:9800, st:'新規'},
-  {id:'EC-20861', ch:'楽天市場', item:'姿勢トラッカー ×3', amt:26940, st:'出荷済'},
-];
-const crmStats = [
-  {n:'3,914', l:'総サポーター数'},
-  {n:'34%', l:'CF→EC 再購入率'},
-  {n:'612', l:'複数回支援（ファン）'},
-  {n:'¥12,400', l:'平均LTV（支援＋EC）'},
-];
-const supporters = [
-  {name:'佐藤 健一', seg:'ファン', cnt:4, ltv:38200, last:'姿勢トラッカー'},
-  {name:'鈴木 美咲', seg:'リピーター', cnt:2, ltv:15600, last:'レザーウォレット'},
-  {name:'田中 大輔', seg:'ファン', cnt:5, ltv:52800, last:'電動アシスト自転車'},
-  {name:'山本 由紀', seg:'新規', cnt:1, ltv:8980, last:'サーキュレーター'},
-  {name:'中村 翔太', seg:'リピーター', cnt:3, ltv:24100, last:'モバイルバッテリー'},
-  {name:'小林 彩', seg:'新規', cnt:1, ltv:6600, last:'真鍮キャンプギア'},
-];
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+  const fmtYen = value => '¥' + Math.round(value).toLocaleString('ja-JP');
+  const fmtNum = value => Number(value).toLocaleString('ja-JP');
+  const esc = value => String(value).replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#39;'
+  })[char]);
 
-/* ---------- render ---------- */
-const $ = s => document.querySelector(s);
-function kpiCards(el, arr){
-  el.innerHTML = arr.map(k=>`<div class="kpi"><div class="lbl">${k.lbl}</div>
-    <div class="val">${k.val}${k.unit?` <small>${k.unit}</small>`:''}</div>
-    ${k.d?`<div class="delta ${k.up?'up':'dn'}">${k.up?'▲':'▼'} ${k.d}</div>`:''}</div>`).join('');
-}
-kpiCards($('#kpis'), kpis);
-kpiCards($('#eckpis'), ecKpis);
+  const platformColor = {
+    'Makuake':'#e54b3f',
+    'CAMPFIRE':'#00a4a7',
+    'GREEN FUNDING':'#70ad47',
+    'Creema SPRINGS':'#d98a2b',
+    'machi-ya':'#5b6fd6'
+  };
+  const statusTone = {
+    '準備中':'neutral',
+    '実施中':'info',
+    '達成':'good',
+    'EC移行':'warn',
+    '販売中':'good',
+    '新規':'info',
+    '処理中':'warn',
+    '出荷済':'good',
+    '欠品リスク':'danger',
+    '回復':'good'
+  };
+  const stages = ['発掘','CF準備','CF実施中','リワード配送','EC販売'];
 
-$('#platlist').innerHTML = platforms.map(p=>{
-  const pct = Math.min(100, Math.round(p.raised/p.goal*100));
-  const rate = Math.round(p.raised/p.goal*100);
-  return `<div class="plat">
-    <div class="badge" style="background:${platColor[p.name]}">${p.name[0]}</div>
-    <div class="body">
-      <div class="t"><span>${p.title}</span><span class="amt">${yen(p.raised)}</span></div>
-      <div class="bar"><i style="width:${pct}%"></i></div>
-      <div class="meta"><span>${p.name}</span><span>達成率 <b style="color:${rate>=100?'#16a34a':'#0891b2'}">${rate}%</b></span><span>${p.backers}人</span><span>残${p.days}日</span></div>
-    </div></div>`;
-}).join('');
+  const iconPaths = {
+    trendUp:'<path d="m4 15 5-5 4 4 7-8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 6h5v5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+    trendDown:'<path d="m4 9 5 5 4-4 7 8" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 18h5v-5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+    money:'<path d="M12 3v18M17 7.2c-.9-1-2.4-1.6-4.2-1.6-2.2 0-3.8 1-3.8 2.6 0 4.1 8.5 1.9 8.5 6.4 0 1.8-1.8 3-4.4 3-2.1 0-3.9-.7-5.1-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    users:'<path d="M16 19c-.4-1.9-1.9-3-4-3s-3.6 1.1-4 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 13a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8ZM18.5 14c1.1.5 1.9 1.4 2.2 2.8M17 10a2.3 2.3 0 0 0 0-4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    box:'<path d="m4.5 7.5 7.5-4 7.5 4v9L12 20.5l-7.5-4v-9Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4.8 7.8 12 11.8l7.2-4M12 20v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    bell:'<path d="M18 9.6a6 6 0 1 0-12 0c0 7-2 7-2 8.4h16c0-1.4-2-1.4-2-8.4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.7 20a2.5 2.5 0 0 0 4.6 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    check:'<path d="m5 12.5 4.1 4.1L19 6.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+    arrowRight:'<path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+    arrowLeft:'<path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>',
+    info:'<path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" stroke="currentColor" stroke-width="1.8"/><path d="M12 11.5v5M12 7.5h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    alert:'<path d="M12 4 3.6 18.5h16.8L12 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.5v4.2M12 16.7h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+    plus:'<path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>',
+    chart:'<path d="M5 19V5M5 19h14M8.5 15.5v-5M12 15.5v-8M15.5 15.5v-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    crm:'<path d="M16 19.5c-.45-2.1-2-3.2-4-3.2s-3.55 1.1-4 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 13a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+    truck:'<path d="M3.5 6.5h11v9h-11v-9ZM14.5 10h3.4l2.6 2.9v2.6h-6v-5.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 18a1.8 1.8 0 1 0 0-3.6A1.8 1.8 0 0 0 7 18ZM17.5 18a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z" stroke="currentColor" stroke-width="1.8"/>',
+    store:'<path d="M5 9.5h14l-1-4H6l-1 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 9.5V19h10V9.5M10 19v-5h4v5" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>'
+  };
+  const icon = name => `<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">${iconPaths[name] || iconPaths.info}</svg>`;
 
-$('#feed').innerHTML = feed.map(f=>`<li><span class="dot" style="background:${f.c}"></span><div>${f.t}<small>${f.s}</small></div></li>`).join('');
+  const dashboardKpis = [
+    {label:'進行中CF', value:6, unit:'件', kind:'number', delta:'+2 今月', dir:'up', icon:'chart', series:[4,4,5,4,5,6,6]},
+    {label:'今期CF支援額', value:48200000, kind:'yen', delta:'+18.4% 前期比', dir:'up', icon:'money', series:[22,26,24,31,36,42,48.2]},
+    {label:'支援者総数', value:3914, unit:'人', kind:'number', delta:'+412 今月', dir:'up', icon:'users', series:[2600,2740,2910,3120,3350,3560,3914]},
+    {label:'EC月商', value:9700000, kind:'yen', delta:'+6.1% 前月比', dir:'up', icon:'store', series:[6.1,6.8,7.4,7.1,8.5,9.1,9.7]}
+  ];
 
-/* campaigns table + filter */
-let campFilter = 'すべて';
-const platNames = ['すべて', ...Object.keys(platColor)];
-function renderCampFilters(){
-  $('#campfilters').innerHTML = platNames.map(n=>`<span class="chip ${n===campFilter?'sel':''}" data-p="${n}">${n}</span>`).join('');
-  document.querySelectorAll('#campfilters .chip').forEach(c=>c.onclick=()=>{campFilter=c.dataset.p;renderCampFilters();renderCampTbl();});
-}
-function stPill(st){const m={'実施中':'b','達成':'g','EC移行':'a','準備中':'n'};return `<span class="pill ${m[st]||'n'}">${st}</span>`;}
-function renderCampTbl(){
-  const rows = campaigns.filter(c=>campFilter==='すべて'||c.name===campFilter);
-  $('#camptbl').innerHTML = `<thead><tr><th>プラットフォーム</th><th>プロジェクト</th><th>達成率</th><th>支援者</th><th>支援額</th><th>状態</th></tr></thead><tbody>${
-    rows.map(c=>`<tr><td><span class="pill" style="background:${platColor[c.name]}22;color:${platColor[c.name]}">${c.name}</span></td>
-    <td>${c.title}</td>
-    <td><b style="color:${c.rate>=100?'#16a34a':c.rate>0?'#0891b2':'#94a3b8'}">${c.rate}%</b></td>
-    <td>${c.backers.toLocaleString()}</td><td>${yen(c.amt)}</td><td>${stPill(c.st)}</td></tr>`).join('')
-  }</tbody>`;
-}
-renderCampFilters(); renderCampTbl();
+  const campaigns = [
+    {
+      id:'camp-bike', platform:'Makuake', title:'超軽量 折りたたみ電動アシスト自転車', sku:'AG-BIKE-01', category:'モビリティ',
+      goal:9000000, raised:12480000, backers:842, daysLeft:11, status:'実施中', owner:'佐々木',
+      curve:[400000,1250000,2380000,4120000,5700000,7650000,9480000,10850000,11620000,12480000],
+      rewards:[
+        {name:'超早割 25%OFF', count:210, amount:128000},
+        {name:'早割 20%OFF', count:386, amount:138000},
+        {name:'2台セット', count:46, amount:248000},
+        {name:'アクセサリー同梱', count:200, amount:148000}
+      ],
+      backerSegments:[{name:'新規支援者', count:612},{name:'既存ファン', count:154},{name:'法人・店舗', count:76}],
+      timelineIndex:2
+    },
+    {
+      id:'camp-fan', platform:'CAMPFIRE', title:'北欧デザイン 静音サーキュレーター', sku:'AG-FAN-02', category:'ホーム家電',
+      goal:8000000, raised:6120000, backers:503, daysLeft:19, status:'実施中', owner:'吉田',
+      curve:[220000,640000,1180000,1940000,2760000,3520000,4270000,5010000,5640000,6120000],
+      rewards:[
+        {name:'先行割 30%OFF', count:180, amount:9800},
+        {name:'ペアセット', count:96, amount:17800},
+        {name:'標準プラン', count:227, amount:12800}
+      ],
+      backerSegments:[{name:'新規支援者', count:421},{name:'既存ファン', count:62},{name:'法人・店舗', count:20}],
+      timelineIndex:2
+    },
+    {
+      id:'camp-battery', platform:'GREEN FUNDING', title:'防水アウトドア モバイルバッテリー40000mAh', sku:'AG-BAT-40', category:'アウトドア',
+      goal:5000000, raised:8940000, backers:1120, daysLeft:6, status:'達成', owner:'森',
+      curve:[310000,980000,1640000,2580000,3560000,4780000,6180000,7040000,8120000,8940000],
+      rewards:[
+        {name:'超早割', count:410, amount:6980},
+        {name:'2個セット', count:265, amount:12800},
+        {name:'ソーラー同梱', count:318, amount:9800},
+        {name:'法人10個パック', count:127, amount:59800}
+      ],
+      backerSegments:[{name:'新規支援者', count:890},{name:'既存ファン', count:186},{name:'法人・店舗', count:44}],
+      timelineIndex:2
+    },
+    {
+      id:'camp-gear', platform:'Creema SPRINGS', title:'職人手作り 真鍮キャンプギア', sku:'AG-CAMP-BR', category:'クラフト',
+      goal:2000000, raised:2360000, backers:318, daysLeft:22, status:'達成', owner:'松井',
+      curve:[90000,260000,440000,680000,920000,1240000,1580000,1880000,2140000,2360000],
+      rewards:[
+        {name:'ソロセット', count:152, amount:6800},
+        {name:'ファミリーセット', count:92, amount:12800},
+        {name:'名入れオプション', count:74, amount:1980}
+      ],
+      backerSegments:[{name:'新規支援者', count:232},{name:'既存ファン', count:72},{name:'法人・店舗', count:14}],
+      timelineIndex:2
+    },
+    {
+      id:'camp-posture', platform:'machi-ya', title:'スマート姿勢トラッカー', sku:'AG-POST-03', category:'ウェルネス',
+      goal:10000000, raised:15200000, backers:1131, daysLeft:2, status:'EC移行', owner:'中村',
+      curve:[600000,1850000,3200000,5100000,7200000,9300000,11200000,13100000,14400000,15200000],
+      rewards:[
+        {name:'先行割 本体', count:520, amount:8980},
+        {name:'家族2個セット', count:288, amount:16800},
+        {name:'法人20個パック', count:36, amount:148000},
+        {name:'EC先行予約', count:287, amount:9980}
+      ],
+      backerSegments:[{name:'新規支援者', count:760},{name:'既存ファン', count:285},{name:'法人・店舗', count:86}],
+      timelineIndex:3
+    },
+    {
+      id:'camp-solar', platform:'CAMPFIRE', title:'折りたたみソーラーパネル', sku:'AG-SOL-12', category:'防災',
+      goal:4000000, raised:2560000, backers:210, daysLeft:19, status:'実施中', owner:'小林',
+      curve:[180000,360000,610000,940000,1220000,1480000,1760000,2040000,2310000,2560000],
+      rewards:[
+        {name:'早割 1枚', count:118, amount:12800},
+        {name:'2枚セット', count:64, amount:23800},
+        {name:'防災セット', count:28, amount:19800}
+      ],
+      backerSegments:[{name:'新規支援者', count:174},{name:'既存ファン', count:28},{name:'法人・店舗', count:8}],
+      timelineIndex:2
+    },
+    {
+      id:'camp-wallet', platform:'GREEN FUNDING', title:'ミニマル レザーウォレット', sku:'AG-WALLET-07', category:'ファッション',
+      goal:2000000, raised:4060000, backers:640, daysLeft:0, status:'販売中', owner:'田口',
+      curve:[160000,480000,860000,1220000,1660000,2140000,2850000,3360000,3820000,4060000],
+      rewards:[
+        {name:'ブラック', count:238, amount:6600},
+        {name:'キャメル', count:184, amount:6600},
+        {name:'2色セット', count:218, amount:11800}
+      ],
+      backerSegments:[{name:'新規支援者', count:402},{name:'既存ファン', count:202},{name:'法人・店舗', count:36}],
+      timelineIndex:4
+    },
+    {
+      id:'camp-coffee', platform:'Makuake', title:'全自動コーヒーメーカー（次期）', sku:'AG-COF-09', category:'キッチン家電',
+      goal:7000000, raised:0, backers:0, daysLeft:45, status:'準備中', owner:'伊藤',
+      curve:[0,0,0,0,0,0,0,0,0,0],
+      rewards:[
+        {name:'超早割', count:0, amount:24800},
+        {name:'標準プラン', count:0, amount:29800},
+        {name:'豆サブスク同梱', count:0, amount:34800}
+      ],
+      backerSegments:[{name:'新規支援者', count:0},{name:'既存ファン', count:0},{name:'法人・店舗', count:0}],
+      timelineIndex:1
+    }
+  ];
 
-/* pipeline kanban */
-function renderKanban(){
-  $('#kanban').innerHTML = stages.map((s,i)=>{
-    const cards = pipeline.filter(p=>p.stage===i);
-    return `<div class="col"><h4>${s}<span>${cards.length}</span></h4>${
-      cards.map(p=>{const idx=pipeline.indexOf(p);return `<div class="card" data-i="${idx}">
-        <div class="pt">${p.t}</div>
-        <div class="pm"><span style="color:${platColor[p.plat]};font-weight:700">${p.plat}</span></div>
-        <div class="pf">${p.note}</div>
-        ${p.stage<4?'<div class="pf" style="color:#94a3b8;font-weight:600">▸ クリックで次へ</div>':'<div class="pf" style="color:#16a34a">✓ 販売中</div>'}
-      </div>`;}).join('')
-    }</div>`;
-  }).join('');
-  document.querySelectorAll('#kanban .card').forEach(c=>c.onclick=()=>{
-    const i=+c.dataset.i; if(pipeline[i].stage<4){pipeline[i].stage++; renderKanban();}
+  const activityFeed = [
+    {type:'check', tone:'green', title:'GREEN FUNDING「モバイルバッテリー」が達成率178%に到達', meta:'12分前・CF'},
+    {type:'store', tone:'brand', title:'楽天市場で「静音サーキュレーター」の受注14件を取込', meta:'38分前・EC'},
+    {type:'truck', tone:'amber', title:'Makuake案件の発送ラベル120件を生成', meta:'1時間前・配送'},
+    {type:'arrowRight', tone:'purple', title:'machi-ya「姿勢トラッカー」をEC販売ステージへ移行', meta:'2時間前・ライフサイクル'},
+    {type:'alert', tone:'red', title:'真鍮キャンプギアの自社EC在庫が残18点', meta:'3時間前・在庫'},
+    {type:'crm', tone:'brand', title:'新規サポーター63名をCRMに取込、重複候補を自動マージ', meta:'今日 09:20・CRM'}
+  ];
+
+  let alerts = [
+    {type:'alert', tone:'red', title:'欠品リスク: AG-CAMP-BR 自社EC在庫18点', meta:'3時間前'},
+    {type:'check', tone:'green', title:'達成: モバイルバッテリーが目標を超過', meta:'12分前'},
+    {type:'crm', tone:'brand', title:'新規支援者63名をCRMへ追加', meta:'今日 09:20'},
+    {type:'truck', tone:'amber', title:'リワード配送ラベル120件を生成', meta:'1時間前'}
+  ];
+
+  let pipeline = [
+    {id:'pipe-coffee', title:'全自動コーヒーメーカー（海外）', platform:'Makuake', stage:0, value:7200000, owner:'伊藤', note:'サンプル輸入・検品中', risk:'PSE確認待ち'},
+    {id:'pipe-solar', title:'折りたたみソーラーパネル', platform:'CAMPFIRE', stage:2, value:4200000, owner:'吉田', note:'達成率64% / 残19日', risk:'広告CPA上昇'},
+    {id:'pipe-bike', title:'超軽量 電動アシスト自転車', platform:'Makuake', stage:2, value:12800000, owner:'佐々木', note:'達成率139% / 残11日', risk:'配送枠調整'},
+    {id:'pipe-battery', title:'防水モバイルバッテリー', platform:'GREEN FUNDING', stage:3, value:9100000, owner:'森', note:'1,120件 発送準備', risk:'同梱品検品'},
+    {id:'pipe-gear', title:'真鍮キャンプギア', platform:'Creema SPRINGS', stage:3, value:2500000, owner:'松井', note:'318件 配送中', risk:'自社EC在庫低下'},
+    {id:'pipe-posture', title:'スマート姿勢トラッカー', platform:'machi-ya', stage:4, value:15300000, owner:'中村', note:'楽天・自社ECで販売中', risk:'在庫配分'},
+    {id:'pipe-wallet', title:'ミニマル レザーウォレット', platform:'GREEN FUNDING', stage:4, value:4300000, owner:'田口', note:'Amazon・自社ECで再販中', risk:'レビュー返信'},
+    {id:'pipe-fan', title:'北欧 静音サーキュレーター', platform:'CAMPFIRE', stage:2, value:8200000, owner:'吉田', note:'達成率77% / 残19日', risk:'LP改善'}
+  ];
+
+  const channelRevenue = [
+    {name:'楽天', own:0, market:3100000, cf:260000},
+    {name:'Amazon', own:0, market:2700000, cf:180000},
+    {name:'Yahoo!', own:0, market:1280000, cf:110000},
+    {name:'自社EC', own:2160000, market:0, cf:340000},
+    {name:'CFストア', own:0, market:0, cf:1740000}
+  ];
+
+  let inventory = [
+    {id:'inv-posture', sku:'スマート姿勢トラッカー', code:'AG-POST-03', channel:'自社EC', stock:42, threshold:80, reserved:19, lead:'6日', risk:'mid'},
+    {id:'inv-gear', sku:'真鍮キャンプギア', code:'AG-CAMP-BR', channel:'Makuake STORE', stock:18, threshold:60, reserved:11, lead:'9日', risk:'high'},
+    {id:'inv-fan', sku:'静音サーキュレーター', code:'AG-FAN-02', channel:'楽天市場', stock:56, threshold:90, reserved:22, lead:'7日', risk:'mid'},
+    {id:'inv-wallet', sku:'レザーウォレット', code:'AG-WALLET-07', channel:'Amazon', stock:128, threshold:100, reserved:30, lead:'4日', risk:'ok'}
+  ];
+
+  let orders = [
+    {id:'EC-20874', channel:'楽天市場', item:'スマート姿勢トラッカー ×1', amount:8980, status:'新規', sku:'AG-POST-03'},
+    {id:'EC-20873', channel:'自社EC', item:'モバイルバッテリー ×2', amount:15960, status:'新規', sku:'AG-BAT-40'},
+    {id:'EC-20871', channel:'Amazon', item:'レザーウォレット ×1', amount:6600, status:'処理中', sku:'AG-WALLET-07'},
+    {id:'EC-20869', channel:'Yahoo!', item:'サーキュレーター ×1', amount:12800, status:'処理中', sku:'AG-FAN-02'},
+    {id:'EC-20866', channel:'Makuake STORE', item:'真鍮キャンプギア ×1', amount:9800, status:'新規', sku:'AG-CAMP-BR'},
+    {id:'EC-20861', channel:'楽天市場', item:'スマート姿勢トラッカー ×3', amount:26940, status:'出荷済', sku:'AG-POST-03'},
+    {id:'EC-20858', channel:'自社EC', item:'レザーウォレット ×2', amount:11800, status:'出荷済', sku:'AG-WALLET-07'}
+  ];
+
+  const supporters = [
+    {id:'sup-sato', name:'佐藤 健一', segment:'ファン', count:4, ltv:38200, last:'スマート姿勢トラッカー', channel:'Makuake / 自社EC', history:[
+      {title:'スマート姿勢トラッカー', meta:'自社EC・2026/07・¥8,980'},
+      {title:'モバイルバッテリー', meta:'GREEN FUNDING・2026/05・¥9,800'},
+      {title:'レザーウォレット', meta:'Amazon・2026/03・¥6,600'}
+    ]},
+    {id:'sup-suzuki', name:'鈴木 美咲', segment:'リピーター', count:2, ltv:15600, last:'レザーウォレット', channel:'GREEN FUNDING / Amazon', history:[
+      {title:'レザーウォレット', meta:'Amazon・2026/06・¥6,600'},
+      {title:'キャンプギア', meta:'Creema SPRINGS・2026/02・¥9,000'}
+    ]},
+    {id:'sup-tanaka', name:'田中 大輔', segment:'ファン', count:5, ltv:52800, last:'電動アシスト自転車', channel:'Makuake / 楽天市場', history:[
+      {title:'電動アシスト自転車', meta:'Makuake・2026/07・¥128,000'},
+      {title:'ソーラーパネル', meta:'CAMPFIRE・2026/04・¥12,800'},
+      {title:'姿勢トラッカー', meta:'楽天市場・2026/03・¥8,980'}
+    ]},
+    {id:'sup-yamamoto', name:'山本 由紀', segment:'新規', count:1, ltv:8980, last:'サーキュレーター', channel:'CAMPFIRE', history:[
+      {title:'サーキュレーター', meta:'CAMPFIRE・2026/07・¥8,980'}
+    ]},
+    {id:'sup-nakamura', name:'中村 翔太', segment:'リピーター', count:3, ltv:24100, last:'モバイルバッテリー', channel:'GREEN FUNDING / Yahoo!', history:[
+      {title:'モバイルバッテリー', meta:'Yahoo!・2026/06・¥7,980'},
+      {title:'レザーウォレット', meta:'GREEN FUNDING・2026/05・¥6,600'}
+    ]},
+    {id:'sup-kobayashi', name:'小林 彩', segment:'新規', count:1, ltv:6600, last:'真鍮キャンプギア', channel:'Creema SPRINGS', history:[
+      {title:'真鍮キャンプギア', meta:'Creema SPRINGS・2026/06・¥6,600'}
+    ]},
+    {id:'sup-kato', name:'加藤 真司', segment:'ファン', count:6, ltv:64100, last:'モバイルバッテリー', channel:'GREEN FUNDING / 自社EC', history:[
+      {title:'モバイルバッテリー', meta:'自社EC・2026/07・¥15,960'},
+      {title:'姿勢トラッカー', meta:'machi-ya・2026/05・¥8,980'},
+      {title:'レザーウォレット', meta:'Amazon・2026/02・¥6,600'}
+    ]},
+    {id:'sup-mori', name:'森 里奈', segment:'リピーター', count:2, ltv:19800, last:'ソーラーパネル', channel:'CAMPFIRE / 楽天市場', history:[
+      {title:'ソーラーパネル', meta:'CAMPFIRE・2026/07・¥12,800'},
+      {title:'サーキュレーター', meta:'楽天市場・2026/05・¥7,000'}
+    ]},
+    {id:'sup-ito', name:'伊藤 杏奈', segment:'新規', count:1, ltv:7200, last:'レザーウォレット', channel:'Amazon', history:[
+      {title:'レザーウォレット', meta:'Amazon・2026/07・¥7,200'}
+    ]},
+    {id:'sup-takahashi', name:'高橋 優', segment:'リピーター', count:2, ltv:12600, last:'真鍮キャンプギア', channel:'Creema SPRINGS / 自社EC', history:[
+      {title:'真鍮キャンプギア', meta:'自社EC・2026/06・¥6,600'},
+      {title:'キャンプギア替えパーツ', meta:'Creema SPRINGS・2026/04・¥6,000'}
+    ]},
+    {id:'sup-inoue', name:'井上 麻衣', segment:'リピーター', count:2, ltv:17400, last:'サーキュレーター', channel:'楽天市場 / CAMPFIRE', history:[
+      {title:'サーキュレーター', meta:'楽天市場・2026/07・¥8,400'},
+      {title:'真鍮キャンプギア', meta:'CAMPFIRE・2026/03・¥9,000'}
+    ]},
+    {id:'sup-shimizu', name:'清水 直人', segment:'新規', count:1, ltv:11200, last:'モバイルバッテリー', channel:'GREEN FUNDING', history:[
+      {title:'モバイルバッテリー', meta:'GREEN FUNDING・2026/06・¥11,200'}
+    ]},
+    {id:'sup-hayashi', name:'林 千尋', segment:'リピーター', count:3, ltv:28700, last:'スマート姿勢トラッカー', channel:'machi-ya / 自社EC', history:[
+      {title:'スマート姿勢トラッカー', meta:'自社EC・2026/07・¥8,980'},
+      {title:'レザーウォレット', meta:'Amazon・2026/05・¥6,600'},
+      {title:'サーキュレーター', meta:'machi-ya・2026/03・¥13,120'}
+    ]},
+    {id:'sup-kimura', name:'木村 航', segment:'ファン', count:4, ltv:33400, last:'ソーラーパネル', channel:'CAMPFIRE / Yahoo!', history:[
+      {title:'ソーラーパネル', meta:'CAMPFIRE・2026/07・¥12,800'},
+      {title:'モバイルバッテリー', meta:'Yahoo!・2026/05・¥7,980'},
+      {title:'真鍮キャンプギア', meta:'Creema SPRINGS・2026/02・¥12,620'}
+    ]}
+  ];
+
+  const viewMeta = {
+    dash:{title:'統合ダッシュボード', sub:'複数プラットフォームのCF＋EC販売を1画面で可視化'},
+    camp:{title:'キャンペーン管理', sub:'Makuake / CAMPFIRE / GREEN FUNDING などを横断集計'},
+    pipe:{title:'案件パイプライン', sub:'発掘からEC販売までのライフサイクルを管理'},
+    ec:{title:'EC一元管理', sub:'CF後の一般販売を全チャネルで統合運営'},
+    crm:{title:'サポーターCRM', sub:'支援者を購入者・リピーターへ育成'}
+  };
+
+  let activeView = 'dash';
+  let campaignFilter = 'すべて';
+  let orderChannelFilter = 'すべて';
+  let orderStatusFilter = 'すべて';
+  let crmSegmentFilter = 'すべて';
+  let selectedSupporterId = supporters[0].id;
+
+  function toneColor(tone){
+    return {
+      green:['#e8f8ee','#16a34a'],
+      brand:['#e5f7fb','#0e7490'],
+      amber:['#fff4de','#d98a2b'],
+      red:['#fee7e7','#dc2626'],
+      purple:['#f0edff','#6d5bd0']
+    }[tone] || ['#eef2f6','#64748b'];
+  }
+
+  function matchesTerm(fields){
+    const term = $('#globalSearch').value.trim().toLowerCase();
+    if(!term) return true;
+    return fields.some(field => String(field || '').toLowerCase().includes(term));
+  }
+
+  function statusPill(status){
+    const tone = statusTone[status] || 'neutral';
+    return `<span class="status-pill ${tone}">${esc(status)}</span>`;
+  }
+
+  function platformPill(platform){
+    const color = platformColor[platform] || '#64748b';
+    return `<span class="platform-pill" style="background:${color}14;color:${color};border-color:${color}33">${esc(platform)}</span>`;
+  }
+
+  function sparkline(values, color){
+    const w = 128, h = 44, p = 5;
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const span = max - min || 1;
+    const pts = values.map((value, index) => {
+      const x = p + (index / Math.max(values.length - 1, 1)) * (w - p * 2);
+      const y = h - p - ((value - min) / span) * (h - p * 2);
+      return {x, y};
+    });
+    const line = pts.map((pt, index) => `${index ? 'L' : 'M'} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(' ');
+    const area = `${line} L ${pts[pts.length - 1].x.toFixed(1)} ${h - p} L ${pts[0].x.toFixed(1)} ${h - p} Z`;
+    return `<svg class="sparkline" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+      <path d="${area}" fill="${color}18"></path>
+      <path d="${line}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+      <circle cx="${pts[pts.length - 1].x.toFixed(1)}" cy="${pts[pts.length - 1].y.toFixed(1)}" r="2.8" fill="#fff" stroke="${color}" stroke-width="2"></circle>
+    </svg>`;
+  }
+
+  function radialGauge(rate){
+    const clamped = Math.max(0, Math.min(rate, 100));
+    const color = rate >= 100 ? '#16a34a' : '#0e7490';
+    return `<svg class="donut" viewBox="0 0 80 80" aria-label="達成率 ${rate}%">
+      <circle cx="40" cy="40" r="31" fill="none" stroke="#e8eef4" stroke-width="8"></circle>
+      <circle cx="40" cy="40" r="31" fill="none" stroke="${color}" stroke-width="8" pathLength="100" stroke-dasharray="${clamped} 100" stroke-linecap="round" transform="rotate(-90 40 40)"></circle>
+      <text x="40" y="39" text-anchor="middle" dominant-baseline="central" fill="${color}" font-size="15" font-weight="900">${rate}%</text>
+      <text x="40" y="54" text-anchor="middle" fill="#8a9bae" font-size="8" font-weight="800">達成率</text>
+    </svg>`;
+  }
+
+  function fundingCurve(campaign){
+    const values = campaign.curve;
+    const w = 492, h = 210, left = 42, right = 18, top = 18, bottom = 34;
+    const plotW = w - left - right;
+    const plotH = h - top - bottom;
+    const max = Math.max(campaign.goal * 1.18, ...values, 1);
+    const yFor = value => top + plotH - (value / max) * plotH;
+    const pts = values.map((value, index) => ({
+      x:left + (index / Math.max(values.length - 1, 1)) * plotW,
+      y:yFor(value)
+    }));
+    const line = pts.map((pt, index) => `${index ? 'L' : 'M'} ${pt.x.toFixed(1)} ${pt.y.toFixed(1)}`).join(' ');
+    const area = `${line} L ${pts[pts.length - 1].x.toFixed(1)} ${top + plotH} L ${pts[0].x.toFixed(1)} ${top + plotH} Z`;
+    const goalY = yFor(campaign.goal);
+    const grid = [0,.25,.5,.75,1].map(step => {
+      const y = top + plotH - step * plotH;
+      return `<line x1="${left}" y1="${y}" x2="${w - right}" y2="${y}" stroke="#edf2f6"></line>`;
+    }).join('');
+    return `<svg viewBox="0 0 ${w} ${h}" class="revenue-chart" aria-label="支援額の推移">
+      ${grid}
+      <line x1="${left}" y1="${goalY.toFixed(1)}" x2="${w - right}" y2="${goalY.toFixed(1)}" stroke="#d98a2b" stroke-dasharray="5 5"></line>
+      <text x="${left}" y="${Math.max(12, goalY - 6).toFixed(1)}" fill="#b26e20" font-size="10" font-weight="800">目標 ${fmtYen(campaign.goal)}</text>
+      <path d="${area}" fill="#0e749018"></path>
+      <path d="${line}" fill="none" stroke="#0e7490" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+      <circle cx="${pts[pts.length - 1].x.toFixed(1)}" cy="${pts[pts.length - 1].y.toFixed(1)}" r="4" fill="#fff" stroke="#0e7490" stroke-width="3"></circle>
+      <text x="${left}" y="${h - 10}" fill="#8a9bae" font-size="10" font-weight="800">開始</text>
+      <text x="${left + plotW / 2}" y="${h - 10}" fill="#8a9bae" font-size="10" font-weight="800" text-anchor="middle">中盤</text>
+      <text x="${w - right}" y="${h - 10}" fill="#8a9bae" font-size="10" font-weight="800" text-anchor="end">現在</text>
+    </svg>`;
+  }
+
+  function rewardBar(count, max){
+    const pct = max ? Math.max(2, Math.round(count / max * 100)) : 0;
+    return `<svg viewBox="0 0 160 10" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="0" y="1" width="160" height="8" rx="4" fill="#edf2f6"></rect>
+      <rect x="0" y="1" width="${pct * 1.6}" height="8" rx="4" fill="#0e7490"></rect>
+    </svg>`;
+  }
+
+  function revenueChartSvg(data){
+    const w = 680, h = 284, left = 82, right = 18, top = 18, bottom = 58;
+    const plotW = w - left - right;
+    const plotH = h - top - bottom;
+    const rawMax = Math.max(...data.map(d => d.own + d.market + d.cf), 0);
+    const tickUnit = 1000000;
+    const max = Math.max(tickUnit, Math.ceil(rawMax / tickUnit) * tickUnit);
+    const base = top + plotH;
+    const barW = Math.min(58, plotW / data.length * .46);
+    const colors = {market:'#0e7490', own:'#22b8cf', cf:'#d98a2b'};
+    const grid = [0,.25,.5,.75,1].map(step => {
+      const y = base - step * plotH;
+      const label = fmtYen(max * step);
+      return `<line x1="${left}" y1="${y.toFixed(1)}" x2="${w - right}" y2="${y.toFixed(1)}" stroke="#edf2f6"></line>
+        <text x="${left - 10}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="#8a9bae" font-size="10" font-weight="800">${label}</text>`;
+    }).join('');
+    const bars = data.map((d, index) => {
+      const total = d.own + d.market + d.cf;
+      const x = left + (index + .5) * (plotW / data.length) - barW / 2;
+      let y = base;
+      const segments = [
+        ['market', d.market],
+        ['own', d.own],
+        ['cf', d.cf]
+      ].filter(([,value]) => value > 0).map(([key, value]) => {
+        const segH = value / max * plotH;
+        y -= segH;
+        return `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${segH.toFixed(1)}" rx="4" fill="${colors[key]}"></rect>`;
+      }).join('');
+      return `${segments}
+        <text x="${(x + barW / 2).toFixed(1)}" y="${h - 35}" text-anchor="middle" fill="#64748b" font-size="11" font-weight="900">${esc(d.name)}</text>
+        <text x="${(x + barW / 2).toFixed(1)}" y="${Math.max(top + 12, y - 7).toFixed(1)}" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="900">${fmtYen(total).replace(',000,000','M')}</text>`;
+    }).join('');
+    return `<svg class="revenue-chart" viewBox="0 0 ${w} ${h}" aria-label="チャネル別売上">
+      ${grid}
+      <line x1="${left}" y1="${base}" x2="${w - right}" y2="${base}" stroke="#dde6ee"></line>
+      ${bars}
+      <text x="${left}" y="${h - 8}" fill="#8a9bae" font-size="10" font-weight="800">サンプル月次売上。実績値ではありません。</text>
+    </svg>
+    <div class="legend-row">
+      <span class="legend-key"><i class="legend-dot" style="background:${colors.market}"></i>マーケットプレイス</span>
+      <span class="legend-key"><i class="legend-dot" style="background:${colors.own}"></i>自社EC</span>
+      <span class="legend-key"><i class="legend-dot" style="background:${colors.cf}"></i>CFストア</span>
+    </div>`;
+  }
+
+  function ltvChartSvg(items){
+    const bins = [
+      {label:'〜1万', min:0, max:9999},
+      {label:'1〜2万', min:10000, max:19999},
+      {label:'2〜4万', min:20000, max:39999},
+      {label:'4万〜', min:40000, max:Infinity}
+    ].map(bin => ({...bin, count:items.filter(s => s.ltv >= bin.min && s.ltv <= bin.max).length}));
+    const w = 330, h = 142, top = 12, bottom = 28, left = 20;
+    const plotH = h - top - bottom;
+    const max = Math.max(...bins.map(b => b.count), 1);
+    const barW = 42;
+    const gap = 30;
+    const bars = bins.map((bin, index) => {
+      const x = left + index * (barW + gap);
+      const bh = bin.count / max * plotH;
+      const y = top + plotH - bh;
+      return `<rect x="${x}" y="${y.toFixed(1)}" width="${barW}" height="${bh.toFixed(1)}" rx="6" fill="#0e7490"></rect>
+        <text x="${x + barW / 2}" y="${Math.max(12, y - 7).toFixed(1)}" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="900">${bin.count}</text>
+        <text x="${x + barW / 2}" y="${h - 7}" text-anchor="middle" fill="#64748b" font-size="10" font-weight="900">${bin.label}</text>`;
+    }).join('');
+    return `<svg viewBox="0 0 ${w} ${h}" class="revenue-chart" aria-label="LTV分布">
+      <line x1="${left - 8}" y1="${top + plotH}" x2="${w - 14}" y2="${top + plotH}" stroke="#dde6ee"></line>
+      ${bars}
+    </svg>`;
+  }
+
+  function renderKpis(target, items){
+    target.innerHTML = items.map(item => {
+      const color = item.dir === 'down' ? '#dc2626' : '#0e7490';
+      const trendIcon = item.dir === 'down' ? 'trendDown' : 'trendUp';
+      return `<article class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-label">${esc(item.label)}</div>
+          <div class="kpi-icon">${icon(item.icon || 'chart')}</div>
+        </div>
+        <div class="kpi-value"><span class="count-value" data-value="${item.value}" data-kind="${item.kind || 'number'}">0</span>${item.unit ? ` <small>${esc(item.unit)}</small>` : ''}</div>
+        <div class="kpi-footer">
+          <span class="delta ${item.dir === 'down' ? 'down' : 'up'}">${icon(trendIcon)}${esc(item.delta || '')}</span>
+          ${sparkline(item.series || [1,2,3], color)}
+        </div>
+      </article>`;
+    }).join('');
+    animateCounts(target);
+  }
+
+  function animateCounts(root){
+    $$('.count-value', root).forEach(node => {
+      const target = Number(node.dataset.value || 0);
+      const kind = node.dataset.kind || 'number';
+      const started = performance.now();
+      const duration = 850;
+      const formatter = value => kind === 'yen' ? fmtYen(value) : fmtNum(Math.round(value));
+      const tick = now => {
+        const progress = Math.min(1, (now - started) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        node.textContent = formatter(target * eased);
+        if(progress < 1) requestAnimationFrame(tick);
+        else node.textContent = formatter(target);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function renderDashboard(){
+    renderKpis($('#dashboardKpis'), dashboardKpis);
+    const activeCampaigns = campaigns
+      .filter(c => ['実施中','達成','EC移行'].includes(c.status))
+      .filter(c => matchesTerm([c.title,c.platform,c.sku,c.category]));
+    $('#dashboardCampaigns').innerHTML = activeCampaigns.length ? activeCampaigns.map(campaignCard).join('') : emptyState('該当するキャンペーンはありません');
+    bindCampaignOpeners($('#dashboardCampaigns'));
+    $('#activityFeed').innerHTML = activityFeed.map(item => {
+      const [bg, fg] = toneColor(item.tone);
+      return `<li>
+        <span class="feed-icon" style="background:${bg};color:${fg}">${icon(item.type)}</span>
+        <div class="feed-copy"><b>${esc(item.title)}</b><p>${esc(item.meta)}</p></div>
+      </li>`;
+    }).join('');
+  }
+
+  function campaignCard(campaign){
+    const rate = Math.round(campaign.raised / Math.max(campaign.goal, 1) * 100);
+    return `<article class="campaign-card" role="button" tabindex="0" data-campaign-id="${esc(campaign.id)}">
+      <div>${radialGauge(rate)}</div>
+      <div>
+        <div>${platformPill(campaign.platform)} ${statusPill(campaign.status)}</div>
+        <div class="campaign-title">${esc(campaign.title)}</div>
+        <div class="campaign-meta">
+          <span>支援者 <b>${fmtNum(campaign.backers)}人</b></span>
+          <span>残日数 <b>${campaign.daysLeft}日</b></span>
+          <span>SKU <b>${esc(campaign.sku)}</b></span>
+        </div>
+      </div>
+      <div class="campaign-amount">
+        <strong>${fmtYen(campaign.raised)}</strong>
+        <span>目標 ${fmtYen(campaign.goal)}</span>
+      </div>
+    </article>`;
+  }
+
+  function renderCampaignFilters(){
+    const options = ['すべて', ...Object.keys(platformColor)];
+    $('#campaignFilters').innerHTML = options.map(option =>
+      `<button class="chip ${campaignFilter === option ? 'active' : ''}" type="button" data-campaign-filter="${esc(option)}">${esc(option)}</button>`
+    ).join('');
+  }
+
+  function renderCampaignTable(){
+    renderCampaignFilters();
+    const rows = campaigns
+      .filter(c => campaignFilter === 'すべて' || c.platform === campaignFilter)
+      .filter(c => matchesTerm([c.title,c.platform,c.sku,c.category,c.status,c.owner]));
+    $('#campaignTable').innerHTML = `<thead><tr>
+      <th>プラットフォーム</th><th>プロジェクト</th><th>達成率</th><th>支援者</th><th>支援額</th><th>残日数</th><th>状態</th>
+    </tr></thead><tbody>${
+      rows.length ? rows.map(c => {
+        const rate = Math.round(c.raised / Math.max(c.goal, 1) * 100);
+        const rateClass = rate >= 100 ? 'rate-good' : rate > 0 ? 'rate-brand' : 'rate-muted';
+        return `<tr class="row-click" tabindex="0" data-campaign-id="${esc(c.id)}">
+          <td>${platformPill(c.platform)}</td>
+          <td><span class="cell-title">${esc(c.title)}</span><span class="cell-sub">${esc(c.category)} / ${esc(c.sku)}</span></td>
+          <td><span class="${rateClass}">${rate}%</span></td>
+          <td>${fmtNum(c.backers)}人</td>
+          <td class="money">${fmtYen(c.raised)}</td>
+          <td>${c.daysLeft}日</td>
+          <td>${statusPill(c.status)}</td>
+        </tr>`;
+      }).join('') : `<tr><td colspan="7">${emptyState('該当するキャンペーンはありません')}</td></tr>`
+    }</tbody>`;
+    bindCampaignOpeners($('#campaignTable'));
+  }
+
+  function bindCampaignOpeners(root){
+    $$('[data-campaign-id]', root).forEach(el => {
+      el.addEventListener('click', () => openCampaignDrawer(el.dataset.campaignId));
+      el.addEventListener('keydown', event => {
+        if(event.key === 'Enter' || event.key === ' '){
+          event.preventDefault();
+          openCampaignDrawer(el.dataset.campaignId);
+        }
+      });
+    });
+  }
+
+  function openCampaignDrawer(id){
+    const campaign = campaigns.find(c => c.id === id);
+    if(!campaign) return;
+    const rate = Math.round(campaign.raised / Math.max(campaign.goal, 1) * 100);
+    $('#drawerTitle').innerHTML = `${platformPill(campaign.platform)} ${statusPill(campaign.status)}<h2>${esc(campaign.title)}</h2>`;
+    const rewardMax = Math.max(...campaign.rewards.map(r => r.count), 1);
+    $('#drawerBody').innerHTML = `
+      <div class="metric-grid">
+        <div class="metric-box"><b>${fmtYen(campaign.raised)}</b><span>支援額</span></div>
+        <div class="metric-box"><b>${rate}%</b><span>達成率</span></div>
+        <div class="metric-box"><b>${fmtNum(campaign.backers)}人</b><span>支援者</span></div>
+        <div class="metric-box"><b>${campaign.daysLeft}日</b><span>残り日数</span></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>支援額の推移</h3><span>目標線付き</span></div>
+        <div class="panel-body">${fundingCurve(campaign)}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>リワード別 支援件数</h3><span>${esc(campaign.sku)}</span></div>
+        <div class="panel-body">
+          <div class="reward-list">
+            ${campaign.rewards.map(reward => `<div class="reward-row">
+              <div><b>${esc(reward.name)}</b><span>${fmtYen(reward.amount)} / サンプル単価</span>${rewardBar(reward.count, rewardMax)}</div>
+              <div class="reward-count">${fmtNum(reward.count)}件</div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>サポーター構成</h3><span>バックエンド集計</span></div>
+        <div class="panel-body">
+          ${campaign.backerSegments.map(seg => `<div class="detail-row"><span>${esc(seg.name)}</span><span>${fmtNum(seg.count)}人</span></div>`).join('')}
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><h3>ステータスタイムライン</h3><span>発掘→EC販売</span></div>
+        <div class="panel-body"><div class="timeline">${stages.map((stage, index) => {
+          const state = index < campaign.timelineIndex ? 'done' : index === campaign.timelineIndex ? 'current' : '';
+          const note = index < campaign.timelineIndex ? '完了' : index === campaign.timelineIndex ? '進行中' : '未着手';
+          return `<div class="timeline-step ${state}">
+            <div class="timeline-dot">${icon(index <= campaign.timelineIndex ? 'check' : 'info')}</div>
+            <div class="timeline-copy"><b>${esc(stage)}</b><span>${note}</span></div>
+          </div>`;
+        }).join('')}</div></div>
+      </div>`;
+    const drawer = $('#campaignDrawer');
+    drawer.hidden = false;
+    requestAnimationFrame(() => drawer.classList.add('open'));
+  }
+
+  function closeCampaignDrawer(){
+    const drawer = $('#campaignDrawer');
+    drawer.classList.remove('open');
+    setTimeout(() => { drawer.hidden = true; }, 180);
+  }
+
+  function renderPipeline(){
+    const filtered = pipeline.filter(item => matchesTerm([item.title,item.platform,item.owner,item.note,item.risk]));
+    $('#kanban').innerHTML = stages.map((stage, stageIndex) => {
+      const cards = filtered.filter(item => item.stage === stageIndex);
+      const total = cards.reduce((sum, item) => sum + item.value, 0);
+      return `<section class="stage-column">
+        <div class="stage-head">
+          <div><h3>${esc(stage)}</h3><p>${fmtYen(total)}</p></div>
+          <span class="stage-count">${cards.length}</span>
+        </div>
+        <div class="stage-cards">
+          ${cards.length ? cards.map(item => pipelineCard(item)).join('') : `<div class="empty-state">該当案件なし</div>`}
+        </div>
+      </section>`;
+    }).join('');
+  }
+
+  function pipelineCard(item){
+    return `<article class="pipeline-card" data-pipeline-id="${esc(item.id)}">
+      <div class="pipeline-title">${esc(item.title)}</div>
+      <div class="pipeline-meta">
+        ${platformPill(item.platform)}
+        <span class="small-pill" style="background:#eef7fa;color:#0e7490">${fmtYen(item.value)}</span>
+      </div>
+      <div class="pipeline-note">${esc(item.note)}</div>
+      <div class="pipeline-actions">
+        <button class="mini-action" type="button" data-pipeline-detail="${esc(item.id)}">${icon('info')}詳細</button>
+        ${item.stage > 0 ? `<button class="mini-action" type="button" data-pipeline-back="${esc(item.id)}">${icon('arrowLeft')}戻す</button>` : ''}
+      </div>
+    </article>`;
+  }
+
+  function advancePipeline(id){
+    const item = pipeline.find(entry => entry.id === id);
+    if(!item) return;
+    if(item.stage >= stages.length - 1){
+      toast(`${item.title}はEC販売ステージです`);
+      return;
+    }
+    item.stage += 1;
+    toast(`${item.title}を「${stages[item.stage]}」へ進めました`);
+    renderPipeline();
+  }
+
+  function backPipeline(id){
+    const item = pipeline.find(entry => entry.id === id);
+    if(!item || item.stage === 0) return;
+    item.stage -= 1;
+    toast(`${item.title}を「${stages[item.stage]}」へ戻しました`);
+    renderPipeline();
+  }
+
+  function openPipelineDetail(id){
+    const item = pipeline.find(entry => entry.id === id);
+    if(!item) return;
+    $('#modalTitle').textContent = item.title;
+    $('#modalBody').innerHTML = `
+      <div class="detail-row"><span>プラットフォーム</span><span>${esc(item.platform)}</span></div>
+      <div class="detail-row"><span>現在ステージ</span><span>${esc(stages[item.stage])}</span></div>
+      <div class="detail-row"><span>見込価値</span><span>${fmtYen(item.value)}</span></div>
+      <div class="detail-row"><span>担当</span><span>${esc(item.owner)}</span></div>
+      <div class="detail-row"><span>運営メモ</span><span>${esc(item.note)}</span></div>
+      <div class="detail-row"><span>確認事項</span><span>${esc(item.risk)}</span></div>
+      <div class="modal-actions">
+        ${item.stage < stages.length - 1 ? `<button class="primary-button" type="button" data-modal-advance="${esc(item.id)}">${icon('arrowRight')}次ステージ</button>` : ''}
+        ${item.stage > 0 ? `<button class="text-button" type="button" data-modal-back="${esc(item.id)}">${icon('arrowLeft')}戻す</button>` : ''}
+      </div>`;
+    $('#miniModal').hidden = false;
+  }
+
+  function closeModal(){
+    $('#miniModal').hidden = true;
+  }
+
+  function ecKpis(){
+    const pending = orders.filter(order => order.status !== '出荷済').length;
+    const todayOrders = orders.length + 79;
+    const stockTotal = inventory.reduce((sum, item) => sum + item.stock, 3980);
+    const riskCount = inventory.filter(item => item.stock < item.threshold).length;
+    return [
+      {label:'本日受注', value:todayOrders, unit:'件', kind:'number', delta:'+12 前日比', dir:'up', icon:'store', series:[68,71,75,74,82,86,todayOrders]},
+      {label:'未出荷', value:pending, unit:'件', kind:'number', delta:pending <= 20 ? '-3 本日' : '+4 本日', dir:pending <= 20 ? 'up' : 'down', icon:'truck', series:[28,25,27,24,23,22,pending]},
+      {label:'在庫総数', value:stockTotal, kind:'number', delta:'+240 補充予定', dir:'up', icon:'box', series:[3860,3920,3980,4050,4100,4180,stockTotal]},
+      {label:'欠品リスクSKU', value:riskCount, unit:'件', kind:'number', delta:riskCount <= 2 ? '-1 改善' : '+1 注意', dir:riskCount <= 2 ? 'up' : 'down', icon:'alert', series:[5,4,4,3,3,3,riskCount]}
+    ];
+  }
+
+  function renderEc(){
+    renderKpis($('#ecKpis'), ecKpis());
+    $('#revenueChart').innerHTML = revenueChartSvg(channelRevenue);
+    renderLowStock();
+    renderOrderFilters();
+    renderOrders();
+  }
+
+  function renderLowStock(){
+    const rows = inventory
+      .filter(item => item.stock < item.threshold)
+      .filter(item => matchesTerm([item.sku,item.code,item.channel]))
+      .sort((a,b) => (a.stock / a.threshold) - (b.stock / b.threshold));
+    $('#lowStockList').innerHTML = rows.length ? rows.map(item => {
+      const risky = item.stock < item.threshold;
+      const riskClass = risky ? item.risk === 'high' ? 'risk-high' : 'risk-mid' : 'stock-ok';
+      const label = risky ? '欠品リスク' : '回復';
+      return `<div class="stock-alert ${riskClass}">
+        <div>
+          <div class="stock-title">${esc(item.sku)}</div>
+          <div class="stock-meta">
+            <span>${esc(item.channel)}</span>
+            <span>${esc(item.code)}</span>
+            <span>残 <b class="stock-num">${fmtNum(item.stock)}</b></span>
+            <span>閾値 ${fmtNum(item.threshold)}</span>
+            <span>入荷LT ${esc(item.lead)}</span>
+          </div>
+        </div>
+        <div style="display:grid;gap:8px;justify-items:end">
+          ${statusPill(label)}
+          <button class="row-action" type="button" data-restock="${esc(item.id)}">${icon('plus')}在庫補充</button>
+        </div>
+      </div>`;
+    }).join('') : emptyState('該当SKUはありません');
+  }
+
+  function renderOrderFilters(){
+    const channels = ['すべて', ...Array.from(new Set(orders.map(order => order.channel)))];
+    const statuses = ['すべて','新規','処理中','出荷済'];
+    $('#orderFilters').innerHTML = `
+      <div class="filter-line"><span class="filter-label">チャネル</span>${channels.map(channel =>
+        `<button class="chip ${orderChannelFilter === channel ? 'active' : ''}" type="button" data-order-channel="${esc(channel)}">${esc(channel)}</button>`
+      ).join('')}</div>
+      <div class="filter-line"><span class="filter-label">状態</span>${statuses.map(status =>
+        `<button class="chip ${orderStatusFilter === status ? 'active' : ''}" type="button" data-order-status="${esc(status)}">${esc(status)}</button>`
+      ).join('')}</div>`;
+  }
+
+  function renderOrders(){
+    const rows = orders
+      .filter(order => orderChannelFilter === 'すべて' || order.channel === orderChannelFilter)
+      .filter(order => orderStatusFilter === 'すべて' || order.status === orderStatusFilter)
+      .filter(order => matchesTerm([order.id,order.channel,order.item,order.sku,order.status]));
+    $('#orderTable').innerHTML = `<thead><tr>
+      <th>受注ID</th><th>チャネル</th><th>商品</th><th>金額</th><th>状態</th><th>操作</th>
+    </tr></thead><tbody>${
+      rows.length ? rows.map(order => `<tr>
+        <td><b>${esc(order.id)}</b><span class="cell-sub">${esc(order.sku)}</span></td>
+        <td>${esc(order.channel)}</td>
+        <td>${esc(order.item)}</td>
+        <td class="money">${fmtYen(order.amount)}</td>
+        <td>${statusPill(order.status)}</td>
+        <td>${order.status !== '出荷済' ? `<button class="row-action" type="button" data-ship-order="${esc(order.id)}">${icon('truck')}出荷済</button>` : `<span class="small-pill" style="background:#e8f8ee;color:#15803d">完了</span>`}</td>
+      </tr>`).join('') : `<tr><td colspan="6">${emptyState('該当する受注はありません')}</td></tr>`
+    }</tbody>`;
+  }
+
+  function restock(id){
+    const item = inventory.find(entry => entry.id === id);
+    if(!item) return;
+    item.stock += 30;
+    item.risk = item.stock < item.threshold ? item.risk : 'ok';
+    alerts.unshift({type:'plus', tone:'brand', title:`在庫補充: ${item.sku} +30`, meta:'たった今'});
+    toast(`${item.sku}の在庫を30点補充しました`);
+    renderEc();
+    renderAlerts();
+  }
+
+  function shipOrder(id){
+    const order = orders.find(entry => entry.id === id);
+    if(!order) return;
+    order.status = '出荷済';
+    alerts.unshift({type:'truck', tone:'green', title:`出荷済: ${order.id}`, meta:'たった今'});
+    toast(`${order.id}を出荷済に更新しました`);
+    renderEc();
+    renderAlerts();
+  }
+
+  function renderCrm(){
+    const crmStats = [
+      {n:3914, kind:'number', label:'総サポーター数'},
+      {n:34, kind:'percent', label:'CF→EC 再購入率'},
+      {n:612, kind:'number', label:'ファンセグメント'},
+      {n:12400, kind:'yen', label:'平均LTV'}
+    ];
+    $('#crmStats').innerHTML = crmStats.map(stat => `<div class="mini-stat">
+      <b>${stat.kind === 'yen' ? fmtYen(stat.n) : stat.kind === 'percent' ? stat.n + '%' : fmtNum(stat.n)}</b>
+      <span>${esc(stat.label)}</span>
+    </div>`).join('');
+    renderCrmFilters();
+    const filtered = supporters
+      .filter(s => crmSegmentFilter === 'すべて' || s.segment === crmSegmentFilter)
+      .filter(s => matchesTerm([s.name,s.segment,s.last,s.channel]));
+    if(filtered.length && !filtered.some(s => s.id === selectedSupporterId)) selectedSupporterId = filtered[0].id;
+    $('#supporterTable').innerHTML = `<thead><tr>
+      <th>サポーター</th><th>セグメント</th><th>回数</th><th>LTV</th><th>最近の商品</th>
+    </tr></thead><tbody>${
+      filtered.length ? filtered.map(s => `<tr class="row-click" tabindex="0" data-supporter-id="${esc(s.id)}">
+        <td><span class="cell-title">${esc(s.name)}</span><span class="cell-sub">${esc(s.channel)}</span></td>
+        <td>${segmentPill(s.segment)}</td>
+        <td>${s.count}回</td>
+        <td class="money">${fmtYen(s.ltv)}</td>
+        <td>${esc(s.last)}</td>
+      </tr>`).join('') : `<tr><td colspan="5">${emptyState('該当するサポーターはありません')}</td></tr>`
+    }</tbody>`;
+    $('#ltvChart').innerHTML = ltvChartSvg(supporters);
+    renderSupporterDetail(filtered);
+  }
+
+  function renderCrmFilters(){
+    const segments = ['すべて','ファン','リピーター','新規'];
+    $('#crmFilters').innerHTML = segments.map(segment =>
+      `<button class="chip ${crmSegmentFilter === segment ? 'active' : ''}" type="button" data-crm-segment="${esc(segment)}">${esc(segment)}</button>`
+    ).join('');
+  }
+
+  function segmentPill(segment){
+    const tone = {'ファン':'good', 'リピーター':'info', '新規':'neutral'}[segment] || 'neutral';
+    return `<span class="status-pill ${tone}">${esc(segment)}</span>`;
+  }
+
+  function renderSupporterDetail(filtered){
+    const supporter = filtered.find(s => s.id === selectedSupporterId) || filtered[0];
+    if(!supporter){
+      $('#supporterDetail').innerHTML = emptyState('詳細表示するサポーターがありません');
+      return;
+    }
+    selectedSupporterId = supporter.id;
+    $('#supporterDetail').innerHTML = `<h3>${esc(supporter.name)}</h3>
+      <div class="detail-row"><span>セグメント</span><span>${esc(supporter.segment)}</span></div>
+      <div class="detail-row"><span>支援 / 購入回数</span><span>${supporter.count}回</span></div>
+      <div class="detail-row"><span>累計LTV</span><span>${fmtYen(supporter.ltv)}</span></div>
+      <div class="detail-row"><span>直近商品</span><span>${esc(supporter.last)}</span></div>
+      <div class="history-list">
+        ${supporter.history.map(item => `<div class="history-item"><b>${esc(item.title)}</b><span>${esc(item.meta)}</span></div>`).join('')}
+      </div>`;
+  }
+
+  function renderAlerts(){
+    $('#alertCount').textContent = Math.min(alerts.length, 9);
+    $('#alertsMenu').innerHTML = `<div class="alerts-head"><b>通知</b><span class="small-pill" style="background:#eef7fa;color:#0e7490">${alerts.length}件</span></div>
+      <div class="alerts-list">${alerts.slice(0, 8).map(alert => {
+        const [bg, fg] = toneColor(alert.tone);
+        return `<div class="alert-item">
+          <span class="alert-icon" style="background:${bg};color:${fg}">${icon(alert.type)}</span>
+          <div class="alert-copy"><b>${esc(alert.title)}</b><span>${esc(alert.meta)}</span></div>
+        </div>`;
+      }).join('')}</div>`;
+  }
+
+  function renderCurrentView(){
+    if(activeView === 'dash') renderDashboard();
+    if(activeView === 'camp') renderCampaignTable();
+    if(activeView === 'pipe') renderPipeline();
+    if(activeView === 'ec') renderEc();
+    if(activeView === 'crm') renderCrm();
+  }
+
+  function switchView(view){
+    activeView = view;
+    $$('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view));
+    $$('.view').forEach(section => section.classList.toggle('is-active', section.id === view));
+    $('#pageTitle').textContent = viewMeta[view].title;
+    $('#pageSub').textContent = viewMeta[view].sub;
+    renderCurrentView();
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function emptyState(message){
+    return `<div class="empty-state">${esc(message)}</div>`;
+  }
+
+  function toast(message){
+    const node = document.createElement('div');
+    node.className = 'toast';
+    node.innerHTML = `${icon('check')}<b>${esc(message)}</b>`;
+    $('#toastRegion').appendChild(node);
+    requestAnimationFrame(() => node.classList.add('show'));
+    setTimeout(() => {
+      node.classList.remove('show');
+      setTimeout(() => node.remove(), 180);
+    }, 2600);
+  }
+
+  $('#nav').addEventListener('click', event => {
+    const button = event.target.closest('[data-view]');
+    if(button) switchView(button.dataset.view);
   });
-}
-renderKanban();
 
-/* EC stock + orders */
-$('#stocklist').innerHTML = channels.map(c=>{
-  const pct = Math.min(100, Math.round(c.stock/1500*100));
-  return `<div class="plat"><div class="badge" style="background:${c.color};font-size:10px">${c.ch[0]}</div>
-    <div class="body"><div class="t"><span>${c.ch}</span><span class="amt">${c.stock.toLocaleString()} 在庫</span></div>
-    <div class="bar"><i style="width:${pct}%;background:${c.color}"></i></div>
-    <div class="meta"><span>主力SKU：${c.sku}</span></div></div></div>`;
-}).join('');
-function ordPill(st){const m={'新規':'b','処理中':'a','出荷済':'g'};return `<span class="pill ${m[st]}">${st}</span>`;}
-function renderOrders(){
-  $('#ectbl').innerHTML = `<thead><tr><th>受注ID</th><th>チャネル</th><th>商品</th><th>金額</th><th>状態</th></tr></thead><tbody>${
-    orders.map((o,i)=>`<tr data-i="${i}" style="cursor:pointer"><td>${o.id}</td><td>${o.ch}</td><td>${o.item}</td><td>${yen(o.amt)}</td><td>${ordPill(o.st)}</td></tr>`).join('')
-  }</tbody>`;
-  document.querySelectorAll('#ectbl tbody tr').forEach(tr=>tr.onclick=()=>{
-    const i=+tr.dataset.i; const seq=['新規','処理中','出荷済']; const cur=seq.indexOf(orders[i].st);
-    orders[i].st = seq[Math.min(seq.length-1,cur+1)]; renderOrders();
+  $('#globalSearch').addEventListener('input', renderCurrentView);
+
+  $('#campaignFilters').addEventListener('click', event => {
+    const button = event.target.closest('[data-campaign-filter]');
+    if(!button) return;
+    campaignFilter = button.dataset.campaignFilter;
+    renderCampaignTable();
   });
-}
-renderOrders();
 
-/* CRM */
-$('#crmstats').innerHTML = crmStats.map(s=>`<div class="s"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
-function segPill(s){const m={'ファン':'g','リピーター':'b','新規':'n'};return `<span class="pill ${m[s]}">${s}</span>`;}
-$('#crmtbl').innerHTML = `<thead><tr><th>サポーター</th><th>セグメント</th><th>支援/購入回数</th><th>累計LTV</th><th>最近の商品</th></tr></thead><tbody>${
-  supporters.map(s=>`<tr><td><b>${s.name}</b></td><td>${segPill(s.seg)}</td><td>${s.cnt} 回</td><td>${yen(s.ltv)}</td><td>${s.last}</td></tr>`).join('')
-}</tbody>`;
+  $('#kanban').addEventListener('click', event => {
+    const detail = event.target.closest('[data-pipeline-detail]');
+    if(detail){
+      event.stopPropagation();
+      openPipelineDetail(detail.dataset.pipelineDetail);
+      return;
+    }
+    const back = event.target.closest('[data-pipeline-back]');
+    if(back){
+      event.stopPropagation();
+      backPipeline(back.dataset.pipelineBack);
+      return;
+    }
+    const card = event.target.closest('[data-pipeline-id]');
+    if(card) advancePipeline(card.dataset.pipelineId);
+  });
 
-/* nav */
-const titles = {
-  dash:['統合ダッシュボード','複数プラットフォームのCF＋EC販売を1画面で'],
-  camp:['キャンペーン管理','Makuake / CAMPFIRE / GREEN FUNDING … を横断集計'],
-  pipe:['案件パイプライン','発掘からEC販売までのライフサイクル'],
-  ec:['EC一元管理','CF後の一般販売を全モール横断で・在庫按分'],
-  crm:['サポーターCRM','支援者を購入者・リピーターへ育成'],
-};
-document.querySelectorAll('#nav li').forEach(li=>li.onclick=()=>{
-  const v=li.dataset.v;
-  document.querySelectorAll('#nav li').forEach(x=>x.classList.toggle('active',x===li));
-  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id===v));
-  $('#ttl').textContent=titles[v][0]; $('#sub').textContent=titles[v][1];
-  window.scrollTo({top:0,behavior:'smooth'});
-});
+  $('#orderFilters').addEventListener('click', event => {
+    const channel = event.target.closest('[data-order-channel]');
+    const status = event.target.closest('[data-order-status]');
+    if(channel){
+      orderChannelFilter = channel.dataset.orderChannel;
+      renderEc();
+    }
+    if(status){
+      orderStatusFilter = status.dataset.orderStatus;
+      renderEc();
+    }
+  });
+
+  $('#lowStockList').addEventListener('click', event => {
+    const button = event.target.closest('[data-restock]');
+    if(button) restock(button.dataset.restock);
+  });
+
+  $('#orderTable').addEventListener('click', event => {
+    const button = event.target.closest('[data-ship-order]');
+    if(button) shipOrder(button.dataset.shipOrder);
+  });
+
+  $('#crmFilters').addEventListener('click', event => {
+    const button = event.target.closest('[data-crm-segment]');
+    if(!button) return;
+    crmSegmentFilter = button.dataset.crmSegment;
+    renderCrm();
+  });
+
+  $('#supporterTable').addEventListener('click', event => {
+    const row = event.target.closest('[data-supporter-id]');
+    if(!row) return;
+    selectedSupporterId = row.dataset.supporterId;
+    renderCrm();
+  });
+
+  $('#supporterTable').addEventListener('keydown', event => {
+    const row = event.target.closest('[data-supporter-id]');
+    if(!row || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault();
+    selectedSupporterId = row.dataset.supporterId;
+    renderCrm();
+  });
+
+  $('#bellButton').addEventListener('click', event => {
+    event.stopPropagation();
+    const menu = $('#alertsMenu');
+    const opening = menu.hidden;
+    menu.hidden = !opening;
+    $('#bellButton').setAttribute('aria-expanded', String(opening));
+  });
+
+  document.addEventListener('click', event => {
+    if(!$('#bellWrap').contains(event.target)){
+      $('#alertsMenu').hidden = true;
+      $('#bellButton').setAttribute('aria-expanded','false');
+    }
+  });
+
+  $$('[data-close-drawer]').forEach(el => el.addEventListener('click', closeCampaignDrawer));
+  $$('[data-close-modal]').forEach(el => el.addEventListener('click', closeModal));
+
+  $('#miniModal').addEventListener('click', event => {
+    const advance = event.target.closest('[data-modal-advance]');
+    const back = event.target.closest('[data-modal-back]');
+    if(advance){
+      advancePipeline(advance.dataset.modalAdvance);
+      closeModal();
+    }
+    if(back){
+      backPipeline(back.dataset.modalBack);
+      closeModal();
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if(event.key === 'Escape'){
+      if(!$('#campaignDrawer').hidden) closeCampaignDrawer();
+      if(!$('#miniModal').hidden) closeModal();
+      $('#alertsMenu').hidden = true;
+      $('#bellButton').setAttribute('aria-expanded','false');
+    }
+  });
+
+  renderAlerts();
+  renderDashboard();
+  renderCampaignTable();
+  renderPipeline();
+  renderEc();
+  renderCrm();
+})();
 </script>
 </body>
 </html>
