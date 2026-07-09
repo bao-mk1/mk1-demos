@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apex Global — クラウドファンディング × EC 統合運営ダッシュボード（デモ）</title>
+<style>
+:root{
+  --brand:#0e7490; --brand-2:#0891b2; --brand-dark:#0c4a6e; --teal-soft:#e0f2f7;
+  --ink:#0f172a; --slate:#475569; --muted:#94a3b8; --line:#e2e8f0;
+  --bg:#f1f5f9; --panel:#ffffff; --amber:#f59e0b; --green:#16a34a; --red:#dc2626;
+  --shadow:0 1px 3px rgba(15,23,42,.08),0 8px 24px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{font-family:"Yu Gothic","Hiragino Sans","Noto Sans JP",-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+
+/* Sidebar */
+.side{background:linear-gradient(180deg,var(--brand-dark),#082f49);color:#cbe6f0;padding:22px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.logo .mark{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--brand-2),#22d3ee);display:flex;align-items:center;justify-content:center;font-weight:800;color:#062c3a;font-size:16px}
+.logo .txt b{color:#fff;font-size:15px;letter-spacing:.02em;display:block}
+.logo .txt small{font-size:10px;opacity:.7;letter-spacing:.08em}
+.side .demo-badge{font-size:9.5px;letter-spacing:.14em;color:#7dd3e8;border:1px solid rgba(125,211,232,.35);border-radius:20px;padding:3px 9px;display:inline-block;margin:14px 0 18px}
+.nav{list-style:none;padding:0;margin:0}
+.nav li{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:#a9cfdd;margin-bottom:3px;transition:.15s;user-select:none}
+.nav li:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav li.active{background:rgba(34,211,238,.16);color:#fff;font-weight:700}
+.nav li .ic{width:18px;text-align:center;font-size:15px}
+.side .foot{margin-top:26px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);font-size:11px;line-height:1.7;opacity:.75}
+.side .foot b{color:#fff;font-weight:600}
+
+/* Main */
+.main{padding:0}
+.topbar{background:var(--panel);border-bottom:1px solid var(--line);padding:16px 30px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.topbar h1{font-size:18px;margin:0;font-weight:700}
+.topbar .sub{font-size:11.5px;color:var(--muted);margin-top:2px}
+.topbar .who{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--slate)}
+.topbar .who .av{width:30px;height:30px;border-radius:50%;background:var(--teal-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700}
+.wrap{padding:26px 30px 60px}
+.view{display:none;animation:fade .25s}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;right:-20px;top:-20px;width:70px;height:70px;border-radius:50%;background:var(--teal-soft);opacity:.6}
+.kpi .lbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.03em;position:relative}
+.kpi .val{font-size:26px;font-weight:800;margin:6px 0 2px;letter-spacing:.01em;position:relative}
+.kpi .val small{font-size:13px;font-weight:600;color:var(--slate)}
+.kpi .delta{font-size:11px;font-weight:700;position:relative}
+.kpi .delta.up{color:var(--green)}.kpi .delta.dn{color:var(--red)}
+
+.grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:20px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);margin-bottom:20px}
+.panel .ph{padding:15px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.panel .ph h3{margin:0;font-size:14px;font-weight:700}
+.panel .ph .hint{font-size:11px;color:var(--muted)}
+.panel .pb{padding:16px 20px}
+
+/* platform cards */
+.plat{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px dashed var(--line)}
+.plat:last-child{border-bottom:none}
+.plat .badge{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:13px;flex:0 0 44px}
+.plat .body{flex:1;min-width:0}
+.plat .body .t{font-size:13px;font-weight:700;display:flex;justify-content:space-between}
+.plat .body .t .amt{color:var(--brand)}
+.bar{height:8px;background:#eef2f6;border-radius:20px;overflow:hidden;margin-top:7px}
+.bar > i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--brand-2),#22d3ee)}
+.plat .meta{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;gap:14px}
+
+.feed{list-style:none;margin:0;padding:0}
+.feed li{display:flex;gap:11px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.feed li:last-child{border:none}
+.feed .dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:0 0 9px}
+.feed small{color:var(--muted);display:block;font-size:10.5px}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;font-size:10.5px;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line);background:#f8fafc;position:sticky;top:0}
+td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:hover td{background:#f8fbfc}
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em}
+.pill.g{background:#dcfce7;color:#15803d}.pill.a{background:#fef3c7;color:#b45309}
+.pill.r{background:#fee2e2;color:#b91c1c}.pill.b{background:var(--teal-soft);color:var(--brand)}
+.pill.n{background:#eef2f6;color:var(--slate)}
+.chip{border:1px solid var(--line);border-radius:7px;padding:5px 11px;font-size:11.5px;cursor:pointer;background:#fff;color:var(--slate);font-weight:600}
+.chip.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+
+/* pipeline kanban */
+.kanban{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.col{background:#eef3f6;border-radius:10px;padding:10px;min-height:340px}
+.col h4{margin:2px 4px 10px;font-size:11.5px;font-weight:800;color:var(--slate);display:flex;justify-content:space-between}
+.col h4 span{background:#fff;border-radius:20px;padding:1px 8px;font-size:10px;color:var(--brand)}
+.card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 12px;margin-bottom:9px;box-shadow:0 1px 2px rgba(15,23,42,.05);cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--brand-2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .pt{font-size:12.5px;font-weight:700;line-height:1.4}
+.card .pm{font-size:10.5px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between}
+.card .pf{font-size:10px;margin-top:7px;color:var(--brand);font-weight:700}
+.hintbar{background:var(--teal-soft);border:1px solid #bae0ec;color:var(--brand-dark);border-radius:9px;padding:9px 14px;font-size:11.5px;margin-bottom:16px;display:flex;gap:8px;align-items:center}
+
+.btn{border:none;background:var(--brand);color:#fff;font-weight:700;font-size:12px;padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--line)}
+.mini{font-size:11px;color:var(--muted)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat-row{display:flex;gap:22px;flex-wrap:wrap}
+.stat-row .s .n{font-size:22px;font-weight:800;color:var(--brand)}
+.stat-row .s .l{font-size:11px;color:var(--muted)}
+.legend{font-size:10.5px;color:var(--muted);margin-top:10px}
+@media (max-width:960px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .grid2,.two{grid-template-columns:1fr}
+  .kanban{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">
+      <div class="mark">A</div>
+      <div class="txt"><b>Apex Global</b><small>CF × EC Operations</small></div>
+    </div>
+    <span class="demo-badge">実機デモ ／ サンプルデータ</span>
+    <ul class="nav" id="nav">
+      <li data-v="dash" class="active"><span class="ic">▤</span>統合ダッシュボード</li>
+      <li data-v="camp"><span class="ic">◎</span>キャンペーン管理</li>
+      <li data-v="pipe"><span class="ic">⇉</span>案件パイプライン</li>
+      <li data-v="ec"><span class="ic">▦</span>EC一元管理</li>
+      <li data-v="crm"><span class="ic">☺</span>サポーターCRM</li>
+    </ul>
+    <div class="foot">
+      <b>MK1 TECHNOLOGY VIETNAM</b><br>
+      御社の運営を支える実装パートナー。<br>
+      このデモは構成イメージです（実データではありません）。
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="ttl">統合ダッシュボード</h1>
+        <div class="sub" id="sub">複数プラットフォームのCF＋EC販売を1画面で</div>
+      </div>
+      <div class="who"><span class="av">A</span>ARAYA 様（運営チーム）</div>
+    </div>
+
+    <div class="wrap">
+      <!-- DASHBOARD -->
+      <section class="view on" id="dash">
+        <div class="kpis" id="kpis"></div>
+        <div class="grid2">
+          <div class="panel">
+            <div class="ph"><h3>進行中クラウドファンディング（プラットフォーム横断）</h3><span class="hint">達成率＝支援額 / 目標</span></div>
+            <div class="pb" id="platlist"></div>
+          </div>
+          <div class="panel">
+            <div class="ph"><h3>最近の動き</h3><span class="hint">CF・EC・配送を統合</span></div>
+            <div class="pb"><ul class="feed" id="feed"></ul></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CAMPAIGNS -->
+      <section class="view" id="camp">
+        <div class="hintbar">🔎 プラットフォームで絞り込めます（Makuake / CAMPFIRE / GREEN FUNDING …）。手作業の横断集計を1画面に。</div>
+        <div class="filters" id="campfilters"></div>
+        <div class="panel"><div class="pb" style="padding:0"><table id="camptbl"></table></div></div>
+      </section>
+
+      <!-- PIPELINE -->
+      <section class="view" id="pipe">
+        <div class="hintbar">➡️ カードをクリックすると次のステージへ進みます（発掘 → CF準備 → CF実施中 → リワード配送 → EC販売）。案件のライフサイクルを可視化。</div>
+        <div class="kanban" id="kanban"></div>
+      </section>
+
+      <!-- EC -->
+      <section class="view" id="ec">
+        <div class="hintbar">📦 CF後の一般販売を、楽天／Amazon／Yahoo／自社／各CFストア横断で一元管理。在庫は単一マスターから按分。</div>
+        <div class="kpis" id="eckpis" style="grid-template-columns:repeat(4,1fr)"></div>
+        <div class="two">
+          <div class="panel">
+            <div class="ph"><h3>チャネル別 在庫按分</h3><span class="hint">単一マスター在庫を自動配分</span></div>
+            <div class="pb" id="stocklist"></div>
+          </div>
+          <div class="panel">
+            <div class="ph"><h3>受注ステータス</h3><span class="hint">クリックで出荷済に更新</span></div>
+            <div class="pb" style="padding:0;max-height:340px;overflow:auto"><table id="ectbl"></table></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CRM -->
+      <section class="view" id="crm">
+        <div class="hintbar">💠 CF支援者 → EC購入者 → リピーターへ。支援者データを販売に接続し、次のCF告知にも活用。</div>
+        <div class="panel"><div class="pb">
+          <div class="stat-row" id="crmstats"></div>
+          <div class="legend">セグメントは支援回数・購入額から自動分類（デモ）。</div>
+        </div></div>
+        <div class="panel"><div class="pb" style="padding:0"><table id="crmtbl"></table></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+const yen = n => '¥' + n.toLocaleString('ja-JP');
+const platColor = {Makuake:'#e4342a', CAMPFIRE:'#00a4a7', 'GREEN FUNDING':'#7cb342', 'Creema SPRINGS':'#e08a1e', 'machi-ya':'#3f51b5'};
+
+/* ---------- data ---------- */
+const kpis = [
+  {lbl:'進行中CF', val:'6', unit:'件', d:'+2 今月', up:1},
+  {lbl:'累計支援額（今期）', val:'¥48.2M', d:'+18.4% 前期比', up:1},
+  {lbl:'支援者総数', val:'3,914', unit:'人', d:'+412 今月', up:1},
+  {lbl:'EC月商（CF後販売）', val:'¥9.7M', d:'+6.1% 前月比', up:1},
+];
+const platforms = [
+  {name:'Makuake', title:'超軽量 折りたたみ電動アシスト自転車', raised:12480000, goal:9000000, backers:842, days:11},
+  {name:'CAMPFIRE', title:'北欧デザイン 静音サーキュレーター', raised:6120000, goal:8000000, backers:503, days:19},
+  {name:'GREEN FUNDING', title:'防水アウトドア モバイルバッテリー40000mAh', raised:8940000, goal:5000000, backers:1120, days:6},
+  {name:'Creema SPRINGS', title:'職人手作り 真鍮キャンプギア', raised:2360000, goal:2000000, backers:318, days:22},
+  {name:'machi-ya', title:'スマート姿勢トラッカー（EC移行準備中）', raised:15200000, goal:10000000, backers:1131, days:2},
+];
+const feed = [
+  {c:'#16a34a', t:'GREEN FUNDING「モバイルバッテリー」が目標達成率 <b>178%</b> に到達', s:'12分前 ・ CF'},
+  {c:'#0891b2', t:'楽天市場で「静音サーキュレーター」EC販売の受注 <b>14件</b>', s:'38分前 ・ EC'},
+  {c:'#f59e0b', t:'リワード配送：Makuake案件の発送ラベル <b>120件</b> を生成', s:'1時間前 ・ 配送'},
+  {c:'#3f51b5', t:'machi-ya「姿勢トラッカー」を EC一般販売パイプラインへ移行', s:'2時間前 ・ ライフサイクル'},
+  {c:'#dc2626', t:'在庫アラート：真鍮キャンプギアの自社在庫が残 <b>18</b>', s:'3時間前 ・ 在庫'},
+  {c:'#16a34a', t:'新規サポーター <b>63名</b> をCRMに取込（重複自動マージ）', s:'今日 09:20 ・ CRM'},
+];
+let campaigns = [
+  {name:'Makuake', title:'超軽量 折りたたみ電動アシスト自転車', rate:139, backers:842, amt:12480000, st:'実施中'},
+  {name:'CAMPFIRE', title:'北欧デザイン 静音サーキュレーター', rate:77, backers:503, amt:6120000, st:'実施中'},
+  {name:'GREEN FUNDING', title:'防水モバイルバッテリー40000mAh', rate:178, backers:1120, amt:8940000, st:'達成'},
+  {name:'Creema SPRINGS', title:'職人手作り 真鍮キャンプギア', rate:118, backers:318, amt:2360000, st:'達成'},
+  {name:'machi-ya', title:'スマート姿勢トラッカー', rate:152, backers:1131, amt:15200000, st:'EC移行'},
+  {name:'Makuake', title:'全自動コーヒーメーカー（次期）', rate:0, backers:0, amt:0, st:'準備中'},
+  {name:'CAMPFIRE', title:'折りたたみソーラーパネル', rate:64, backers:210, amt:2560000, st:'実施中'},
+  {name:'GREEN FUNDING', title:'ミニマル レザーウォレット', rate:203, backers:640, amt:4060000, st:'達成'},
+];
+const stages = ['発掘','CF準備','CF実施中','リワード配送','EC販売'];
+let pipeline = [
+  {t:'全自動コーヒーメーカー（海外）', plat:'Makuake', stage:0, note:'サンプル輸入・検品中'},
+  {t:'折りたたみソーラーパネル', plat:'CAMPFIRE', stage:2, note:'達成率 64% ／ 残19日'},
+  {t:'超軽量 電動アシスト自転車', plat:'Makuake', stage:2, note:'達成率 139% ／ 残11日'},
+  {t:'防水モバイルバッテリー', plat:'GREEN FUNDING', stage:3, note:'1,120件 発送準備'},
+  {t:'真鍮キャンプギア', plat:'Creema SPRINGS', stage:3, note:'318件 配送中'},
+  {t:'スマート姿勢トラッカー', plat:'machi-ya', stage:4, note:'楽天・自社ECで販売中'},
+  {t:'ミニマル レザーウォレット', plat:'GREEN FUNDING', stage:4, note:'Amazon・自社で再販中'},
+  {t:'北欧 静音サーキュレーター', plat:'CAMPFIRE', stage:2, note:'達成率 77% ／ 残19日'},
+];
+const ecKpis = [
+  {lbl:'本日受注', val:'86', unit:'件'},
+  {lbl:'未出荷', val:'23', unit:'件'},
+  {lbl:'在庫総数（全SKU）', val:'4,210'},
+  {lbl:'欠品リスクSKU', val:'3'},
+];
+const channels = [
+  {ch:'自社EC（Shopify）', sku:'姿勢トラッカー', stock:1240, color:'#0891b2'},
+  {ch:'楽天市場', sku:'姿勢トラッカー', stock:860, color:'#bf0000'},
+  {ch:'Amazon', sku:'レザーウォレット', stock:1420, color:'#ff9900'},
+  {ch:'Yahoo!ショッピング', sku:'モバイルバッテリー', stock:520, color:'#ff0033'},
+  {ch:'Makuake STORE', sku:'キャンプギア', stock:170, color:'#e4342a'},
+];
+let orders = [
+  {id:'EC-20874', ch:'楽天市場', item:'姿勢トラッカー ×1', amt:8980, st:'新規'},
+  {id:'EC-20873', ch:'自社EC', item:'モバイルバッテリー ×2', amt:15960, st:'新規'},
+  {id:'EC-20871', ch:'Amazon', item:'レザーウォレット ×1', amt:6600, st:'処理中'},
+  {id:'EC-20869', ch:'Yahoo!', item:'サーキュレーター ×1', amt:12800, st:'処理中'},
+  {id:'EC-20866', ch:'Makuake STORE', item:'真鍮キャンプギア ×1', amt:9800, st:'新規'},
+  {id:'EC-20861', ch:'楽天市場', item:'姿勢トラッカー ×3', amt:26940, st:'出荷済'},
+];
+const crmStats = [
+  {n:'3,914', l:'総サポーター数'},
+  {n:'34%', l:'CF→EC 再購入率'},
+  {n:'612', l:'複数回支援（ファン）'},
+  {n:'¥12,400', l:'平均LTV（支援＋EC）'},
+];
+const supporters = [
+  {name:'佐藤 健一', seg:'ファン', cnt:4, ltv:38200, last:'姿勢トラッカー'},
+  {name:'鈴木 美咲', seg:'リピーター', cnt:2, ltv:15600, last:'レザーウォレット'},
+  {name:'田中 大輔', seg:'ファン', cnt:5, ltv:52800, last:'電動アシスト自転車'},
+  {name:'山本 由紀', seg:'新規', cnt:1, ltv:8980, last:'サーキュレーター'},
+  {name:'中村 翔太', seg:'リピーター', cnt:3, ltv:24100, last:'モバイルバッテリー'},
+  {name:'小林 彩', seg:'新規', cnt:1, ltv:6600, last:'真鍮キャンプギア'},
+];
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+function kpiCards(el, arr){
+  el.innerHTML = arr.map(k=>`<div class="kpi"><div class="lbl">${k.lbl}</div>
+    <div class="val">${k.val}${k.unit?` <small>${k.unit}</small>`:''}</div>
+    ${k.d?`<div class="delta ${k.up?'up':'dn'}">${k.up?'▲':'▼'} ${k.d}</div>`:''}</div>`).join('');
+}
+kpiCards($('#kpis'), kpis);
+kpiCards($('#eckpis'), ecKpis);
+
+$('#platlist').innerHTML = platforms.map(p=>{
+  const pct = Math.min(100, Math.round(p.raised/p.goal*100));
+  const rate = Math.round(p.raised/p.goal*100);
+  return `<div class="plat">
+    <div class="badge" style="background:${platColor[p.name]}">${p.name[0]}</div>
+    <div class="body">
+      <div class="t"><span>${p.title}</span><span class="amt">${yen(p.raised)}</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div class="meta"><span>${p.name}</span><span>達成率 <b style="color:${rate>=100?'#16a34a':'#0891b2'}">${rate}%</b></span><span>${p.backers}人</span><span>残${p.days}日</span></div>
+    </div></div>`;
+}).join('');
+
+$('#feed').innerHTML = feed.map(f=>`<li><span class="dot" style="background:${f.c}"></span><div>${f.t}<small>${f.s}</small></div></li>`).join('');
+
+/* campaigns table + filter */
+let campFilter = 'すべて';
+const platNames = ['すべて', ...Object.keys(platColor)];
+function renderCampFilters(){
+  $('#campfilters').innerHTML = platNames.map(n=>`<span class="chip ${n===campFilter?'sel':''}" data-p="${n}">${n}</span>`).join('');
+  document.querySelectorAll('#campfilters .chip').forEach(c=>c.onclick=()=>{campFilter=c.dataset.p;renderCampFilters();renderCampTbl();});
+}
+function stPill(st){const m={'実施中':'b','達成':'g','EC移行':'a','準備中':'n'};return `<span class="pill ${m[st]||'n'}">${st}</span>`;}
+function renderCampTbl(){
+  const rows = campaigns.filter(c=>campFilter==='すべて'||c.name===campFilter);
+  $('#camptbl').innerHTML = `<thead><tr><th>プラットフォーム</th><th>プロジェクト</th><th>達成率</th><th>支援者</th><th>支援額</th><th>状態</th></tr></thead><tbody>${
+    rows.map(c=>`<tr><td><span class="pill" style="background:${platColor[c.name]}22;color:${platColor[c.name]}">${c.name}</span></td>
+    <td>${c.title}</td>
+    <td><b style="color:${c.rate>=100?'#16a34a':c.rate>0?'#0891b2':'#94a3b8'}">${c.rate}%</b></td>
+    <td>${c.backers.toLocaleString()}</td><td>${yen(c.amt)}</td><td>${stPill(c.st)}</td></tr>`).join('')
+  }</tbody>`;
+}
+renderCampFilters(); renderCampTbl();
+
+/* pipeline kanban */
+function renderKanban(){
+  $('#kanban').innerHTML = stages.map((s,i)=>{
+    const cards = pipeline.filter(p=>p.stage===i);
+    return `<div class="col"><h4>${s}<span>${cards.length}</span></h4>${
+      cards.map(p=>{const idx=pipeline.indexOf(p);return `<div class="card" data-i="${idx}">
+        <div class="pt">${p.t}</div>
+        <div class="pm"><span style="color:${platColor[p.plat]};font-weight:700">${p.plat}</span></div>
+        <div class="pf">${p.note}</div>
+        ${p.stage<4?'<div class="pf" style="color:#94a3b8;font-weight:600">▸ クリックで次へ</div>':'<div class="pf" style="color:#16a34a">✓ 販売中</div>'}
+      </div>`;}).join('')
+    }</div>`;
+  }).join('');
+  document.querySelectorAll('#kanban .card').forEach(c=>c.onclick=()=>{
+    const i=+c.dataset.i; if(pipeline[i].stage<4){pipeline[i].stage++; renderKanban();}
+  });
+}
+renderKanban();
+
+/* EC stock + orders */
+$('#stocklist').innerHTML = channels.map(c=>{
+  const pct = Math.min(100, Math.round(c.stock/1500*100));
+  return `<div class="plat"><div class="badge" style="background:${c.color};font-size:10px">${c.ch[0]}</div>
+    <div class="body"><div class="t"><span>${c.ch}</span><span class="amt">${c.stock.toLocaleString()} 在庫</span></div>
+    <div class="bar"><i style="width:${pct}%;background:${c.color}"></i></div>
+    <div class="meta"><span>主力SKU：${c.sku}</span></div></div></div>`;
+}).join('');
+function ordPill(st){const m={'新規':'b','処理中':'a','出荷済':'g'};return `<span class="pill ${m[st]}">${st}</span>`;}
+function renderOrders(){
+  $('#ectbl').innerHTML = `<thead><tr><th>受注ID</th><th>チャネル</th><th>商品</th><th>金額</th><th>状態</th></tr></thead><tbody>${
+    orders.map((o,i)=>`<tr data-i="${i}" style="cursor:pointer"><td>${o.id}</td><td>${o.ch}</td><td>${o.item}</td><td>${yen(o.amt)}</td><td>${ordPill(o.st)}</td></tr>`).join('')
+  }</tbody>`;
+  document.querySelectorAll('#ectbl tbody tr').forEach(tr=>tr.onclick=()=>{
+    const i=+tr.dataset.i; const seq=['新規','処理中','出荷済']; const cur=seq.indexOf(orders[i].st);
+    orders[i].st = seq[Math.min(seq.length-1,cur+1)]; renderOrders();
+  });
+}
+renderOrders();
+
+/* CRM */
+$('#crmstats').innerHTML = crmStats.map(s=>`<div class="s"><div class="n">${s.n}</div><div class="l">${s.l}</div></div>`).join('');
+function segPill(s){const m={'ファン':'g','リピーター':'b','新規':'n'};return `<span class="pill ${m[s]}">${s}</span>`;}
+$('#crmtbl').innerHTML = `<thead><tr><th>サポーター</th><th>セグメント</th><th>支援/購入回数</th><th>累計LTV</th><th>最近の商品</th></tr></thead><tbody>${
+  supporters.map(s=>`<tr><td><b>${s.name}</b></td><td>${segPill(s.seg)}</td><td>${s.cnt} 回</td><td>${yen(s.ltv)}</td><td>${s.last}</td></tr>`).join('')
+}</tbody>`;
+
+/* nav */
+const titles = {
+  dash:['統合ダッシュボード','複数プラットフォームのCF＋EC販売を1画面で'],
+  camp:['キャンペーン管理','Makuake / CAMPFIRE / GREEN FUNDING … を横断集計'],
+  pipe:['案件パイプライン','発掘からEC販売までのライフサイクル'],
+  ec:['EC一元管理','CF後の一般販売を全モール横断で・在庫按分'],
+  crm:['サポーターCRM','支援者を購入者・リピーターへ育成'],
+};
+document.querySelectorAll('#nav li').forEach(li=>li.onclick=()=>{
+  const v=li.dataset.v;
+  document.querySelectorAll('#nav li').forEach(x=>x.classList.toggle('active',x===li));
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id===v));
+  $('#ttl').textContent=titles[v][0]; $('#sub').textContent=titles[v][1];
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+</script>
+</body>
+</html>
